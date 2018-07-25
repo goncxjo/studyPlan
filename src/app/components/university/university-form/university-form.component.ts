@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NgForm } from '../../../../../node_modules/@angular/forms';
+import { NgForm } from '@angular/forms';
 import { ToastrService, Toast } from 'ngx-toastr';
 
 import { UniversityService } from '../../../services/university.service';

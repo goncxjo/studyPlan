@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup } from '../../../../../node_modules/@angular/forms';
+import { FormGroup } from '@angular/forms';
 
 import { SubjectService } from '../../../services/subject.service';
 import { State } from '../../../models/subject';

@@ -1,28 +1,11 @@
-import {
-  Component,
-  OnInit
-} from '@angular/core';
-import {
-  FormGroup,
-  FormControl,
-  FormBuilder
-} from '../../../../../node_modules/@angular/forms';
-import {
-  ActivatedRoute
-} from '@angular/router';
-import {
-  Location
-} from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 
-import {
-  ToastrService
-} from 'ngx-toastr';
-import {
-  SubjectService
-} from '../../../services/subject.service';
-import {
-  Subject
-} from '../../../models/subject';
+import { ToastrService } from 'ngx-toastr';
+import { SubjectService } from '../../../services/subject.service';
+import { Subject } from '../../../models/subject';
 
 @Component({
   selector: 'app-subject-form',
