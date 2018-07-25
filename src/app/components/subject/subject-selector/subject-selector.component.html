@@ -1,0 +1,6 @@
+<div [formGroup]="parent">
+  <select multiple class="form-control multiple-select" [formControlName]="name">
+    <option [value]="null">-- select a subject --</option>
+    <option *ngFor="let subject of subjects" [value]="subject.$key">{{ subject.name }}</option>
+  </select>
+</div>

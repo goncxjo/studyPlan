@@ -1,0 +1,23 @@
+<div class="card">
+  <div class="card-body">
+    <form #universityForm="ngForm" (ngSubmit)="onSubmit(universityForm)">
+      <div class="form-group">
+        <input type="text" class="form-control" name="$key" #$key="ngModel" [(ngModel)]="universityService.selectedUniversity.$key"
+          placeholder="Add a Key...">
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="universityService.selectedUniversity.name"
+          placeholder="Add a name...">
+      </div>
+      <div class="form-group">
+        <button class="btn btn-primary" type="submit">
+          <i class="fas fa-plus">{{ universityService.selectedUniversity.$key == null ? "Add a university" : "Edit university"}}</i>
+        </button>
+        <button class="btn btn-secondary" type="reset" (click)="resetForm(universityForm)">
+          <i class="fas fa-sync-alt">Reset</i>
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
