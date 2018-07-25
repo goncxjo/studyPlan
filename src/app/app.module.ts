@@ -21,7 +21,7 @@ import { SubjectService } from './services/subject.service';
 import { UniversityService } from './services/university.service';
 import { CareerService } from './services/career.service';
 import { StateSelectorComponent } from './components/subject/state-selector/state-selector.component';
-import { AppRoutingModule } from './/app-routing.module';
+import { AppRoutingModule } from './app-routing.module';
 
 
 @NgModule({
