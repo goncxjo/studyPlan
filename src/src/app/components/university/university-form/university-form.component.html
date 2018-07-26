@@ -1,0 +1,50 @@
+<div class="card bg-light">
+	<div class="card-header">
+		<b>
+      {{ (editMode ? "Editar" : "Crear") + " Universidad" }}
+    </b>
+	</div>
+	<div class="card-body">
+		<form [formGroup]="universityForm" (ngSubmit)="onSubmit()">
+			<div class="row">
+				<div class="form-group col-md-6">
+					<label for="$key">Código:</label>
+					<input type="text" class="form-control" name="$key" formControlName="$key">
+				</div>
+				<div class="form-group col-md-6">
+					<label for="name">Nombre:</label>
+					<input type="text" class="form-control" name="name" formControlName="name">
+				</div>
+				<div class="form-group col-md-6">
+					<label for="headquarter">Sede central:</label>
+					<input type="text" class="form-control" name="headquarter" formControlName="headquarter">
+				</div>
+				<!--
+				<div formGroupName="correlatives" class="col-md-12">
+					<h6 class="card-subtitle mb-2 text-muted">
+						Correlativas
+					</h6>
+					<div class="form-group col-md-12">
+						<label for="regularized">Regularizadas:</label>
+						<app-university-selector [parent]="universityForm.get('correlatives')" name="regularized"></app-university-selector>
+					</div>
+					<div class="form-group col-md-12">
+						<label for="approved">Aprobadas:</label>
+						<app-university-selector [parent]="universityForm.get('correlatives')" name="approved"></app-university-selector>
+					</div>
+				</div>
+-->
+			</div>
+      			<div class="btn-group" role="group">
+				<button type="submit" class="btn btn-primary">Enviar</button>
+				<button type="reset" class="btn btn-secondary">Limpiar</button>
+			</div>
+
+		</form>
+	</div>
+	<div class="card-footer">
+		<div class="d-flex justify-content-between">
+			<button class="btn btn-primary" (click)="goBack()">Volver</button>
+		</div>
+	</div>
+</div>

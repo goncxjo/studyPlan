@@ -1,0 +1,7 @@
+<div [formGroup]="parent">
+  <!-- <input type="text" class="form-control" name="state" formControlName="state" placeholder="Add a state..."> -->
+  <select [formControlName]="name" class="form-control select">
+    <option disabled>-- select a state --</option>
+    <option *ngFor="let state of states" [value]="state.key">{{ state.value }}</option>
+  </select>
+</div>
