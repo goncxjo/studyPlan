@@ -10,46 +10,46 @@ import { DataSet } from 'vis';
 export class NetworkService {
 
   constructor(private firebase: AngularFireDatabase) { }
-/*
-  getCourses(selected) {
-    let courses = _.filter(jsonContent, function (item) {
-      return (item.Orientacion.length == 0 || _.includes(item.Orientacion, selected.orientation));
-    });
-    let length = 0;
-    let nodesDataset = [],
-      edgesDataset = [];
-
-    _.forEach(courses, function (element) {
-      nodesDataset.push({
-        id: element.Id,
-        label: element.Nombre,
-        level: (element.Cuatrimestre - 1),
-        rel: element.Correlativas,
-        group: element.Grupo,
-        orientation: element.Orientacion
+  /*
+    getCourses(selected) {
+      let courses = _.filter(jsonContent, function (item) {
+        return (item.Orientacion.length == 0 || _.includes(item.Orientacion, selected.orientation));
       });
-      if (element.Correlativas != undefined) {
-        length = element.Correlativas.length;
-        for (let i = 0, c = element.Correlativas; i < length; i++) {
-          edgesDataset.push({
-            from: c[i],
-            to: element.Id,
-            chosen: {
-              label: false
-            }
-          });
+      let length = 0;
+      let nodesDataset = [],
+        edgesDataset = [];
+  
+      _.forEach(courses, function (element) {
+        nodesDataset.push({
+          id: element.Id,
+          label: element.Nombre,
+          level: (element.Cuatrimestre - 1),
+          rel: element.Correlativas,
+          group: element.Grupo,
+          orientation: element.Orientacion
+        });
+        if (element.Correlativas != undefined) {
+          length = element.Correlativas.length;
+          for (let i = 0, c = element.Correlativas; i < length; i++) {
+            edgesDataset.push({
+              from: c[i],
+              to: element.Id,
+              chosen: {
+                label: false
+              }
+            });
+          }
         }
+      });
+  
+      let dataset = {
+        nodes: new DataSet(nodesDataset),
+        edges: new DataSet(edgesDataset)
       }
-    });
-
-    let dataset = {
-      nodes: new DataSet(nodesDataset),
-      edges: new DataSet(edgesDataset)
+  
+      return dataset;
     }
-
-    return dataset;
-  }
-*/
+  */
   getOptions() {
     let config = {
       locale: 'es',

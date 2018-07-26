@@ -2,21 +2,40 @@ export class Subject {
     $key?: string;
     name?: string;
     code?: string;
-    classLoad?: number;
+    year?: number;
     quarter?: number;
-    state?: string;
-    correlatives?: any[];
+    classLoad?: number;
+    credits?: number;
+    // state?: string;
+    correlatives?: {
+        approved?: {},
+        regularized?: {}
+    };
+    plan?: number;
+    career?: string;
+    careerOption?: string;
+    department?: string;
+    university?: string;
 }
 
 export class State {
     key: string;
     value: string;
+
+    constructor(key: string, value: string) {
+      this.key = key
+      this.value = value
+    }
+
+    getValue() {
+      return this.value;
+    }
 }
 
 export const STATES: State[] = [
-    { key: 'available', value: 'Disponible' },
-    { key: 'notApproved', value: 'No disponible' },
-    { key: 'inProgress', value: 'En curso' },
-    { key: 'regularized', value: 'Regularizada' },
-    { key: 'approved', value: 'Aprobada' }
+    new State('available', 'Disponible'),
+    new State('notApproved', 'No disponible'),
+    new State('inProgress', 'En curso'),
+    new State('regularized', 'Regularizada'),
+    new State('approved', 'Aprobada')
 ];

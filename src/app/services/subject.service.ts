@@ -16,14 +16,14 @@ export class SubjectService {
   constructor(private db: AngularFireDatabase) {
     this.subjects = db.list<Subject>(this.route)
       .snapshotChanges().pipe(
-        map(changes => changes.map(c => {
-          const key = c.payload.key;
-          let val = c.payload.val();
-          val.$key = key;
-          return val;
-        }
+      map(changes => changes.map(c => {
+        const key = c.payload.key;
+        let val = c.payload.val();
+        val.$key = key;
+        return val;
+      }
       ))
-    );
+      );
   }
 
   getSubjects() {
@@ -39,28 +39,34 @@ export class SubjectService {
   }
 
   addSubject(subject: Subject) {
-    this.db.list<Subject>(this.route).push({
+    return this.db.list<Subject>(this.route).push({
       name: subject.name,
       code: subject.code,
-      classLoad: subject.classLoad,
+      year: subject.year,
       quarter: subject.quarter,
-      state: subject.state,
-      correlatives: subject.correlatives 
+      classLoad: subject.classLoad,
+      credits: subject.credits,
+      correlatives: subject.correlatives,
+      career: subject.career,
+      careerOption: subject.careerOption
     });
   }
-  
+
   updateSubject(subject: Subject) {
-    this.db.list<Subject>(this.route).update(subject.$key, {
+    return this.db.list<Subject>(this.route).update(subject.$key, {
       name: subject.name,
       code: subject.code,
+      year: subject.year,
       quarter: subject.quarter,
       classLoad: subject.classLoad,
-      state: subject.state,
-      correlatives: subject.correlatives
+      credits: subject.credits,
+      correlatives: subject.correlatives,
+      career: subject.career,
+      careerOption: subject.careerOption
     });
   }
 
   deleteSubject($key: string) {
-    this.db.list<Subject>(this.route).remove($key);
+    return this.db.list<Subject>(this.route).remove($key);
   }
 }

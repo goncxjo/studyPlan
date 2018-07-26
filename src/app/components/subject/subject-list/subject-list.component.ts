@@ -26,10 +26,10 @@ export class SubjectListComponent implements OnInit {
   }
 
   onDelete($key: string){
-    if (confirm('Are you sure?')) {
-      this.subjectService.deleteSubject($key);
-      this.toastr.success("Subject deleted", "Successfull operation");
+    if (confirm('¿Estás seguro?')) {
+      this.subjectService.deleteSubject($key)
+      .then(x => this.toastr.success("Asignatura eliminada", "Operación exitosa"))
+      .catch(x => this.toastr.success(x, "Operación fallida"));
     }
   }
-
 }

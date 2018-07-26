@@ -1,34 +1,64 @@
 import { Injectable } from '@angular/core';
-import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
+import { AngularFireDatabase, DatabaseSnapshot, AngularFireAction } from 'angularfire2/database';
 import { University } from '../models/university';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UniversityService {
-  universityList: AngularFireList<any>;
-  selectedUniversity: University = new University(); 
+  private route: string = '/universities';
 
-  constructor(private db: AngularFireDatabase) { }
+  university: Observable<University>;
+  universities: Observable<University[]>;
 
-  getUniversities() {
-    return this.universityList = this.db.list('universities');
+  constructor(private db: AngularFireDatabase) {
+    this.universities = db.list<University>(this.route)
+      .snapshotChanges().pipe(
+      map(changes => changes.map(c => {
+        const key = c.payload.key;
+        let val = c.payload.val();
+        val.$key = key;
+        return val;
+      }
+      ))
+      );
   }
 
-  insertUniversity(university: University) {
-    const ref = this.db.list('/universities').query.ref;
-    ref.child(university.$key.toString()).set({
-      name: university.name
+  getUniversities() {
+    return this.universities;
+  }
+
+  getUniversityById(id: string) {
+    return this.university = this.db.object<University>(this.route + '/' + id.toLowerCase()).valueChanges();
+  }
+
+  addUniversity(university: University) {
+    let noExist = true;
+    this.universities.forEach( x => noExist = !x.find(o => o.$key == university.$key));
+    return new Promise((resolve, reject) => {
+      const ref = this.db.list(this.route).query.ref;
+      const child = ref.child(university.$key.toLowerCase());
+      if (noExist) {
+        resolve(child.set({
+          name: university.name,
+          headquarter: university.headquarter
+        }));
+      } else {
+        reject(Error("El código de la Universidad ya existe"));
+      }
     });
   }
 
   updateUniversity(university: University) {
-    this.universityList.update(university.$key, {
-      name: University.name,
+    return this.db.list<University>(this.route).update(university.$key, {
+      name: university.name,
+      headquarter: university.headquarter
     });
   }
 
   deleteUniversity($key: string) {
-    this.universityList.remove($key);
+    return this.db.list<University>(this.route).remove($key);
   }
 }

@@ -14,8 +14,7 @@ import { Subject } from '../../../models/subject';
 })
 export class SubjectFormComponent implements OnInit {
   subjectForm: FormGroup;
-  selectedSubject: Subject = new Subject();
-  private editMode = this.route.routeConfig.path.toString().includes('edit');
+  private editMode: boolean;
 
   constructor(
     private route: ActivatedRoute, private location: Location, private subjectService: SubjectService, private toastr: ToastrService, private fb: FormBuilder
@@ -24,47 +23,69 @@ export class SubjectFormComponent implements OnInit {
       $key: [''],
       name: [''],
       code: [''],
-      classLoad: [''],
+      year: [''],
       quarter: [''],
-      state: [''],
+      classLoad: [''],
+      credits: [''],
       correlatives: this.fb.group({
         regularized: [{}],
         approved: [{}]
       }),
+      career: [''],
+      careerOption: [''],
     });
   }
 
   ngOnInit() {
-    if(this.editMode) {
-      this.getSubject();
-    }
+    this.route.data.subscribe(d => {
+      this.editMode = d['editMode'];
+      if (this.editMode) {
+        this.getSubject();
+      }
+    });
   }
 
   getSubject() {
     const id = this.route.snapshot.paramMap.get('$key');
     this.subjectService.getSubjectById(id)
       .subscribe(subject => {
-        this.subjectForm.setValue({
-          $key: id,
-          name: !subject.name ? '' : subject.name,
-          code: !subject.code ? '' : subject.code,
-          classLoad: !subject.classLoad ? '' : subject.classLoad,
-          state: !subject.state ? '' : subject.state,
-          quarter: !subject.quarter ? '' : subject.quarter,
-          correlatives: !subject.correlatives ? {} : subject.correlatives
-        })
+        this.subjectForm.controls['$key'].setValue(id);
+        this.subjectForm.controls['name'].setValue(!subject.name ? '' : subject.name);
+        this.subjectForm.controls['code'].setValue(!subject.code ? '' : subject.code);
+        this.subjectForm.controls['classLoad'].setValue(!subject.classLoad ? '' : subject.classLoad);
+        this.subjectForm.controls['year'].setValue(!subject.year ? '' : subject.year);
+        this.subjectForm.controls['quarter'].setValue(!subject.quarter ? '' : subject.quarter);
+        this.subjectForm.controls['credits'].setValue(!subject.credits ? '' : subject.credits);
+        this.subjectForm.controls['career'].setValue(!subject.career ? '' : subject.career);
+        this.subjectForm.controls['careerOption'].setValue(!subject.careerOption ? '' : subject.careerOption);
+
+        if (!subject.correlatives) {
+          this.subjectForm.controls['correlatives'].setValue({ approved: {}, regularized: {} })
+        } else {
+          this.subjectForm.controls['correlatives'].setValue({
+            approved: !subject.correlatives.approved ? {} : subject.correlatives.approved,
+            regularized: !subject.correlatives.regularized ? {} : subject.correlatives.regularized
+          })
+        }
       });
   }
 
   onSubmit() {
     if (!this.editMode) {
-      this.subjectService.addSubject(this.subjectForm.value);
-      this.toastr.success("Subject created", "Successfull operation");
+      this.subjectService.addSubject(this.subjectForm.value)
+        .then(x => {
+          this.toastr.success("Asignatura creada", "Operación exitosa");
+          this.goBack();
+        }, (r => this.toastr.error(r, "Operación fallida"))
+      );
     } else {
-      this.subjectService.updateSubject(this.subjectForm.value);
-      this.toastr.success("Subject edited", "Successfull operation");
+      this.subjectService.updateSubject(this.subjectForm.value)
+        .then(x => {
+          this.toastr.success("Asignatura editada", "Operación exitosa");
+          this.goBack();
+        }
+        ).catch(x => this.toastr.error(x, "Operación fallida"));
     }
-    this.goBack();
   }
 
   goBack(): void {
