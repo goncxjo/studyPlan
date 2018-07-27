@@ -8,19 +8,17 @@
 			<th>Cuatrimestre</th>
 			<th>Carga horaria</th>
 			<th>Creditos</th>
-			<th>Correlativas</th>
 			<th>Acciones</th>
 		</thead>
 		<tbody class="text-center">
 			<tr *ngFor="let subject of subjects">
-				<td>{{ subject.code }}</td>
-				<td>{{ subject.name }}</td>
-				<td>{{ subject.year }}</td>
-				<td>{{ subject.quarter }}</td>
-				<td>{{ subject.classLoad }}</td>
-				<td>{{ subject.credits }}</td>
-				<td>{{ subject.correlatives | json }}</td>
-				<td>
+				<td class="align-middle">{{ subject.code }}</td>
+				<td class="align-middle">{{ subject.name }}</td>
+				<td class="align-middle">{{ subject.year }}</td>
+				<td class="align-middle">{{ subject.quarter }}</td>
+				<td class="align-middle">{{ subject.classLoad }}</td>
+				<td class="align-middle">{{ subject.credits }}</td>
+				<td class="align-middle">
 					<div class="btn-group" role="group">
 						<button type="button" class="btn btn-primary text-white" routerLink="/subjects/edit/{{ subject.$key }}"><i class="far fa-edit"></i></button>
 						<button type="button" class="btn btn-danger text-white" (click)="onDelete(subject.$key)"><i class="fas fa-trash-alt"></i></button>

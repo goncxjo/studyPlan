@@ -4,7 +4,7 @@ import { University } from '../models/university';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Headquarters } from '../models/headquarters';
-import { HeadquartersService } from '../services/headquarters.service';
+import { HeadquartersService } from './headquarters.service';
 
 @Injectable({
   providedIn: 'root'

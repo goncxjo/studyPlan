@@ -17,11 +17,13 @@ import { ToastrModule } from 'ngx-toastr';
 import { NetworkComponent } from './components/network/network.component';
 import { SubjectFormComponent } from './components/subject/subject-form/subject-form.component';
 import { SubjectListComponent } from './components/subject/subject-list/subject-list.component';
-import { SubjectSelectorComponent } from './components/subject/subject-selector/subject-selector.component';
-// import { StateSelectorComponent } from './components/subject/state-selector/state-selector.component';
+import { SubjectMultiselectorComponent } from './components/subject/subject-multiselector/subject-multiselector.component';
 import { UniversityListComponent } from './components/university/university-list/university-list.component';
 import { UniversityFormComponent } from './components/university/university-form/university-form.component';
-// import { CareerFormComponent } from './components/network/career/career-form/career-form.component';
+import { UniversitySelectorComponent } from './components/university/university-selector/university-selector.component';
+import { CareerListComponent } from './components/career/career-list/career-list.component';
+import { CareerFormComponent } from './components/career/career-form/career-form.component';
+import { CareerSelectorComponent } from './components/career/career-selector/career-selector.component';
 
 // SERVICES
 import { SubjectService } from './services/subject.service';
@@ -33,13 +35,15 @@ import { CareerService } from './services/career.service';
   declarations: [
     AppComponent,
     NetworkComponent,
-    SubjectFormComponent,
     SubjectListComponent,
+    SubjectFormComponent,
+    SubjectMultiselectorComponent,
+    UniversityListComponent,
     UniversityFormComponent,
-    SubjectSelectorComponent,
-    UniversityListComponent
-    // CareerFormComponent,
-    // StateSelectorComponent,
+    UniversitySelectorComponent,
+    CareerListComponent,
+    CareerFormComponent,
+    CareerSelectorComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,7 +55,7 @@ import { CareerService } from './services/career.service';
     ToastrModule.forRoot(),
     AppRoutingModule,
   ],
-  providers: [SubjectService, UniversityService],
+  providers: [SubjectService, UniversityService, CareerService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

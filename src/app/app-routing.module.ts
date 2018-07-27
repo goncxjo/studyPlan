@@ -4,14 +4,19 @@ import { SubjectListComponent } from './components/subject/subject-list/subject-
 import { SubjectFormComponent } from './components/subject/subject-form/subject-form.component';
 import { UniversityListComponent } from './components/university/university-list/university-list.component';
 import { UniversityFormComponent } from './components/university/university-form/university-form.component';
+import { CareerListComponent } from './components/career/career-list/career-list.component';
+import { CareerFormComponent } from './components/career/career-form/career-form.component';
 
 const routes: Routes = [
-  { path: 'subjects', component: SubjectListComponent },
   { path: 'universities', component: UniversityListComponent },
-  { path: 'universities/edit/:$key', component: UniversityFormComponent, data: { editMode: true } },
   { path: 'universities/create', component: UniversityFormComponent, data: { editMode: false } },
+  { path: 'universities/edit/:$key', component: UniversityFormComponent, data: { editMode: true } },
+  { path: 'careers', component: CareerListComponent },
+  { path: 'careers/create', component: CareerFormComponent, data: { editMode: false } },
+  { path: 'careers/edit/:$key', component: CareerFormComponent, data: { editMode: true } },
+  { path: 'subjects', component: SubjectListComponent },
+  { path: 'subjects/create', component: SubjectFormComponent, data: { editMode: false } },
   { path: 'subjects/edit/:$key', component: SubjectFormComponent, data: { editMode: true } },
-  { path: 'subjects/create', component: SubjectFormComponent, data: { editMode: false } }
 ];
 
 @NgModule({

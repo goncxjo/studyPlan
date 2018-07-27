@@ -1,0 +1,7 @@
+<div [formGroup]="parent">
+    <select class="form-control select" [formControlName]="name">
+      <option [value]="null" (click)="reset()">-- Universidades --</option>
+      <option *ngFor="let university of universities" [value]="university.$key">{{ university.name + " (" + university.$key.toUpperCase() + ")"  }}</option>
+    </select>
+  </div>
+  

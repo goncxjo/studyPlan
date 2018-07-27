@@ -5,11 +5,11 @@ import { SubjectService } from '../../../services/subject.service';
 import { Subject } from '../../../models/subject';
 
 @Component({
-  selector: 'app-subject-selector',
-  templateUrl: './subject-selector.component.html',
-  styleUrls: ['./subject-selector.component.css']
+  selector: 'app-subject-multiselector',
+  templateUrl: './subject-multiselector.component.html',
+  styleUrls: ['./subject-multiselector.component.css']
 })
-export class SubjectSelectorComponent implements OnInit {
+export class SubjectMultiselectorComponent implements OnInit {
   @Input() parent: FormGroup;
   @Input() name: string;
 

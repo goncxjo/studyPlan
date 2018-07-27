@@ -1,0 +1,27 @@
+<h3 class="text-center">Lista de Carreras</h3>
+<div class="table-responsive">
+	<table class="table table-striped table-bordered">
+		<thead class="text-center thead-dark">
+			<th>Universidad</th>
+      <th>Carrera</th>
+			<th>Duración</th>
+			<th>Nivel</th>
+		</thead>
+		<tbody class="text-center">
+			<tr *ngFor="let career of careers">
+				<td class="align-middle">{{ career.university }}</td>
+				<td class="align-middle">{{ career.name }}</td>
+				<td class="align-middle">{{ career.length }}</td>
+				<td class="align-middle">{{ career.level }}</td>
+				<td class="align-middle">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-primary text-white" routerLink="/careers/edit/{{ career.$key }}"><i class="far fa-edit"></i></button>
+						<button type="button" class="btn btn-danger text-white" (click)="onDelete(career.$key)"><i class="fas fa-trash-alt"></i></button>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<hr>
+<button class="btn btn-primary" routerLink="/careers/create">Crear Carrera</button>
