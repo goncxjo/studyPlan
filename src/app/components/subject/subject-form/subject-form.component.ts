@@ -49,23 +49,29 @@ export class SubjectFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('$key');
     this.subjectService.getSubjectById(id)
       .subscribe(subject => {
-        this.subjectForm.controls['$key'].setValue(id);
-        this.subjectForm.controls['name'].setValue(!subject.name ? '' : subject.name);
-        this.subjectForm.controls['code'].setValue(!subject.code ? '' : subject.code);
-        this.subjectForm.controls['classLoad'].setValue(!subject.classLoad ? '' : subject.classLoad);
-        this.subjectForm.controls['year'].setValue(!subject.year ? '' : subject.year);
-        this.subjectForm.controls['quarter'].setValue(!subject.quarter ? '' : subject.quarter);
-        this.subjectForm.controls['credits'].setValue(!subject.credits ? '' : subject.credits);
-        this.subjectForm.controls['career'].setValue(!subject.career ? '' : subject.career);
-        this.subjectForm.controls['careerOption'].setValue(!subject.careerOption ? '' : subject.careerOption);
+        this.subjectForm.patchValue({
+          $key: id,
+          name: !subject.name ? '' : subject.name,
+          code: !subject.code ? '' : subject.code,
+          classLoad: !subject.classLoad ? '' : subject.classLoad,
+          year: !subject.year ? '' : subject.year,
+          quarter: !subject.quarter ? '' : subject.quarter,
+          credits: !subject.credits ? '' : subject.credits,
+          career: !subject.career ? '' : subject.career,
+          careerOption: !subject.careerOption ? '' : subject.careerOption
+        });
 
         if (!subject.correlatives) {
-          this.subjectForm.controls['correlatives'].setValue({ approved: {}, regularized: {} })
+          this.subjectForm.patchValue({
+            correlatives: { approved: {}, regularized: {} }
+          });
         } else {
-          this.subjectForm.controls['correlatives'].setValue({
-            approved: !subject.correlatives.approved ? {} : subject.correlatives.approved,
-            regularized: !subject.correlatives.regularized ? {} : subject.correlatives.regularized
-          })
+          this.subjectForm.patchValue({
+            correlatives: {
+              approved: !subject.correlatives.approved ? {} : subject.correlatives.approved,
+              regularized: !subject.correlatives.regularized ? {} : subject.correlatives.regularized
+            }
+          });
         }
       });
   }
@@ -83,8 +89,8 @@ export class SubjectFormComponent implements OnInit {
         .then(x => {
           this.toastr.success("Asignatura editada", "Operación exitosa");
           this.goBack();
-        }
-        ).catch(x => this.toastr.error(x, "Operación fallida"));
+        })
+        .catch(x => this.toastr.error(x, "Operación fallida"));
     }
   }
 

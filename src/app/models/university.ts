@@ -1,7 +1,7 @@
 export class University {
     $key?: string;
     name?: string;
-    departments?: [string];
+    departments?: [any];
     headquarter?: string;
-    headquarters?: [string];
+    headquarters?: [any];
 }
