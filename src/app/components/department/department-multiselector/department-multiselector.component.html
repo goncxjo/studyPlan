@@ -1,0 +1,7 @@
+<div [formGroup]="parent">
+    <select multiple class="form-control multiple-select" [formControlName]="name">
+      <option [value]="''">-- Departamentos --</option>
+      <option *ngFor="let department of departments" [value]="department.$key">{{ department.name }}</option>
+    </select>
+  </div>
+  

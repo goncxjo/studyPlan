@@ -14,6 +14,7 @@ import { CareerService } from '../../../services/career.service';
 export class CareerFormComponent implements OnInit {
   careerForm: FormGroup;
   private editMode: boolean;
+  private departmentFilters: any = [];
 
   constructor(
     private route: ActivatedRoute, private location: Location, private careerService: CareerService, private toastr: ToastrService, private fb: FormBuilder
@@ -25,8 +26,8 @@ export class CareerFormComponent implements OnInit {
       level: '',
       about: '',
       goals: '',
-      university: '',
-      departments: {},
+      universityId: '',
+      departments: [],
       options: this.fb.array([])
     });
   }
@@ -120,6 +121,12 @@ export class CareerFormComponent implements OnInit {
     //       this.addOptions(group);
     //     });
     // })
+  }
+
+  onUniversityChange() {
+    this.departmentFilters = [{
+      universityId: this.careerForm.value.universityId
+    }]
   }
 
   onSubmit() {

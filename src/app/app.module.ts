@@ -29,6 +29,7 @@ import { CareerSelectorComponent } from './components/career/career-selector/car
 import { SubjectService } from './services/subject.service';
 import { UniversityService } from './services/university.service';
 import { CareerService } from './services/career.service';
+import { DepartmentMultiselectorComponent } from './components/department/department-multiselector/department-multiselector.component';
 
 
 @NgModule({
@@ -44,6 +45,7 @@ import { CareerService } from './services/career.service';
     CareerListComponent,
     CareerFormComponent,
     CareerSelectorComponent,
+    DepartmentMultiselectorComponent,
   ],
   imports: [
     BrowserModule,

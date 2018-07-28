@@ -26,7 +26,16 @@ export class DepartmentService {
       );
   }
 
-  getDepartments() {
+  getDepartments(name: string = '', universityId: string = '') {
+    this.departments = this.db.list<Department>(this.route, ref => ref.orderByChild('universityId').startAt(universityId))
+    .snapshotChanges().pipe(
+      map(changes => changes.map(c => {
+        const key = c.payload.key;
+        let val = c.payload.val();
+        val.$key = key;
+        return val;
+      }))
+    );
     return this.departments;
   }
 
