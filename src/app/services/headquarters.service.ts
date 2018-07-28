@@ -42,7 +42,9 @@ export class HeadquartersService {
       address: headquarters.address,
       city: headquarters.city,
       country: headquarters.country,
-      telephone: headquarters.telephone
+      telephone: headquarters.telephone,
+      universityId: headquarters.universityId,
+      isHead: headquarters.isHead,
     });
   }
 
@@ -52,7 +54,9 @@ export class HeadquartersService {
       address: headquarters.address,
       city: headquarters.city,
       country: headquarters.country,
-      telephone: headquarters.telephone
+      telephone: headquarters.telephone,
+      universityId: headquarters.universityId,
+      isHead: headquarters.isHead,
     });
   }
 

@@ -5,4 +5,6 @@ export class Headquarters {
     city?: string;
     country?: string;
     telephone?: string;
+    universityId: string;
+    isHead: boolean;
 }

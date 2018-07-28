@@ -6,6 +6,7 @@ import { Location } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { UniversityService } from '../../../services/university.service';
 import { HeadquartersService } from '../../../services/headquarters.service';
+import { DepartmentService } from '../../../services/department.service';
 
 @Component({
   selector: 'app-university-form',
@@ -17,13 +18,19 @@ export class UniversityFormComponent implements OnInit {
   private editMode: boolean;
 
   constructor(
-    private route: ActivatedRoute, private location: Location, private universityService: UniversityService, private headquarterService: HeadquartersService, private toastr: ToastrService, private fb: FormBuilder
+    private route: ActivatedRoute
+    , private location: Location
+    , private universityService: UniversityService
+    , private headquarterService: HeadquartersService
+    , private departmentService: DepartmentService
+    , private toastr: ToastrService
+    , private fb: FormBuilder
   ) {
     this.universityForm = this.fb.group({
       $key: '',
       name: '',
-      headquarter: '',
-      headquarters: this.fb.array([])
+      headquarters: this.fb.array([]),
+      departments: this.fb.array([]),
     });
   }
 
@@ -47,7 +54,8 @@ export class UniversityFormComponent implements OnInit {
       address: '',
       city: '',
       country: '',
-      telephone: ''
+      telephone: '',
+      isHead: false,
     });
 
     this.headquartersForm.push(headquarters);
@@ -61,6 +69,27 @@ export class UniversityFormComponent implements OnInit {
     this.headquartersForm.removeAt(index);
   }
 
+  get departmentsForm() {
+    return this.universityForm.get('departments') as FormArray;
+  }
+
+  addNewDepartment() {
+    const department = this.fb.group({
+      $key: '',
+      name: '',
+    });
+
+    this.departmentsForm.push(department);
+  }
+
+  addDepartment(department) {
+    this.departmentsForm.push(department);
+  }
+
+  deleteDepartment(index) {
+    this.departmentsForm.removeAt(index);
+  }
+
   fillForm() {
     const id = this.route.snapshot.paramMap.get('$key');
     this.universityService.getUniversityById(id)
@@ -71,6 +100,7 @@ export class UniversityFormComponent implements OnInit {
           headquarter: !university.headquarter ? '' : university.headquarter,  
         });
         this.getHeadquarters(university);
+        this.getDepartments(university);
       });
   }
 
@@ -84,9 +114,23 @@ export class UniversityFormComponent implements OnInit {
             address: headquarters.address,
             city: headquarters.city,
             country: headquarters.country,
-            telephone: headquarters.telephone
+            telephone: headquarters.telephone,
+            isHead: headquarters.isHead
           });
           this.addHeadquarters(group);
+        });
+    })
+  }
+
+  getDepartments(university) {
+    university.departments.forEach(item => {
+      this.departmentService.getDepartmentById(item)
+        .subscribe(departments => {
+          const group = this.fb.group({
+            $key: item,
+            name: departments.name,
+          });
+          this.addDepartment(group);
         });
     })
   }
