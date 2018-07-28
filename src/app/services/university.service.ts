@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
-import { University } from '../models/university';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Headquarters } from '../models/headquarters';
+
 import { HeadquartersService } from './headquarters.service';
+import { DepartmentService } from './department.service';
+
+import { University } from '../models/university';
+import { Headquarters } from '../models/headquarters';
+import { Department } from '../models/department';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +19,11 @@ export class UniversityService {
   university: Observable<University>;
   universities: Observable < University[] > ;
 
-  constructor(private db: AngularFireDatabase, private headquarterService: HeadquartersService) {
+  constructor(
+    private db: AngularFireDatabase
+    , private headquarterService: HeadquartersService
+    , private departmentService: DepartmentService 
+  ) {
     this.universities = db.list<University>(this.route)
       .snapshotChanges().pipe(
         map(changes => changes.map(c => {
@@ -36,33 +44,31 @@ export class UniversityService {
   }
 
   addUniversity(university: University) {
-    let noExist = true;
-    this.universities.forEach(x => noExist = !x.find(o => o.$key == university.$key));
-    return new Promise((resolve, reject) => {
-      const ref = this.db.list(this.route).query.ref;
-      const child = ref.child(university.$key.toLowerCase());
-      if (noExist) {
-        let newUniversity = {
-          name: university.name,
-          headquarter: university.headquarter,
-          headquarters: university.headquarters.map((item: Headquarters) => {
-            item.$key = this.db.createPushId();
-            return item;
-          })
-        };
+    let newUniversity = {
+      name: university.name,
+      headquarters: university.headquarters.map((item: Headquarters) => {
+        item.$key = this.db.createPushId();
+        item.universityId = university.$key;
+        return item;
+      }),
+      departments: university.departments.map((item: Department) => {
+        item.$key = this.db.createPushId();
+        item.universityId = university.$key;
+        return item;
+      }),
+    };
 
-        newUniversity.headquarters.forEach(element => {
-          this.headquarterService.addHeadquarters(element);
-        });
+    newUniversity.headquarters.forEach(element => {
+      this.headquarterService.addHeadquarters(element);
+    });
+    newUniversity.departments.forEach(element => {
+      this.departmentService.addDepartment(element);
+    });
 
-        resolve(child.set({
-          name: newUniversity.name,
-          headquarter: newUniversity.headquarter,
-          headquarters: newUniversity.headquarters.map((item: Headquarters) => item.$key)
-        }));
-      } else {
-        reject(Error("El código de la Universidad ya existe"));
-      }
+    return this.db.list(this.route).set(university.$key, {
+      name: newUniversity.name,
+      headquarters: newUniversity.headquarters.map((item: Headquarters) => item.$key),
+      departments: newUniversity.departments.map((item: Department) => item.$key)
     });
   }
 
@@ -71,21 +77,29 @@ export class UniversityService {
       name: university.name,
       headquarter: university.headquarter,
       headquarters: university.headquarters.map((item: Headquarters) => {
-        if(!item.$key) {
-          item.$key = this.db.createPushId();
-        }
+        item.$key = item.$key || this.db.createPushId();
+        item.universityId = item.universityId || university.$key;
         return item;
-      })
+      }),
+      departments: university.departments.map((item: Department) => {
+        item.$key = item.$key || this.db.createPushId();
+        item.universityId = item.universityId || university.$key;
+        return item;
+      }),
     };
 
     selectedUniversity.headquarters.forEach(element => {
       this.headquarterService.addHeadquarters(element);
     });
+    selectedUniversity.departments.forEach(element => {
+      this.departmentService.addDepartment(element);
+    });
 
     return this.db.list(this.route).set(university.$key, {
       name: selectedUniversity.name,
       headquarter: selectedUniversity.headquarter,
-      headquarters: selectedUniversity.headquarters.map((item: Headquarters) => item.$key)
+      headquarters: selectedUniversity.headquarters.map((item: Headquarters) => item.$key),
+      departments: selectedUniversity.departments.map((item: Department) => item.$key)
     });
   }
 
