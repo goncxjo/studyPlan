@@ -11,7 +11,7 @@
           <label for="$key">Código:</label>
           <input type="text" class="form-control" name="$key" formControlName="$key">
         </div>
-        <div class="form-group col-md-8">
+        <div class="form-group col-md-6">
           <label for="name">Nombre:</label>
           <input type="text" class="form-control" name="name" formControlName="name">
         </div>
@@ -21,6 +21,7 @@
         <h6 class="card-subtitle mb-2">
           Sedes
         </h6>
+
         <ul class="list-group list-group-flush">
           <div *ngFor="let h of headquartersForm.controls; let i = index" [formGroupName]="i">
             <li class="list-group-item">
@@ -31,17 +32,7 @@
                   </h6>
                 </div>
                 <input type="hidden" name="$key" formControlName="$key">
-                <div class="form-group col-md-12">
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="isHead" [value]="true" formControlName="isHead">
-                    <label class="form-check-label" for="isHead">
-                      Sede principal
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group col-md-12">
+                <div class="form-group col-md-6">
                   <label for="name">Nombre:</label>
                   <input type="text" class="form-control" name="name" formControlName="name">
                 </div>
@@ -71,13 +62,13 @@
       </div>
       <button type="button" class="btn btn-primary" (click)="addNewHeadquarters()">Agregar Sede</button>
 
-
-      <div class="form-group mt-3" formArrayName="departments">
+      <div class="form-group mt-4" formArrayName="departments">
         <h6 class="card-subtitle mb-2">
-          Departamentos
+          Departamento
         </h6>
+
         <ul class="list-group list-group-flush">
-          <div *ngFor="let h of departmentsForm.controls; let i = index" [formGroupName]="i">
+          <div *ngFor="let d of departmentsForm.controls; let i = index" [formGroupName]="i">
             <li class="list-group-item">
               <div class="form-row">
                 <div class="form-group col-md-12">
@@ -85,8 +76,6 @@
                     {{ "Departamento #" + (i + 1) }}
                   </h6>
                 </div>
-              </div>
-              <div class="form-row">
                 <input type="hidden" name="$key" formControlName="$key">
                 <div class="form-group col-md-6">
                   <label for="name">Nombre:</label>
@@ -99,8 +88,8 @@
         </ul>
       </div>
       <button type="button" class="btn btn-primary" (click)="addNewDepartment()">Agregar Departamento</button>
-      <hr>
 
+      <hr>
       <div class="btn-group" role="group">
         <button type="submit" class="btn btn-primary">Enviar</button>
         <button type="reset" class="btn btn-secondary">Limpiar</button>

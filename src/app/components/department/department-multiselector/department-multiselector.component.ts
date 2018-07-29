@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, SimpleChange } from '@angular/core';
+import { Component, Input, OnInit, SimpleChange } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { DepartmentService } from '../../../services/department.service';

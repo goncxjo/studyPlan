@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
-import { Career, Level, LEVELS } from '../models/career';
+import { Career, LEVELS } from '../models/career';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -21,9 +21,7 @@ export class CareerService {
         let val = c.payload.val();
         val.$key = key;
         return val;
-      }
-      ))
-      );
+      })));
   }
 
   getCareers() {
@@ -34,8 +32,8 @@ export class CareerService {
     return this.career = this.db.object<Career>(this.route + '/' + id).valueChanges();
   }
 
-  getLevels(): Observable<Level[]> {
-    return of(LEVELS);
+  getLevels(): any[] {
+    return LEVELS;
   }
 
   addCareer(career: Career) {

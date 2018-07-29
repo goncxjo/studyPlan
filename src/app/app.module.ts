@@ -24,12 +24,13 @@ import { UniversitySelectorComponent } from './components/university/university-
 import { CareerListComponent } from './components/career/career-list/career-list.component';
 import { CareerFormComponent } from './components/career/career-form/career-form.component';
 import { CareerSelectorComponent } from './components/career/career-selector/career-selector.component';
+import { DepartmentMultiselectorComponent } from './components/department/department-multiselector/department-multiselector.component';
 
 // SERVICES
 import { SubjectService } from './services/subject.service';
 import { UniversityService } from './services/university.service';
 import { CareerService } from './services/career.service';
-import { DepartmentMultiselectorComponent } from './components/department/department-multiselector/department-multiselector.component';
+import { SelectorComponent } from './components/shared/selector/selector.component';
 
 
 @NgModule({
@@ -45,6 +46,7 @@ import { DepartmentMultiselectorComponent } from './components/department/depart
     CareerListComponent,
     CareerFormComponent,
     CareerSelectorComponent,
+    SelectorComponent,
     DepartmentMultiselectorComponent,
   ],
   imports: [

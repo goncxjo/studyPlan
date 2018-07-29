@@ -18,13 +18,7 @@ export class UniversityFormComponent implements OnInit {
   private editMode: boolean;
 
   constructor(
-    private route: ActivatedRoute
-    , private location: Location
-    , private universityService: UniversityService
-    , private headquarterService: HeadquartersService
-    , private departmentService: DepartmentService
-    , private toastr: ToastrService
-    , private fb: FormBuilder
+    private route: ActivatedRoute, private location: Location, private universityService: UniversityService, private headquarterService: HeadquartersService, private departmentService: DepartmentService, private toastr: ToastrService, private fb: FormBuilder
   ) {
     this.universityForm = this.fb.group({
       $key: '',
@@ -54,8 +48,7 @@ export class UniversityFormComponent implements OnInit {
       address: '',
       city: '',
       country: '',
-      telephone: '',
-      isHead: false,
+      telephone: ''
     });
 
     this.headquartersForm.push(headquarters);
@@ -73,30 +66,31 @@ export class UniversityFormComponent implements OnInit {
     return this.universityForm.get('departments') as FormArray;
   }
 
-  addNewDepartment() {
-    const department = this.fb.group({
+  addNewDepartments() {
+    const departments = this.fb.group({
       $key: '',
       name: '',
     });
 
-    this.departmentsForm.push(department);
+    this.departmentsForm.push(departments);
   }
 
-  addDepartment(department) {
-    this.departmentsForm.push(department);
+  addDepartments(departments) {
+    this.departmentsForm.push(departments);
   }
 
-  deleteDepartment(index) {
+  deleteDepartments(index) {
     this.departmentsForm.removeAt(index);
   }
+
 
   fillForm() {
     const id = this.route.snapshot.paramMap.get('$key');
     this.universityService.getUniversityById(id)
       .subscribe(university => {
         this.universityForm.patchValue({
-          $key: id || '',
-          name: university.name || '',  
+          $key: !university ? '' : id,
+          name: !university.name || '',
         });
         this.getHeadquarters(university);
         this.getDepartments(university);
@@ -113,8 +107,7 @@ export class UniversityFormComponent implements OnInit {
             address: headquarters.address,
             city: headquarters.city,
             country: headquarters.country,
-            telephone: headquarters.telephone,
-            isHead: headquarters.isHead
+            telephone: headquarters.telephone
           });
           this.addHeadquarters(group);
         });
@@ -129,7 +122,7 @@ export class UniversityFormComponent implements OnInit {
             $key: item,
             name: departments.name,
           });
-          this.addDepartment(group);
+          this.addDepartments(group);
         });
     })
   }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-
+import { Observable } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { CareerService } from '../../../services/career.service';
 
@@ -13,8 +13,8 @@ import { CareerService } from '../../../services/career.service';
 })
 export class CareerFormComponent implements OnInit {
   careerForm: FormGroup;
+  levels: any[];
   private editMode: boolean;
-  private departmentFilters: any = [];
 
   constructor(
     private route: ActivatedRoute, private location: Location, private careerService: CareerService, private toastr: ToastrService, private fb: FormBuilder
@@ -30,9 +30,11 @@ export class CareerFormComponent implements OnInit {
       departments: [],
       options: this.fb.array([])
     });
+
   }
 
   ngOnInit() {
+    this.levels = this.careerService.getLevels();
     this.route.data.subscribe(d => {
       this.editMode = d['editMode'];
       if (this.editMode) {
@@ -76,20 +78,20 @@ export class CareerFormComponent implements OnInit {
     return this.careerForm.get('options') as FormArray;
   }
 
-  addNewOptions() {
+  addNewOption() {
     const options = this.fb.group({
-      key: '',
-      value: '',
+      code: '',
+      name: '',
     });
 
     this.optionsForm.push(options);
   }
 
-  addOptions(options) {
+  addOption(options) {
     this.optionsForm.push(options);
   }
 
-  deleteOptions(index) {
+  deleteOption(index) {
     this.optionsForm.removeAt(index);
   }
 
@@ -124,9 +126,7 @@ export class CareerFormComponent implements OnInit {
   }
 
   onUniversityChange() {
-    this.departmentFilters = [{
-      universityId: this.careerForm.value.universityId
-    }]
+    this.careerForm.patchValue({ departments: [] });
   }
 
   onSubmit() {
