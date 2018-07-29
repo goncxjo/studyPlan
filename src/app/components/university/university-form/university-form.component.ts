@@ -89,8 +89,8 @@ export class UniversityFormComponent implements OnInit {
     this.universityService.getUniversityById(id)
       .subscribe(university => {
         this.universityForm.patchValue({
-          $key: !university ? '' : id,
-          name: !university.name || '',
+          $key: id || '',
+          name: university.name || '',
         });
         this.getHeadquarters(university);
         this.getDepartments(university);
