@@ -13,6 +13,7 @@ export class CareerService {
 
   career: Observable<Career>;
   careers: Observable<Career[]>;
+  option: Observable<CareerOption>;
   options: Observable<CareerOption[]>;
 
   constructor(private db: AngularFireDatabase) {
@@ -141,7 +142,7 @@ export class CareerService {
   }
 
   getOptionById(id: string) {
-    return this.options = this.db.object<CareerOption>(this.routeOptions + id).valueChanges();
+    return this.option = this.db.object<CareerOption>(this.routeOptions + '/'  + id).valueChanges();
   }
 
 
