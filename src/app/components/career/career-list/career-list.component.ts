@@ -11,7 +11,7 @@ import { Career } from '../../../models/career';
 })
 export class CareerListComponent implements OnInit {
 
-  career: Career[];
+  careers: Career[];
 
   constructor(private careerService: CareerService, private toastr: ToastrService) { }
 
@@ -20,8 +20,12 @@ export class CareerListComponent implements OnInit {
   }
 
   getCareers() {
-    this.careerService.getCareers().subscribe(career => {
-      this.career = career;
+    this.careerService.getCareers().subscribe(items => {
+      const careers = items.map(career => {
+        career.level = this.careerService.getLevelValue(career.level);
+        return career;
+      })
+      this.careers = careers;
     });
   }
 

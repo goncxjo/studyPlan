@@ -6,10 +6,11 @@
       <th>Carrera</th>
 			<th>Duración</th>
 			<th>Nivel</th>
+			<th>Acciones</th>
 		</thead>
 		<tbody class="text-center">
 			<tr *ngFor="let career of careers">
-				<td class="align-middle">{{ career.university }}</td>
+				<td class="align-middle">{{ career.universityId.toUpperCase() }}</td>
 				<td class="align-middle">{{ career.name }}</td>
 				<td class="align-middle">{{ career.length }}</td>
 				<td class="align-middle">{{ career.level }}</td>

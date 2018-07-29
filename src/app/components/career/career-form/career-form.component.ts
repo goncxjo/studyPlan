@@ -27,7 +27,7 @@ export class CareerFormComponent implements OnInit {
       about: '',
       goals: '',
       universityId: '',
-      departments: [],
+      departmentId: '',
       options: this.fb.array([])
     });
 
@@ -44,34 +44,7 @@ export class CareerFormComponent implements OnInit {
   }
 
   getCareer() {
-    // const id = this.route.snapshot.paramMap.get('$key');
-    // this.careerService.getCareerById(id)
-    //   .subscribe(career => {
-    //     this.careerForm.patchValue({
-    //       $key: id,
-    //       name: !career.name ? '' : career.name,
-    //       code: !career.code ? '' : career.code,
-    //       classLoad: !career.classLoad ? '' : career.classLoad,
-    //       year: !career.year ? '' : career.year,
-    //       quarter: !career.quarter ? '' : career.quarter,
-    //       credits: !career.credits ? '' : career.credits,
-    //       career: !career.career ? '' : career.career,
-    //       careerOption: !career.careerOption ? '' : career.careerOption
-    //     });
 
-    //     if (!career.correlatives) {
-    //       this.careerForm.patchValue({
-    //         correlatives: { approved: {}, regularized: {} }
-    //       });
-    //     } else {
-    //       this.careerForm.patchValue({
-    //         correlatives: {
-    //           approved: !career.correlatives.approved ? {} : career.correlatives.approved,
-    //           regularized: !career.correlatives.regularized ? {} : career.correlatives.regularized
-    //         }
-    //       });
-    //     }
-    //   });
   }
 
   get optionsForm() {
@@ -80,7 +53,6 @@ export class CareerFormComponent implements OnInit {
 
   addNewOption() {
     const options = this.fb.group({
-      code: '',
       name: '',
     });
 
@@ -96,37 +68,43 @@ export class CareerFormComponent implements OnInit {
   }
 
   fillForm() {
-    // const id = this.route.snapshot.paramMap.get('$key');
-    // this.careerService.getUniversityById(id)
-    //   .subscribe(university => {
-    //     this.careerForm.patchValue({
-    //       $key: !university ? '' : id,
-    //       name: !university.name ? '' : university.name,
-    //       headquarter: !university.headquarter ? '' : university.headquarter,  
-    //     });
-    //     this.getOptions(university);
-    //   });
+    const id = this.route.snapshot.paramMap.get('$key');
+    this.careerService.getCareerById(id)
+      .subscribe(career => {
+        career.$key = id || '';
+        this.careerForm.patchValue({
+          $key: career.$key,
+          name: career.name || '',
+          length: career.length || '',
+          level: career.level || '',
+          about: career.about || '',
+          goals: career.goals || '',
+          departments: career.departments || '',
+          universityId: career.universityId || '',
+        });
+        this.getOptions(career);
+      });
   }
 
-  getOptions(university) {
-    // university.options.forEach(item => {
-    //   this.headquarterService.getOptionsById(item)
-    //     .subscribe(options => {
-    //       const group = this.fb.group({
-    //         $key: item,
-    //         name: options.name,
-    //         address: options.address,
-    //         city: options.city,
-    //         country: options.country,
-    //         telephone: options.telephone
-    //       });
-    //       this.addOptions(group);
-    //     });
-    // })
+  getOptions(career) {
+    if(career.options) {
+      career.options.forEach(items => {
+        this.careerService.getOptionsByCareerId(career.$key)
+          .subscribe(options => {
+            options.map(option => {
+            const group = this.fb.group({
+              $key: option.$key,
+              name: option.name,
+            });
+            this.addOption(group);
+            });
+          });
+      })
+    }
   }
 
   onUniversityChange() {
-    this.careerForm.patchValue({ departments: [] });
+    this.careerForm.patchValue({ departmentId: '', options: [] });
   }
 
   onSubmit() {

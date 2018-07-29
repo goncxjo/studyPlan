@@ -1,97 +1,88 @@
-<pre>
-  {{ careerForm.value | json }}
-</pre>
 <div class="card bg-light">
-  <div class="card-header">
-    <b>
+	<div class="card-header">
+		<b>
       {{ (editMode ? "Editar" : "Crear") + " Carrera" }}
     </b>
-  </div>
-  <div class="card-body">
-    <form [formGroup]="careerForm" (ngSubmit)="onSubmit()">
-      <div class="form-row">
-        <input type="hidden" name="$key" formControlName="$key">
-        <div class="form-group col-md-12">
-          <label for="name">Nombre:</label>
-          <input type="text" class="form-control" name="name" formControlName="name">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="level">Nivel:</label>
-          <app-selector [parent]="careerForm" [elements]="levels" name="level"></app-selector>
-        </div>
-        <div class="form-group col-md-6">
-          <label for="length">Duración:</label>
-          <input type="number" class="form-control" name="length" formControlName="length">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group col-md-12">
-          <label for="about">Acerca de la carrera:</label>
-          <textarea class="form-control" name="about" rows="3" formControlName="about"> </textarea>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group col-md-12">
-          <label for="goals">Objetivos de la carrera:</label>
-          <textarea class="form-control" name="goals" rows="3" formControlName="goals"> </textarea>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="universityId">Universidad:</label>
-          <app-university-selector [parent]="careerForm" name="universityId" (change)="onUniversityChange()"></app-university-selector>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="departments">Departamentos:</label>
-          <app-department-multiselector [parent]="careerForm" [filterUniversityId]="careerForm.value.universityId" name="departments"></app-department-multiselector>
-        </div>
-      </div>
+	</div>
+	<div class="card-body">
+		<form [formGroup]="careerForm" (ngSubmit)="onSubmit()">
+			<div class="form-row">
+				<input type="hidden" name="$key" formControlName="$key">
+				<div class="form-group col-md-12">
+					<label for="name">Nombre:</label>
+					<input type="text" class="form-control" name="name" formControlName="name">
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="level">Nivel:</label>
+					<app-selector [parent]="careerForm" [elements]="levels" name="level"></app-selector>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="length">Duración:</label>
+					<input type="number" class="form-control" name="length" formControlName="length">
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<label for="about">Acerca de la carrera:</label>
+					<textarea class="form-control" name="about" rows="3" formControlName="about"> </textarea>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<label for="goals">Objetivos de la carrera:</label>
+					<textarea class="form-control" name="goals" rows="3" formControlName="goals"> </textarea>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="universityId">Universidad:</label>
+					<app-university-selector [parent]="careerForm" name="universityId" (change)="onUniversityChange()"></app-university-selector>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="departmentId">Departamento:</label>
+					<app-department-selector [parent]="careerForm" [filterUniversityId]="careerForm.value.universityId" name="departmentId"></app-department-selector>
+				</div>
+			</div>
 
-      <div class="form-group" formArrayName="options">
-        <h6 class="card-subtitle mb-2">
-          Orientaciones
-        </h6>
+			<div class="form-group" formArrayName="options">
+				<h6 class="card-subtitle mb-2">
+					Orientaciones
+				</h6>
 
-        <ul class="list-group list-group-flush">
-          <div *ngFor="let o of optionsForm.controls; let i = index" [formGroupName]="i">
-            <li class="list-group-item">
-              <div class="form-row">
-                <div class="form-group col-md-12">
-                  <h6 class="card-subtitle mb-2 text-muted">
-                    {{ "Orientacion #" + (i + 1) }}
-                  </h6>
-                </div>
-                <div class="form-group col-md-4">
-                  <label for="code">Código:</label>
-                  <input type="text" class="form-control" name="code" formControlName="code">
-                </div>
-                <div class="form-group col-md-6">
-                  <label for="name">Nombre:</label>
-                  <input type="text" class="form-control" name="name" formControlName="name">
-                </div>
-              </div>
-              <button type="button" class="btn btn-danger" (click)="deleteOption(i)">Eliminar Orientacion</button>
-            </li>
-          </div>
-        </ul>
-      </div>
+				<ul class="list-group list-group-flush">
+					<div *ngFor="let o of optionsForm.controls; let i = index" [formGroupName]="i">
+						<li class="list-group-item">
+							<div class="form-row">
+								<div class="form-group col-md-12">
+									<h6 class="card-subtitle mb-2 text-muted">
+										{{ "Orientacion #" + (i + 1) }}
+									</h6>
+								</div>
+								<div class="form-group col-md-12">
+									<label for="name">Nombre:</label>
+									<input type="text" class="form-control" name="name" formControlName="name">
+								</div>
+							</div>
+							<button type="button" class="btn btn-danger" (click)="deleteOption(i)">Eliminar Orientacion</button>
+						</li>
+					</div>
+				</ul>
+			</div>
 
-      <button type="button" class="btn btn-primary" (click)="addNewOption()">Agregar Orientacion</button>
-      <hr>
-      <div class="btn-group" role="group">
-        <button type="submit" class="btn btn-primary">Enviar</button>
-        <button type="reset" class="btn btn-secondary">Limpiar</button>
-      </div>
+			<button type="button" class="btn btn-primary" (click)="addNewOption()">Agregar Orientacion</button>
+			<hr>
+			<div class="btn-group" role="group">
+				<button type="submit" class="btn btn-primary">Enviar</button>
+				<button type="reset" class="btn btn-secondary">Limpiar</button>
+			</div>
 
-    </form>
-  </div>
-  <div class="card-footer">
-    <div class="d-flex justify-content-between">
-      <button class="btn btn-primary" (click)="goBack()">Volver</button>
-    </div>
-  </div>
+		</form>
+	</div>
+	<div class="card-footer">
+		<div class="d-flex justify-content-between">
+			<button class="btn btn-primary" (click)="goBack()">Volver</button>
+		</div>
+	</div>
 </div>

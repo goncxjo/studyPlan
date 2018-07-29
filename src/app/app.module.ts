@@ -31,6 +31,7 @@ import { SubjectService } from './services/subject.service';
 import { UniversityService } from './services/university.service';
 import { CareerService } from './services/career.service';
 import { SelectorComponent } from './components/shared/selector/selector.component';
+import { DepartmentSelectorComponent } from './components/department/department-selector/department-selector.component';
 
 
 @NgModule({
@@ -48,6 +49,7 @@ import { SelectorComponent } from './components/shared/selector/selector.compone
     CareerSelectorComponent,
     SelectorComponent,
     DepartmentMultiselectorComponent,
+    DepartmentSelectorComponent,
   ],
   imports: [
     BrowserModule,

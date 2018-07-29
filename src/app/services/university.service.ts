@@ -17,7 +17,7 @@ export class UniversityService {
   private route: string = '/universities';
 
   university: Observable<University>;
-  universities: Observable < University[] > ;
+  universities: Observable <University[]> ;
 
   constructor(private db: AngularFireDatabase, private headquarterService: HeadquartersService, private departmentService: DepartmentService) {
     this.universities = db.list<University>(this.route)
@@ -43,23 +43,22 @@ export class UniversityService {
     let newUniversity = {
       name: university.name,
       headquarters: university.headquarters.map((item: Headquarters) => {
-        if(!item.$key) {
-          item.$key = item.$key || this.db.createPushId();
-          item.universityId = university.$key;
-        }
+        item.$key = item.$key || this.db.createPushId();
+        item.universityId = university.$key;
         return item;
       }),
       departments: university.departments.map((item: Department) => {
-        if(!item.$key) {
-          item.$key = item.$key || this.db.createPushId();
-          item.universityId = university.$key;
-        }
+        item.$key = item.$key || this.db.createPushId();
+        item.universityId = university.$key;
         return item;
       })
     };
 
     newUniversity.headquarters.forEach(element => {
       this.headquarterService.addHeadquarters(element);
+    });
+    newUniversity.departments.forEach(element => {
+      this.departmentService.addDepartment(element);
     });
 
     return this.db.list(this.route).set(university.$key, {
@@ -73,23 +72,22 @@ export class UniversityService {
     let selectedUniversity = {
       name: university.name,
       headquarters: university.headquarters.map((item: Headquarters) => {
-        if(!item.$key) {
-          item.$key = item.$key || this.db.createPushId();
-          item.universityId = university.$key;
-        }
+        item.$key = item.$key || this.db.createPushId();
+        item.universityId = university.$key;
         return item;
       }),
       departments: university.departments.map((item: Department) => {
-        if(!item.$key) {
-          item.$key = item.$key || this.db.createPushId();
-          item.universityId = university.$key;
-        }
+        item.$key = item.$key || this.db.createPushId();
+        item.universityId = university.$key;
         return item;
       })
     };
 
     selectedUniversity.headquarters.forEach(element => {
       this.headquarterService.addHeadquarters(element);
+    });
+    selectedUniversity.departments.forEach(element => {
+      this.departmentService.addDepartment(element);
     });
 
     return this.db.list(this.route).update(university.$key, {

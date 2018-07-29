@@ -66,20 +66,20 @@ export class UniversityFormComponent implements OnInit {
     return this.universityForm.get('departments') as FormArray;
   }
 
-  addNewDepartments() {
-    const departments = this.fb.group({
+  addNewDepartment() {
+    const department = this.fb.group({
       $key: '',
       name: '',
     });
 
-    this.departmentsForm.push(departments);
+    this.departmentsForm.push(department);
   }
 
-  addDepartments(departments) {
-    this.departmentsForm.push(departments);
+  addDepartment(department) {
+    this.departmentsForm.push(department);
   }
 
-  deleteDepartments(index) {
+  deleteDepartment(index) {
     this.departmentsForm.removeAt(index);
   }
 
@@ -92,39 +92,43 @@ export class UniversityFormComponent implements OnInit {
           $key: id || '',
           name: university.name || '',
         });
-        this.getHeadquarters(university);
-        this.getDepartments(university);
+        this.getHeadquarters(university.headquarters);
+        this.getDepartments(university.departments);
       });
   }
 
-  getHeadquarters(university) {
-    university.headquarters.forEach(item => {
-      this.headquarterService.getHeadquartersById(item)
-        .subscribe(headquarters => {
-          const group = this.fb.group({
-            $key: item,
-            name: headquarters.name,
-            address: headquarters.address,
-            city: headquarters.city,
-            country: headquarters.country,
-            telephone: headquarters.telephone
+  getHeadquarters(headquarters) {
+    if(headquarters) {
+      headquarters.forEach(item => {
+        this.headquarterService.getHeadquartersById(item)
+          .subscribe(headquarters => {
+            const group = this.fb.group({
+              $key: item,
+              name: headquarters.name,
+              address: headquarters.address,
+              city: headquarters.city,
+              country: headquarters.country,
+              telephone: headquarters.telephone
+            });
+            this.addHeadquarters(group);
           });
-          this.addHeadquarters(group);
-        });
-    })
+      })
+    }
   }
 
-  getDepartments(university) {
-    university.departments.forEach(item => {
-      this.departmentService.getDepartmentById(item)
-        .subscribe(departments => {
-          const group = this.fb.group({
-            $key: item,
-            name: departments.name,
+  getDepartments(departments) {
+    if(departments) {
+      departments.forEach(item => {
+        this.departmentService.getDepartmentById(item)
+          .subscribe(departments => {
+            const group = this.fb.group({
+              $key: item,
+              name: departments.name,
+            });
+            this.addDepartment(group);
           });
-          this.addDepartments(group);
-        });
-    })
+      })
+    }
   }
 
   onSubmit() {
