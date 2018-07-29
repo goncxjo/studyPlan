@@ -1,0 +1,6 @@
+<div [formGroup]="parent">
+  <select class="form-control select" [formControlName]="name">
+    <option [value]="null" (click)="reset()">-- Orientaciones --</option>
+    <option *ngFor="let option of options" [value]="option.$key">{{ option.name }}</option>
+  </select>
+</div>

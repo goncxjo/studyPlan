@@ -6,16 +6,24 @@
 	</div>
 	<div class="card-body">
 		<form [formGroup]="subjectForm" (ngSubmit)="onSubmit()">
-			<div class="row">
+			<div class="form-row">
 				<input type="hidden" name="$key" formControlName="$key">
 				<div class="form-group col-md-6">
-					<label for="career">Carrera:</label>
-					<input type="text" class="form-control" name="career" formControlName="career">
+					<label for="universityId">Universidad:</label>
+					<app-university-selector [parent]="subjectForm" name="universityId" (change)="onUniversityChange()"></app-university-selector>
 				</div>
 				<div class="form-group col-md-6">
-					<label for="careerOption">Orientacion:</label>
-					<input type="text" class="form-control" name="careerOption" formControlName="careerOption">
+					<label for="careerId">Carrera:</label>
+					<app-career-selector [parent]="subjectForm" [filterUniversityId]="subjectForm.value.universityId" name="careerId"></app-career-selector>
 				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<label for="careerOptionId">Orientacion:</label>
+					<app-career-option-multiselector [parent]="subjectForm" [filterCareerId]="subjectForm.value.careerId" name="careerOptionId"></app-career-option-multiselector>
+				</div>
+			</div>
+			<div class="form-row">
 				<div class="form-group col-md-6">
 					<label for="name">Código:</label>
 					<input type="text" class="form-control" name="code" formControlName="code">
@@ -40,6 +48,8 @@
 					<label for="credits">Creditos:</label>
 					<input type="number" class="form-control" name="credits" formControlName="credits">
 				</div>
+			</div>
+			<div class="form-row">
 				<div formGroupName="correlatives" class="col-md-12">
 					<h6 class="card-subtitle mb-2 text-muted">
 						Correlativas

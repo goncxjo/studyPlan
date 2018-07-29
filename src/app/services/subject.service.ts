@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase, DatabaseSnapshot, AngularFireAction } from 'angularfire2/database';
-import { Subject, State, STATES } from '../models/subject';
+import { Subject } from '../models/subject';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -32,10 +32,6 @@ export class SubjectService {
 
   getSubjectById(id: string) {
     return this.subject = this.db.object<Subject>(this.route + '/' + id).valueChanges();
-  }
-
-  getStates(): Observable<State[]> {
-    return of(STATES);
   }
 
   addSubject(subject: Subject) {

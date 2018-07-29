@@ -31,8 +31,9 @@ export class SubjectFormComponent implements OnInit {
         regularized: [{}],
         approved: [{}]
       }),
-      career: [''],
-      careerOption: [''],
+      universityId: [''],
+      careerId: [''],
+      careerOptionId: [''],
     });
   }
 
@@ -74,6 +75,10 @@ export class SubjectFormComponent implements OnInit {
           });
         }
       });
+  }
+
+  onUniversityChange() {
+
   }
 
   onSubmit() {

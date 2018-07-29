@@ -12,6 +12,7 @@ import { Career } from '../../../models/career';
 export class CareerSelectorComponent implements OnInit {
   @Input() parent: FormGroup;
   @Input() name: string;
+  @Input() filterUniversityId: string;
 
   careers: Career[];
 
@@ -22,7 +23,10 @@ export class CareerSelectorComponent implements OnInit {
   }
   
   getCareers() {
-    this.careerService.getCareers().subscribe(careers => { this.careers = careers });
+    this.careerService.getCareers().subscribe(careers => {
+      this.careers = careers
+      console.log(this.careers);
+    });
   }
 
   reset() {
