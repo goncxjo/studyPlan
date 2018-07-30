@@ -1,6 +1,12 @@
 import { Component, OnInit} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
+
 import { NetworkService } from '../../services/network.service'
+import { StudentService } from '../../services/student.service'
 import { Network, DataSet } from 'vis';
+import { Student } from '../../models/student';
+import { tap } from '../../../../node_modules/rxjs/operators';
 
 @Component({
   selector: 'app-network',
@@ -9,51 +15,43 @@ import { Network, DataSet } from 'vis';
 })
 export class NetworkComponent implements OnInit {
 
-  private service;
-  public network ? : Network;
+  public student: Student;
+  public network?: Network;
   public options;
   public data;
   public container;
-  public selected = {
-    university: "UNDAV",
-    career: "ING-INF",
-    orientation: "SD",
-  }
 
-  constructor(private networkService: NetworkService) {}
+
+  constructor(private route: ActivatedRoute, private location: Location, private networkService: NetworkService, private studentService: StudentService) {
+  }
 
   ngOnInit() {
-    /*
-      this.options = this.networkService.getOptions();
-      // this.data = this.networkService.getCourses(this.selected);
-      this.data = {
-        nodes: new DataSet([
-          {id: 1, label: 'Node 1'},
-          {id: 2, label: 'Node 2'},
-          {id: 3, label: 'Node 3'},
-          {id: 4, label: 'Node 4'},
-          {id: 5, label: 'Node 5'}
-        ]),
-        edges: new DataSet([
-          {from: 1, to: 3},
-          {from: 1, to: 2},
-          {from: 2, to: 4},
-          {from: 2, to: 5},
-          {from: 3, to: 3}
-        ])
-      }
-      this.container = document.getElementById('mynetwork');
-      this.network = new Network(this.container, this.data, this.options);
-      */
+    const id = this.route.snapshot.paramMap.get('$key');
+    this.studentService.getStudentById(id).pipe(
+      tap(student => {
+        student.$key = id;
+        this.student = student;
+        this.networkService.getCourses(this.student).subscribe(dataset => {
+          this.data = dataset;
+          this.options = this.networkService.getOptions();
+          this.container = document.getElementById('mynetwork');
+          this.network = new Network(this.container, this.data, this.options);
+        });
+      })
+    ).subscribe();
   }
-
+  
   draw() {
     destroy(this.network);
-    this.data = this.service.getCourses(this.selected);
-    this.network = new Network(this.container, this.data, this.options);
+    this.networkService.getCourses(this.student).subscribe(dataset => {
+      this.data = dataset;
+      this.options = this.networkService.getOptions();
+      this.container = document.getElementById('mynetwork');
+      this.network = new Network(this.container, this.data, this.options);
+    });
 
     function destroy(network) {
-      if (network !== null) {
+      if (network) {
         network.destroy();
         network = null;
       }

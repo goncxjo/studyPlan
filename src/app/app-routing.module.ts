@@ -8,6 +8,7 @@ import { SubjectListComponent } from './components/subject/subject-list/subject-
 import { SubjectFormComponent } from './components/subject/subject-form/subject-form.component';
 import { StudentListComponent } from './components/student/student-list/student-list.component';
 import { StudentFormComponent } from './components/student/student-form/student-form.component';
+import { NetworkComponent } from './components/network/network.component';
 
 const routes: Routes = [
   { path: 'universities', component: UniversityListComponent },
@@ -23,6 +24,7 @@ const routes: Routes = [
   { path: 'students', component: StudentListComponent },
   { path: 'students/create', component: StudentFormComponent, data: { editMode: false } },
   { path: 'students/edit/:$key', component: StudentFormComponent, data: { editMode: true } },
+  { path: 'students/:$key/plan', component: NetworkComponent },
 ];
 
 @NgModule({

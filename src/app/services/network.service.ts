@@ -1,55 +1,44 @@
 import { Injectable } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2/database';
-
 import * as _ from 'lodash';
+
+import { SubjectService } from './subject.service';
 import { DataSet } from 'vis';
+import { Student } from '../models/student';
+import { Observable } from 'rxjs';
+import { tap, map, flatMap } from 'rxjs/operators';
+import { Subject } from '../models/subject';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NetworkService {
 
-  constructor(private firebase: AngularFireDatabase) { }
-  /*
-    getCourses(selected) {
-      let courses = _.filter(jsonContent, function (item) {
-        return (item.Orientacion.length == 0 || _.includes(item.Orientacion, selected.orientation));
-      });
-      let length = 0;
-      let nodesDataset = [],
-        edgesDataset = [];
-  
-      _.forEach(courses, function (element) {
-        nodesDataset.push({
-          id: element.Id,
-          label: element.Nombre,
-          level: (element.Cuatrimestre - 1),
-          rel: element.Correlativas,
-          group: element.Grupo,
-          orientation: element.Orientacion
+  dataset: any;
+  subjects: Subject[];
+
+  constructor(private subjectService: SubjectService) {}
+
+  getCourses(student: Student) {
+    return this.dataset = this.subjectService.getSubjectsByCareer(student.careerId).pipe(
+      map(subjects => {
+        const nodes = subjects.map(element => {
+          const subject = {
+            id: element.$key,
+            label: element.name,
+            level: (element.quarter - 1),
+            rel: element.correlatives,
+            group: 'noDisponible',
+            orientations: element.careerOptions
+          };
+          return subject;
         });
-        if (element.Correlativas != undefined) {
-          length = element.Correlativas.length;
-          for (let i = 0, c = element.Correlativas; i < length; i++) {
-            edgesDataset.push({
-              from: c[i],
-              to: element.Id,
-              chosen: {
-                label: false
-              }
-            });
-          }
-        }
-      });
-  
-      let dataset = {
-        nodes: new DataSet(nodesDataset),
-        edges: new DataSet(edgesDataset)
-      }
-  
-      return dataset;
-    }
-  */
+        return {
+          nodes: new DataSet(nodes),
+          edges: new DataSet({from: 1, to: 0}),
+        };
+      })    );
+  }
+
   getOptions() {
     let config = {
       locale: 'es',
