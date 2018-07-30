@@ -142,7 +142,7 @@ export class CareerService {
   }
 
   getOptionById(id: string) {
-    return this.option = this.db.object<CareerOption>(this.routeOptions + id).valueChanges();
+    return this.option = this.db.object<CareerOption>(this.routeOptions + '/' + id).valueChanges();
   }
 
 

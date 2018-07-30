@@ -29,7 +29,7 @@ export class StudentListComponent implements OnInit {
         .map(s => {
           this.universityService.getUniversityById(s.universityId).pipe(map(u => u.name)).subscribe(n => s.universityId = n);
           this.careerService.getCareerById(s.careerId).pipe(map(c => c.name)).subscribe(n => s.careerId = n);
-          this.careerService.getCareerById(s.careerOptionId).pipe(map(c => c.name)).subscribe(n => s.careerOptionId = n);
+          this.careerService.getOptionById(s.careerOptionId).pipe(map(c => c.name)).subscribe(n => s.careerOptionId = n);
         } ))
     ).subscribe();
   }
