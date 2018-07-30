@@ -8,14 +8,21 @@ export class Subject {
     credits?: number;
     // state?: string;
     correlatives?: {
-        approved?: {},
-        regularized?: {}
+      approved?: [any];
+      regularized?: [any];
     };
     plan?: number;
-    career?: string;
-    careerOption?: string;
-    department?: string;
-    university?: string;
+    universityId?: string;
+    careerId?: string;
+    careerOptions?: string;
+}
+
+export class SubjectCorrelative {
+    $key?: string;
+    fromSubject?: string;
+    universityId?: string;
+    careerId?: string;
+    careerOptionId?: string;
 }
 
 export class State {

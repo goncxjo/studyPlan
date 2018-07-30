@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase, DatabaseSnapshot, AngularFireAction } from 'angularfire2/database';
-import { Subject } from '../models/subject';
+import { Subject, SubjectCorrelative } from '../models/subject';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -9,6 +9,8 @@ import { map } from 'rxjs/operators';
 })
 export class SubjectService {
   private route: string = '/subjects';
+  private routeApproved: string = '/correlatives/approved';
+  private routeRegularized: string = '/correlatives/regularized';
 
   subject: Observable<Subject>;
   subjects: Observable<Subject[]>;
@@ -35,7 +37,38 @@ export class SubjectService {
   }
 
   addSubject(subject: Subject) {
-    return this.db.list<Subject>(this.route).push({
+    const newSubjectKey = this.db.createPushId();
+    let correlatives = {
+      approved: subject.correlatives.approved.map(item => {
+        const subjectCorrelative = {
+          $key: newSubjectKey,
+          fromSubject: item,
+          universityId: subject.universityId,
+          careerId: subject.careerId,
+          careerOptions: subject.careerOptions,
+        };
+        return subjectCorrelative
+      }),
+      regularized: subject.correlatives.regularized.map(item => {
+        const subjectCorrelative = {
+          $key: newSubjectKey,
+          fromSubject: item,
+          universityId: subject.universityId,
+          careerId: subject.careerId,
+          careerOptions: subject.careerOptions,
+        };
+        return subjectCorrelative
+      }),
+    };
+
+    correlatives.approved.forEach(element => {
+      this.addSubjectCorrelative(element, this.routeApproved);
+    });
+    correlatives.regularized.forEach(element => {
+      this.addSubjectCorrelative(element, this.routeRegularized);
+    });
+
+    return this.db.list(this.route).set(newSubjectKey, {
       name: subject.name,
       code: subject.code,
       year: subject.year,
@@ -43,13 +76,39 @@ export class SubjectService {
       classLoad: subject.classLoad,
       credits: subject.credits,
       correlatives: subject.correlatives,
-      career: subject.career,
-      careerOption: subject.careerOption
+      careerId: subject.careerId,
+      careerOptions: subject.careerOptions,
+      universityId: subject.universityId,
     });
   }
 
   updateSubject(subject: Subject) {
-    return this.db.list<Subject>(this.route).update(subject.$key, {
+    let correlatives = {
+      approved: subject.correlatives.approved.map(item => {
+        const subjectCorrelative = {
+          $key: subject.$key,
+          fromSubject: item,
+          universityId: subject.universityId,
+          careerId: subject.careerId,
+          careerOptions: subject.careerOptions,
+        };
+        return subjectCorrelative
+      }),
+      regularized: subject.correlatives.regularized.map(item => {
+        const subjectCorrelative = {
+          $key: subject.$key,
+          fromSubject: item,
+          universityId: subject.universityId,
+          careerId: subject.careerId,
+          careerOptions: subject.careerOptions,
+        };
+        return subjectCorrelative
+      }),
+    };
+
+    this.updateCorrelatives(subject.$key, correlatives);
+
+    return this.db.list(this.route).set(subject.$key, {
       name: subject.name,
       code: subject.code,
       year: subject.year,
@@ -57,12 +116,40 @@ export class SubjectService {
       classLoad: subject.classLoad,
       credits: subject.credits,
       correlatives: subject.correlatives,
-      career: subject.career,
-      careerOption: subject.careerOption
+      careerId: subject.careerId,
+      careerOptions: subject.careerOptions,
+      universityId: subject.universityId,
     });
   }
 
   deleteSubject($key: string) {
     return this.db.list<Subject>(this.route).remove($key);
+  }
+
+  addSubjectCorrelative(subjectCorrelative: SubjectCorrelative, route: string) {
+    const ref = this.db.list(route).query.ref;
+    const child = ref.child(subjectCorrelative.$key);
+    return child.set({
+      fromSubject: subjectCorrelative.fromSubject,
+      universityId: subjectCorrelative.universityId,
+      careerId: subjectCorrelative.careerId,
+      careerOptionId: subjectCorrelative.careerOptionId,
+    }); 
+  }
+
+  deleteSubjectCorrelative(subjectKey: string, route: string) {
+    return this.db.list(route).remove(subjectKey);
+  }
+
+  updateCorrelatives(subjectKey: string, correlatives) {
+    this.deleteSubjectCorrelative(subjectKey, this.routeApproved);
+    this.deleteSubjectCorrelative(subjectKey, this.routeRegularized);
+    
+    correlatives.approved.forEach(element => {
+      this.addSubjectCorrelative(element, this.routeApproved);
+    });
+    correlatives.regularized.forEach(element => {
+      this.addSubjectCorrelative(element, this.routeRegularized);
+    });
   }
 }

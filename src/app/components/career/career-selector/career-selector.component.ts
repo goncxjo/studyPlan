@@ -25,7 +25,6 @@ export class CareerSelectorComponent implements OnInit {
   getCareers() {
     this.careerService.getCareers().subscribe(careers => {
       this.careers = careers
-      console.log(this.careers);
     });
   }
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { Career, CareerOption, LEVELS } from '../models/career';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -142,7 +142,7 @@ export class CareerService {
   }
 
   getOptionById(id: string) {
-    return this.option = this.db.object<CareerOption>(this.routeOptions + '/'  + id).valueChanges();
+    return this.option = this.db.object<CareerOption>(this.routeOptions + id).valueChanges();
   }
 
 

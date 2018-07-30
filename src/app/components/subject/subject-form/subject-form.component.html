@@ -10,7 +10,7 @@
 				<input type="hidden" name="$key" formControlName="$key">
 				<div class="form-group col-md-6">
 					<label for="universityId">Universidad:</label>
-					<app-university-selector [parent]="subjectForm" name="universityId" (change)="onUniversityChange()"></app-university-selector>
+					<app-university-selector [parent]="subjectForm" name="universityId"></app-university-selector>
 				</div>
 				<div class="form-group col-md-6">
 					<label for="careerId">Carrera:</label>
@@ -19,8 +19,8 @@
 			</div>
 			<div class="form-row">
 				<div class="form-group col-md-12">
-					<label for="careerOptionId">Orientacion:</label>
-					<app-career-option-multiselector [parent]="subjectForm" [filterCareerId]="subjectForm.value.careerId" name="careerOptionId"></app-career-option-multiselector>
+					<label for="careerOptions">Orientaciones:</label>
+					<app-career-option-multiselector [parent]="subjectForm" [filterCareerId]="subjectForm.value.careerId" name="careerOptions"></app-career-option-multiselector>
 				</div>
 			</div>
 			<div class="form-row">
@@ -64,15 +64,15 @@
 					</div>
 				</div>
 			</div>
-			<div class="btn-group " role="group ">
-				<button type="submit " class="btn btn-primary ">Enviar</button>
-				<button type="reset " class="btn btn-secondary ">Limpiar</button>
+			<div class="btn-group" role="group">
+				<button type="submit" class="btn btn-primary">Enviar</button>
+				<button type="reset" class="btn btn-secondary">Limpiar</button>
 			</div>
 		</form>
 	</div>
 	<div class="card-footer">
 		<div class="d-flex justify-content-between">
-			<button class="btn btn-primary " (click)="goBack() ">Volver</button>
+			<button class="btn btn-primary" (click)="goBack()">Volver</button>
 		</div>
 	</div>
 </div>

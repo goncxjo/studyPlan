@@ -33,7 +33,7 @@ export class SubjectFormComponent implements OnInit {
       }),
       universityId: [''],
       careerId: [''],
-      careerOptionId: [''],
+      careerOptions: [],
     });
   }
 
@@ -41,44 +41,45 @@ export class SubjectFormComponent implements OnInit {
     this.route.data.subscribe(d => {
       this.editMode = d['editMode'];
       if (this.editMode) {
-        this.getSubject();
+        this.fillForm();
       }
     });
   }
 
-  getSubject() {
+  fillForm() {
     const id = this.route.snapshot.paramMap.get('$key');
     this.subjectService.getSubjectById(id)
       .subscribe(subject => {
+        subject.$key = id || '';
         this.subjectForm.patchValue({
-          $key: id,
-          name: !subject.name ? '' : subject.name,
-          code: !subject.code ? '' : subject.code,
-          classLoad: !subject.classLoad ? '' : subject.classLoad,
-          year: !subject.year ? '' : subject.year,
-          quarter: !subject.quarter ? '' : subject.quarter,
-          credits: !subject.credits ? '' : subject.credits,
-          career: !subject.career ? '' : subject.career,
-          careerOption: !subject.careerOption ? '' : subject.careerOption
-        });
-
-        if (!subject.correlatives) {
-          this.subjectForm.patchValue({
-            correlatives: { approved: {}, regularized: {} }
-          });
-        } else {
-          this.subjectForm.patchValue({
-            correlatives: {
-              approved: !subject.correlatives.approved ? {} : subject.correlatives.approved,
-              regularized: !subject.correlatives.regularized ? {} : subject.correlatives.regularized
-            }
-          });
-        }
+          $key: subject.$key || '',
+          name: subject.name || '',
+          code: subject.code || '',
+          year: subject.year || '',
+          quarter: subject.quarter || '',
+          classLoad: subject.classLoad || '',
+          credits: subject.credits || '',
+          universityId: subject.universityId || '',
+          careerId: subject.careerId || '',
+          careerOptions: subject.careerOptions || '',
+        })
+        this.addCorrelatives(subject);
       });
   }
 
-  onUniversityChange() {
-
+  addCorrelatives(subject) {
+    if (!subject.correlatives) {
+      this.subjectForm.patchValue({
+        correlatives: { approved: {}, regularized: {} }
+      });
+    } else {
+      this.subjectForm.patchValue({
+        correlatives: {
+          approved: subject.correlatives.approved || {},
+          regularized: subject.correlatives.regularized || {},
+        }
+      });
+    }
   }
 
   onSubmit() {
@@ -88,7 +89,7 @@ export class SubjectFormComponent implements OnInit {
           this.toastr.success("Asignatura creada", "Operación exitosa");
           this.goBack();
         }, (r => this.toastr.error(r, "Operación fallida"))
-      );
+        );
     } else {
       this.subjectService.updateSubject(this.subjectForm.value)
         .then(x => {

@@ -32,6 +32,11 @@ import { UniversityService } from './services/university.service';
 import { CareerService } from './services/career.service';
 import { SelectorComponent } from './components/shared/selector/selector.component';
 import { DepartmentSelectorComponent } from './components/department/department-selector/department-selector.component';
+import { CareerOptionSelectorComponent } from './components/career/career-option-selector/career-option-selector.component';
+import { CareerOptionMultiselectorComponent } from './components/career/career-option-multiselector/career-option-multiselector.component';
+import { StudentFormComponent } from './components/student/student-form/student-form.component';
+import { StudentListComponent } from './components/student/student-list/student-list.component';
+import { StudentService } from './services/student.service';
 
 
 @NgModule({
@@ -50,6 +55,10 @@ import { DepartmentSelectorComponent } from './components/department/department-
     SelectorComponent,
     DepartmentMultiselectorComponent,
     DepartmentSelectorComponent,
+    CareerOptionSelectorComponent,
+    CareerOptionMultiselectorComponent,
+    StudentFormComponent,
+    StudentListComponent,
   ],
   imports: [
     BrowserModule,
@@ -61,7 +70,7 @@ import { DepartmentSelectorComponent } from './components/department/department-
     ToastrModule.forRoot(),
     AppRoutingModule,
   ],
-  providers: [SubjectService, UniversityService, CareerService],
+  providers: [SubjectService, UniversityService, CareerService, StudentService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

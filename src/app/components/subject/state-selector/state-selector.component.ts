@@ -22,8 +22,8 @@ export class StateSelectorComponent implements OnInit {
   }
   
   getStates() {
-    this.subjectService.getStates()
-    .subscribe(states => {
-      this.states = states});
+  //   this.subjectService.getStates()
+  //   .subscribe(states => {
+  //     this.states = states});
   }
 }
