@@ -26,9 +26,9 @@ export class NetworkService {
           const node = {
             id: element.$key,
             label: element.name,
-            level: (element.quarter - 1),
+            level: element.quarter,
             rel: element.correlatives,
-            group: 'noDisponible',
+            group: 'disponible',
             orientations: element.careerOptions
           };
           if (element.correlatives) {
@@ -36,9 +36,7 @@ export class NetworkService {
               edges.push({
                 from: i,
                 to: element.$key,
-                chosen: {
-                  label: false
-                }
+                chosen: { label: false }
               });
             });
           }
