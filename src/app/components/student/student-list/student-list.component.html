@@ -20,7 +20,7 @@
 				<td class="align-middle">{{ student.careerOptionId }}</td>
 				<td class="align-middle">
 					<div class="btn-group" role="group">
-						<button type="button" class="btn btn-primary text-white" routerLink="/estudiantes/edit/{{ student.$key }}"><i class="far fa-edit"></i></button>
+						<button type="button" class="btn btn-primary text-white" routerLink="/estudiantes/editar/{{ student.$key }}"><i class="far fa-edit"></i></button>
 						<button type="button" class="btn btn-danger text-white" (click)="onDelete(student.$key)"><i class="fas fa-trash-alt"></i></button>
 						<button type="button" class="btn btn-success text-white" routerLink="/estudiantes/{{ student.$key }}/plan"><i class="fas fa-draw-polygon"></i></button>
 					</div>

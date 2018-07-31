@@ -35,7 +35,7 @@ export class HeadquartersService {
   }
 
   getHeadquartersListByUniversity(id: string) {
-    return this.headquarters = this.db.list<Headquarters>(this.route,
+    return this.headquartersList = this.db.list<Headquarters>(this.route,
       ref => ref.orderByChild('universityId').startAt(id))
       .snapshotChanges().pipe(
       map(changes => changes.map(c => {

@@ -23,11 +23,12 @@ export class NetworkComponent implements OnInit {
 
 
   constructor(private route: ActivatedRoute, private location: Location, private networkService: NetworkService, private studentService: StudentService) {
-    this.container = document.getElementById('mynetwork');
-    this.options = this.networkService.getOptions();
   }
 
   ngOnInit() {
+    this.container = document.getElementById('mynetwork');
+    this.options = this.networkService.getOptions();
+    
     const id = this.route.snapshot.paramMap.get('$key');
     this.studentService.getStudentById(id).pipe(
       tap(student => {
