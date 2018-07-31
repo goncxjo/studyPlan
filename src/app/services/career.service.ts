@@ -62,7 +62,7 @@ export class CareerService {
       about: career.about,
       goals: career.goals,
       universityId: career.universityId,
-      departments: career.departments,
+      departmentId: career.departmentId,
       options: career.options.map((item: CareerOption) => {
         if (!item.$key) {
           item.$key = this.db.createPushId();
@@ -83,7 +83,7 @@ export class CareerService {
       goals: newCareer.goals,
       universityId: newCareer.universityId,
       options: newCareer.options.map((item: CareerOption) => item.$key),
-      departments: newCareer.departments
+      departmentId: newCareer.departmentId
     });
   }
 
@@ -96,15 +96,16 @@ export class CareerService {
       about: career.about,
       goals: career.goals,
       universityId: career.universityId,
-      departments: career.departments,
+      departmentId: career.departmentId,
       options: career.options.map((item: CareerOption) => {
-        if (!item.$key) {
-          item.$key = this.db.createPushId();
-          item.careerId = career.$key;
-        }
+        item.$key = item.$key || this.db.createPushId();
+        item.careerId = item.careerId || career.$key;
         return item;
       })
     }
+
+    this.deleteOptionsByCareerId(career.$key);
+
     selectedCareer.options.forEach(element => {
       this.addOption(element);
     });
@@ -117,12 +118,16 @@ export class CareerService {
       goals: selectedCareer.goals,
       universityId: selectedCareer.universityId,
       options: selectedCareer.options.map((item: CareerOption) => item.$key),
-      departments: selectedCareer.departments
+      departmentId: selectedCareer.departmentId
     });
   }
 
   deleteCareer($key: string) {
     return this.db.list<Career>(this.route).remove($key);
+  }
+  
+  deleteOptionsByCareerId(careerKey: string) {
+    return this.db.list<CareerOption>(this.routeOptions, ref => ref.orderByChild('careerId').equalTo(careerKey)).remove();
   }
 
   getOptions() {

@@ -21,8 +21,9 @@ export class NetworkService {
   getCourses(student: Student) {
     return this.dataset = this.subjectService.getSubjectsByCareer(student.careerId).pipe(
       map(subjects => {
+        let edges = [];
         const nodes = subjects.map(element => {
-          const subject = {
+          const node = {
             id: element.$key,
             label: element.name,
             level: (element.quarter - 1),
@@ -30,11 +31,22 @@ export class NetworkService {
             group: 'noDisponible',
             orientations: element.careerOptions
           };
-          return subject;
+          if (element.correlatives) {
+            element.correlatives['approved'].forEach(i => {
+              edges.push({
+                from: i,
+                to: element.$key,
+                chosen: {
+                  label: false
+                }
+              });
+            });
+          }
+          return node;
         });
         return {
           nodes: new DataSet(nodes),
-          edges: new DataSet({from: 1, to: 0}),
+          edges: new DataSet(edges),
         };
       })    );
   }

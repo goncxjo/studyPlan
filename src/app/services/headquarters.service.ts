@@ -59,4 +59,8 @@ export class HeadquartersService {
   deleteHeadquarters($key: string) {
     return this.db.list<Headquarters>(this.route).remove($key);
   }
+
+  deleteHeadquartersListByUniversityId(universityKey: string) {
+    return this.db.list<Headquarters>(this.route, ref => ref.orderByChild('universityId').equalTo(universityKey)).remove();
+  }
 }

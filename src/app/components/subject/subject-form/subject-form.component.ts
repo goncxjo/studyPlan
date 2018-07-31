@@ -20,19 +20,19 @@ export class SubjectFormComponent implements OnInit {
     private route: ActivatedRoute, private location: Location, private subjectService: SubjectService, private toastr: ToastrService, private fb: FormBuilder
   ) {
     this.subjectForm = this.fb.group({
-      $key: [''],
-      name: [''],
-      code: [''],
-      year: [''],
-      quarter: [''],
-      classLoad: [''],
-      credits: [''],
+      $key: '',
+      name: '',
+      code: '',
+      year: '',
+      quarter: '',
+      classLoad: '',
+      credits: '',
       correlatives: this.fb.group({
-        regularized: [{}],
-        approved: [{}]
+        regularized: [],
+        approved: []
       }),
-      universityId: [''],
-      careerId: [''],
+      universityId: '',
+      careerId: '',
       careerOptions: [],
     });
   }
@@ -70,13 +70,13 @@ export class SubjectFormComponent implements OnInit {
   addCorrelatives(subject) {
     if (!subject.correlatives) {
       this.subjectForm.patchValue({
-        correlatives: { approved: {}, regularized: {} }
+        correlatives: { approved: [], regularized: [] }
       });
     } else {
       this.subjectForm.patchValue({
         correlatives: {
-          approved: subject.correlatives.approved || {},
-          regularized: subject.correlatives.regularized || {},
+          approved: subject.correlatives.approved || [],
+          regularized: subject.correlatives.regularized || [],
         }
       });
     }

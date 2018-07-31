@@ -83,6 +83,9 @@ export class UniversityService {
       })
     };
 
+    this.headquarterService.deleteHeadquartersListByUniversityId(university.$key);
+    this.departmentService.deleteDepartmentsByUniversityId(university.$key);
+
     selectedUniversity.headquarters.forEach(element => {
       this.headquarterService.addHeadquarters(element);
     });

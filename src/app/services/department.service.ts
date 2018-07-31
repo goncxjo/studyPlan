@@ -62,4 +62,8 @@ export class DepartmentService {
   deleteDepartment($key: string) {
     return this.db.list<Department>(this.route).remove($key);
   }
+
+  deleteDepartmentsByUniversityId(universityKey: string) {
+    return this.db.list<Department>(this.route, ref => ref.orderByChild('universityId').equalTo(universityKey)).remove();
+  }
 }

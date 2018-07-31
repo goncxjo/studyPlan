@@ -5,9 +5,9 @@ export class Career {
   level?: string;
   about?: string;
   goals?: string;
-  departments?: [any];
-  options?: [any];
   universityId?: string;
+  departmentId?: [any];
+  options?: [any];
 }
 
 export class CareerOption {

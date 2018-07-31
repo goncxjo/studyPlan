@@ -79,7 +79,7 @@ export class CareerFormComponent implements OnInit {
           level: career.level || '',
           about: career.about || '',
           goals: career.goals || '',
-          departments: career.departments || '',
+          departmentId: career.departmentId || '',
           universityId: career.universityId || '',
         });
         this.getOptions(career);
@@ -88,16 +88,14 @@ export class CareerFormComponent implements OnInit {
 
   getOptions(career) {
     if(career.options) {
-      career.options.forEach(items => {
-        this.careerService.getOptionsByCareerId(career.$key)
-          .subscribe(options => {
-            options.map(option => {
-            const group = this.fb.group({
-              $key: option.$key,
-              name: option.name,
-            });
-            this.addOption(group);
-            });
+      this.careerService.getOptionsByCareerId(career.$key)
+        .subscribe(options => {
+          options.map(option => {
+          const group = this.fb.group({
+            $key: option.$key,
+            name: option.name,
+          });
+          this.addOption(group);
           });
       })
     }

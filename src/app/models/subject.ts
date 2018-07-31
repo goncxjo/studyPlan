@@ -19,6 +19,7 @@ export class Subject {
 
 export class SubjectCorrelative {
     $key?: string;
+    toSubject?: string;
     fromSubject?: string;
     universityId?: string;
     careerId?: string;
