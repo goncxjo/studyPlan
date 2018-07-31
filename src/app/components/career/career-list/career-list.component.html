@@ -16,7 +16,7 @@
 				<td class="align-middle">{{ career.level }}</td>
 				<td class="align-middle">
 					<div class="btn-group" role="group">
-						<button type="button" class="btn btn-primary text-white" routerLink="/careers/edit/{{ career.$key }}"><i class="far fa-edit"></i></button>
+						<button type="button" class="btn btn-primary text-white" routerLink="/carreras/editar/{{ career.$key }}"><i class="far fa-edit"></i></button>
 						<button type="button" class="btn btn-danger text-white" (click)="onDelete(career.$key)"><i class="fas fa-trash-alt"></i></button>
 					</div>
 				</td>
@@ -25,4 +25,4 @@
 	</table>
 </div>
 <hr>
-<button class="btn btn-primary" routerLink="/careers/create">Crear Carrera</button>
+<button class="btn btn-primary" routerLink="/carreras/crear">Crear Carrera</button>

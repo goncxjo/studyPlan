@@ -20,7 +20,7 @@
 				<td class="align-middle">{{ subject.credits }}</td>
 				<td class="align-middle">
 					<div class="btn-group" role="group">
-						<button type="button" class="btn btn-primary text-white" routerLink="/subjects/edit/{{ subject.$key }}"><i class="far fa-edit"></i></button>
+						<button type="button" class="btn btn-primary text-white" routerLink="/estudiantes/editar/{{ subject.$key }}"><i class="far fa-edit"></i></button>
 						<button type="button" class="btn btn-danger text-white" (click)="onDelete(subject.$key)"><i class="fas fa-trash-alt"></i></button>
 					</div>
 				</td>
@@ -29,4 +29,4 @@
 	</table>
 </div>
 <hr>
-<button class="btn btn-primary" routerLink="/subjects/create">Crear Asignatura</button>
+<button class="btn btn-primary" routerLink="/estudiantes/crear">Crear Asignatura</button>

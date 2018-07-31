@@ -28,7 +28,7 @@ export class NetworkService {
             label: element.name,
             level: element.quarter,
             rel: element.correlatives,
-            group: 'disponible',
+            group: element.year,
             orientations: element.careerOptions
           };
           if (element.correlatives) {

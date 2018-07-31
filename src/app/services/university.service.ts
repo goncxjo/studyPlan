@@ -17,7 +17,7 @@ export class UniversityService {
   private route: string = '/universities';
 
   university: Observable<University>;
-  universities: Observable <University[]> ;
+  universities: Observable<University[]>;
 
   constructor(private db: AngularFireDatabase, private headquarterService: HeadquartersService, private departmentService: DepartmentService) {
     this.universities = db.list<University>(this.route)

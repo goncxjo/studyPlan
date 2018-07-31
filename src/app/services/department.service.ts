@@ -43,6 +43,18 @@ export class DepartmentService {
     return this.department = this.db.object<Department>(this.route + '/' + id).valueChanges();
   }
 
+  getDepartmentsByUniversity(id: string) {
+    return this.departments = this.db.list<Department>(this.route,
+      ref => ref.orderByChild('universityId').startAt(id))
+      .snapshotChanges().pipe(
+      map(changes => changes.map(c => {
+        const key = c.payload.key;
+        let val = c.payload.val();
+        val.$key = key;
+        return val;
+      })));
+  }
+
   addDepartment(department: Department) {
     const ref = this.db.list(this.route).query.ref;
     const child = ref.child(department.$key);

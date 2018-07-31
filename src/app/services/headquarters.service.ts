@@ -34,6 +34,18 @@ export class HeadquartersService {
     return this.headquarters = this.db.object<Headquarters>(this.route + '/' + id).valueChanges();
   }
 
+  getHeadquartersListByUniversity(id: string) {
+    return this.headquarters = this.db.list<Headquarters>(this.route,
+      ref => ref.orderByChild('universityId').startAt(id))
+      .snapshotChanges().pipe(
+      map(changes => changes.map(c => {
+        const key = c.payload.key;
+        let val = c.payload.val();
+        val.$key = key;
+        return val;
+      })));
+  }
+
   addHeadquarters(headquarters: Headquarters) {
     const ref = this.db.list(this.route).query.ref;
     const child = ref.child(headquarters.$key);

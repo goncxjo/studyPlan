@@ -11,20 +11,20 @@ import { StudentFormComponent } from './components/student/student-form/student-
 import { NetworkComponent } from './components/network/network.component';
 
 const routes: Routes = [
-  { path: 'universities', component: UniversityListComponent },
-  { path: 'universities/create', component: UniversityFormComponent, data: { editMode: false } },
-  { path: 'universities/edit/:$key', component: UniversityFormComponent, data: { editMode: true } },
-  { path: 'careers', component: CareerListComponent },
-  { path: 'careers/create', component: CareerFormComponent, data: { editMode: false } },
-  { path: 'careers/edit/:$key', component: CareerFormComponent, data: { editMode: true } },
-  { path: 'subjects', component: SubjectListComponent },
-  { path: 'subjects/create', component: SubjectFormComponent, data: { editMode: false } },
-  { path: 'subjects/edit/:$key', component: SubjectFormComponent, data: { editMode: true } },
-  { path: 'careers/edit/:$key', component: CareerFormComponent, data: { editMode: true } },
-  { path: 'students', component: StudentListComponent },
-  { path: 'students/create', component: StudentFormComponent, data: { editMode: false } },
-  { path: 'students/edit/:$key', component: StudentFormComponent, data: { editMode: true } },
-  { path: 'students/:$key/plan', component: NetworkComponent },
+  { path: 'universidades', component: UniversityListComponent },
+  { path: 'universidades/crear', component: UniversityFormComponent, data: { editMode: false } },
+  { path: 'universidades/editar/:$key', component: UniversityFormComponent, data: { editMode: true } },
+  { path: 'carreras', component: CareerListComponent },
+  { path: 'carreras/crear', component: CareerFormComponent, data: { editMode: false } },
+  { path: 'carreras/editar/:$key', component: CareerFormComponent, data: { editMode: true } },
+  { path: 'carreras/:$key/plan', component: NetworkComponent },
+  { path: 'asignaturas', component: SubjectListComponent },
+  { path: 'asignaturas/crear', component: SubjectFormComponent, data: { editMode: false } },
+  { path: 'asignaturas/editar/:$key', component: SubjectFormComponent, data: { editMode: true } },
+  { path: 'estudiantes', component: StudentListComponent },
+  { path: 'estudiantes/crear', component: StudentFormComponent, data: { editMode: false } },
+  { path: 'estudiantes/editar/:$key', component: StudentFormComponent, data: { editMode: true } },
+  { path: 'estudiantes/:$key/plan', component: NetworkComponent },
 ];
 
 @NgModule({

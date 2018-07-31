@@ -5,6 +5,7 @@ import { Location } from '@angular/common';
 import { Observable } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { CareerService } from '../../../services/career.service';
+import { tap } from 'rxjs/operators'
 
 @Component({
   selector: 'app-career-form',
@@ -87,17 +88,20 @@ export class CareerFormComponent implements OnInit {
   }
 
   getOptions(career) {
-    if(career.options) {
-      this.careerService.getOptionsByCareerId(career.$key)
-        .subscribe(options => {
-          options.map(option => {
-          const group = this.fb.group({
-            $key: option.$key,
-            name: option.name,
-          });
-          this.addOption(group);
-          });
-      })
+    if (career.options) {
+      this.careerService.getOptions().pipe(
+        tap(options => {
+          options
+            .filter(o => o.careerId == career.$key)
+            .forEach(o => {
+              const group = this.fb.group({
+                $key: o.$key,
+                name: o.name,
+              });
+              this.addOption(group);
+            })
+        })
+      ).subscribe();
     }
   }
 

@@ -14,7 +14,7 @@
 				<td class="align-middle">{{ university.headquarter }}</td>
 				<td class="align-middle">
 					<div class="btn-group" role="group">
-						<button type="button" class="btn btn-primary text-white" routerLink="/universities/edit/{{ university.$key }}"><i class="far fa-edit"></i></button>
+						<button type="button" class="btn btn-primary text-white" routerLink="/universidades/editar/{{ university.$key }}"><i class="far fa-edit"></i></button>
 						<button type="button" class="btn btn-danger text-white" (click)="onDelete(university.$key)"><i class="fas fa-trash-alt"></i></button>
 					</div>
 				</td>
@@ -23,4 +23,4 @@
 	</table>
 </div>
 <hr>
-<button class="btn btn-primary" routerLink="/universities/create">Crear Universidad</button>
+<button class="btn btn-primary" routerLink="/universidades/crear">Crear Universidad</button>

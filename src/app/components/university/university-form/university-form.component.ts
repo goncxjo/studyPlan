@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { UniversityService } from '../../../services/university.service';
 import { HeadquartersService } from '../../../services/headquarters.service';
 import { DepartmentService } from '../../../services/department.service';
+import { tap } from 'rxjs/operators'
 
 @Component({
   selector: 'app-university-form',
@@ -86,48 +87,56 @@ export class UniversityFormComponent implements OnInit {
 
   fillForm() {
     const id = this.route.snapshot.paramMap.get('$key');
-    this.universityService.getUniversityById(id)
-      .subscribe(university => {
+    this.universityService.getUniversityById(id).pipe(
+      tap(university => {
+        university['$key'] = id;
         this.universityForm.patchValue({
-          $key: id || '',
-          name: university.name || '',
+          $key: university['$key'] || '',
+          name: university['name'] || '',
         });
-        this.getHeadquarters(university.headquarters);
-        this.getDepartments(university.departments);
-      });
+        this.getHeadquarters(university);
+        this.getDepartments(university);
+      })
+    ).subscribe();
   }
 
-  getHeadquarters(headquarters) {
-    if(headquarters) {
-      headquarters.forEach(item => {
-        this.headquarterService.getHeadquartersById(item)
-          .subscribe(headquarters => {
-            const group = this.fb.group({
-              $key: item,
-              name: headquarters.name,
-              address: headquarters.address,
-              city: headquarters.city,
-              country: headquarters.country,
-              telephone: headquarters.telephone
+  getHeadquarters(university) {
+    if (university.headquarters) {
+      this.headquarterService.getAllHeadquarters().pipe(
+        tap(headquartersList => {
+          headquartersList
+            .filter(h => h.universityId == university.$key)
+            .forEach(h => {
+              const group = this.fb.group({
+                $key: h.$key,
+                name: h.name,
+                address: h.address,
+                city: h.city,
+                country: h.country,
+                telephone: h.telephone
+              });
+              this.addHeadquarters(group)
             });
-            this.addHeadquarters(group);
-          });
-      })
+        })
+      ).subscribe();
     }
   }
 
-  getDepartments(departments) {
-    if(departments) {
-      departments.forEach(item => {
-        this.departmentService.getDepartmentById(item)
-          .subscribe(departments => {
-            const group = this.fb.group({
-              $key: item,
-              name: departments.name,
+  getDepartments(university) {
+    if (university.departments) {
+      this.departmentService.getDepartments().pipe(
+        tap(departments => {
+          departments
+            .filter(d => d.universityId == university.$key)
+            .forEach(d => {
+              const group = this.fb.group({
+                $key: d.$key,
+                name: d.name,
+              });
+              this.addDepartment(group)
             });
-            this.addDepartment(group);
-          });
-      })
+        })
+      ).subscribe()
     }
   }
 
@@ -140,7 +149,7 @@ export class UniversityFormComponent implements OnInit {
         }).catch(x => this.toastr.error(x, "Operación fallida"));
     } else {
       this.universityService.updateUniversity(this.universityForm.value)
-        .then(x => {0
+        .then(x => {
           this.toastr.success("Universidad actualizada", "Operación exitosa");
           this.goBack();
         }).catch(x => this.toastr.error(x, "Operación fallida"));
