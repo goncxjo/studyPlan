@@ -1,78 +1,78 @@
 <div class="card bg-light">
-	<div class="card-header">
-		<b>
+  <div class="card-header bg-dark text-white">
+    <b>
       {{ (editMode ? "Editar" : "Crear") + " Asignatura" }}
     </b>
-	</div>
-	<div class="card-body">
-		<form [formGroup]="subjectForm" (ngSubmit)="onSubmit()">
-			<div class="form-row">
-				<input type="hidden" name="$key" formControlName="$key">
-				<div class="form-group col-md-6">
-					<label for="universityId">Universidad:</label>
-					<app-university-selector [parent]="subjectForm" name="universityId"></app-university-selector>
-				</div>
-				<div class="form-group col-md-6">
-					<label for="careerId">Carrera:</label>
-					<app-career-selector [parent]="subjectForm" [filterUniversityId]="subjectForm.value.universityId" name="careerId"></app-career-selector>
-				</div>
-			</div>
-			<div class="form-row">
-				<div class="form-group col-md-12">
-					<label for="careerOptions">Orientaciones:</label>
-					<app-career-option-multiselector [parent]="subjectForm" [filterCareerId]="subjectForm.value.careerId" name="careerOptions"></app-career-option-multiselector>
-				</div>
-			</div>
-			<div class="form-row">
-				<div class="form-group col-md-6">
-					<label for="name">Código:</label>
-					<input type="text" class="form-control" name="code" formControlName="code">
-				</div>
-				<div class="form-group col-md-6">
-					<label for="name">Nombre:</label>
-					<input type="text" class="form-control" name="name" formControlName="name">
-				</div>
-				<div class="form-group col-md-6">
-					<label for="year">Año:</label>
-					<input type="number" class="form-control" name="year" formControlName="year">
-				</div>
-				<div class="form-group col-md-6">
-					<label for="quarter">Cuatrimestre:</label>
-					<input type="number" class="form-control" name="quarter" formControlName="quarter">
-				</div>
-				<div class="form-group col-md-6">
-					<label for="classLoad">Carga horaria:</label>
-					<input type="number" class="form-control" name="classLoad" formControlName="classLoad">
-				</div>
-				<div class="form-group col-md-6">
-					<label for="credits">Creditos:</label>
-					<input type="number" class="form-control" name="credits" formControlName="credits">
-				</div>
-			</div>
-			<div class="form-row">
-				<div formGroupName="correlatives" class="col-md-12">
-					<h6 class="card-subtitle mb-2 text-muted">
-						Correlativas
-					</h6>
-					<div class="form-group col-md-12">
-						<label for="regularized">Regularizadas:</label>
-						<app-subject-multiselector [parent]="subjectForm.get('correlatives')" name="regularized"></app-subject-multiselector>
-					</div>
-					<div class="form-group col-md-12">
-						<label for="approved">Aprobadas:</label>
-						<app-subject-multiselector [parent]="subjectForm.get('correlatives')" name="approved"></app-subject-multiselector>
-					</div>
-				</div>
-			</div>
-			<div class="btn-group" role="group">
-				<button type="submit" class="btn btn-primary">Enviar</button>
-				<button type="reset" class="btn btn-secondary">Limpiar</button>
-			</div>
-		</form>
-	</div>
-	<div class="card-footer">
-		<div class="d-flex justify-content-between">
-			<button class="btn btn-primary" (click)="goBack()">Volver</button>
-		</div>
-	</div>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="subjectForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <input type="hidden" name="$key" formControlName="$key">
+        <div class="form-group col-md-6">
+          <label for="universityId">Universidad:</label>
+          <app-university-selector [parent]="subjectForm" name="universityId"></app-university-selector>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="careerId">Carrera:</label>
+          <app-career-selector [parent]="subjectForm" [filterUniversityId]="subjectForm.value.universityId" name="careerId"></app-career-selector>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label for="careerOptions">Orientaciones:</label>
+          <app-career-option-multiselector [parent]="subjectForm" [filterCareerId]="subjectForm.value.careerId" name="careerOptions"></app-career-option-multiselector>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="name">Código:</label>
+          <input type="text" class="form-control" name="code" formControlName="code">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Nombre:</label>
+          <input type="text" class="form-control" name="name" formControlName="name">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="year">Año:</label>
+          <input type="number" class="form-control" name="year" formControlName="year">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="quarter">Cuatrimestre:</label>
+          <input type="number" class="form-control" name="quarter" formControlName="quarter">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="classLoad">Carga horaria:</label>
+          <input type="number" class="form-control" name="classLoad" formControlName="classLoad">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="credits">Creditos:</label>
+          <input type="number" class="form-control" name="credits" formControlName="credits">
+        </div>
+      </div>
+      <div class="form-row">
+        <div formGroupName="correlatives" class="col-md-12">
+          <h6 class="card-subtitle mb-2 text-muted">
+            Correlativas
+          </h6>
+          <div class="form-group col-md-12">
+            <label for="regularized">Regularizadas:</label>
+            <app-subject-multiselector [parent]="subjectForm.get('correlatives')" name="regularized"></app-subject-multiselector>
+          </div>
+          <div class="form-group col-md-12">
+            <label for="approved">Aprobadas:</label>
+            <app-subject-multiselector [parent]="subjectForm.get('correlatives')" name="approved"></app-subject-multiselector>
+          </div>
+        </div>
+      </div>
+      <div class="btn-group" role="group">
+        <button type="submit" class="btn btn-primary">Enviar</button>
+        <button type="reset" class="btn btn-secondary">Limpiar</button>
+      </div>
+    </form>
+  </div>
+  <div class="card-footer">
+    <div class="d-flex justify-content-between">
+      <button class="btn btn-primary" (click)="goBack()">Volver</button>
+    </div>
+  </div>
 </div>
