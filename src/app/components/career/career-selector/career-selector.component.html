@@ -1,6 +1,15 @@
-<div [formGroup]="parent">
-  <select class="form-control select" [formControlName]="name">
-    <option [value]="null" (click)="reset()">-- Carreras --</option>
-    <option *ngFor="let career of careers" [value]="career.$key">{{ career.name }}</option>
-  </select>
-</div>
+<div *ngIf="!parent">
+    <select class="form-control select" [ngModel]="model" (ngModelChange)="change($event)">
+      <option [value]="''">-- Carreras --</option>
+      <option *ngFor="let career of filterResult" [value]="career.$key">{{ career.name }}</option>
+    </select>
+  </div>
+  <div *ngIf="parent">
+    <div [formGroup]="parent">
+      <select class="form-control select" [formControlName]="name">
+        <option [value]="''">-- Carreras --</option>
+        <option *ngFor="let career of filterResult" [value]="career.$key">{{ career.name }}</option>
+      </select>
+    </div>
+  </div>
+  

@@ -1,6 +1,14 @@
-<div [formGroup]="parent">
-  <select class="form-control select" [formControlName]="name">
-    <option [value]="null" (click)="reset()">-- Orientaciones --</option>
-    <option *ngFor="let option of options" [value]="option.$key">{{ option.name }}</option>
+<div *ngIf="!parent">
+  <select class="form-control select" [ngModel]="model" (ngModelChange)="change($event)">
+    <option [value]="''">-- Orientaciones --</option>
+    <option *ngFor="let option of filterResult" [value]="option.$key">{{ option.name }}</option>
   </select>
+</div>
+<div *ngIf="parent">
+  <div [formGroup]="parent">
+    <select class="form-control select" [formControlName]="name">
+      <option [value]="''">-- Orientaciones --</option>
+      <option *ngFor="let option of filterResult" [value]="option.$key">{{ option.name }}</option>
+    </select>
+  </div>
 </div>

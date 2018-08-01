@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { UniversityService } from '../../../services/university.service';
@@ -12,12 +12,15 @@ import { University } from '../../../models/university';
 export class UniversitySelectorComponent implements OnInit {
   @Input() parent: FormGroup;
   @Input() name: string;
+  @Input() model: string;
+  @Output() modelChange = new EventEmitter();
 
   universities: University[];
 
   constructor(private universityService: UniversityService) { }
 
   ngOnInit() {
+    this.change('');
     this.getUniversities();
   }
   
@@ -25,7 +28,8 @@ export class UniversitySelectorComponent implements OnInit {
     this.universityService.getUniversities().subscribe(universities => { this.universities = universities });
   }
 
-  reset() {
-    this.parent.reset();
+  change(newValue) {
+    this.model = newValue;
+    this.modelChange.emit(newValue);
   }
 }

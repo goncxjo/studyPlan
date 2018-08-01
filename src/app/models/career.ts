@@ -2,7 +2,7 @@ export class Career {
   $key?: string;
   name?: string;
   length?: number;
-  level?: string;
+  level?: any;
   about?: string;
   goals?: string;
   universityId?: string;

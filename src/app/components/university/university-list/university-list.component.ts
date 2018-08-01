@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastrService, Toast } from 'ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 
 import { UniversityService } from '../../../services/university.service';
 import { University } from '../../../models/university';
@@ -12,6 +12,8 @@ import { University } from '../../../models/university';
 export class UniversityListComponent implements OnInit {
 
   universities: University[];
+  searchResult: University[] = [];
+  filter: University = new University();
 
   constructor(private universityService: UniversityService, private toastr: ToastrService) { }
 
@@ -22,6 +24,7 @@ export class UniversityListComponent implements OnInit {
   getUniversities() {
     this.universityService.getUniversities().subscribe(universities => {
       this.universities = universities;
+      this.searchResult = universities;
     });
   }
 
@@ -31,5 +34,9 @@ export class UniversityListComponent implements OnInit {
         .then(x => this.toastr.success("Universidad eliminada", "Operación exitosa"))
         .catch(x => this.toastr.success(x, "Operación fallida"));;
     }
+  }
+
+  search() {
+    this.searchResult = this.universities.filter(u => u.$key.includes(this.filter.$key || '') && u.name.includes(this.filter.name || ''));
   }
 }

@@ -1,20 +1,20 @@
 export class Subject {
-    $key?: string;
-    name?: string;
-    code?: string;
+    $key?: string = '';
+    name?: string = '';
+    code?: string = '';
     year?: number;
     quarter?: number;
     classLoad?: number;
     credits?: number;
-    // state?: string;
     correlatives?: {
       approved?: [any];
       regularized?: [any];
     };
     plan?: number;
-    universityId?: string;
-    careerId?: string;
-    careerOptions?: string;
+    universityId?: string = '';
+    careerId?: string = '';
+    careerOptionId?: string = '';
+    careerOptions?: [string];
 }
 
 export class SubjectCorrelative {

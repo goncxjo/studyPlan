@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 @Component({
@@ -10,9 +10,15 @@ export class SelectorComponent implements OnInit {
   @Input() public parent: FormGroup;
   @Input() public name: string;
   @Input() public elements: any[];
-
+  @Input() model: string;
+  @Output() modelChange = new EventEmitter();
   constructor() { }
 
   ngOnInit() {
+  }
+
+  change(newValue) {
+    this.model = newValue;
+    this.modelChange.emit(newValue);
   }
 }
