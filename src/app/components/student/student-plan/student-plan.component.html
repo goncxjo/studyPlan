@@ -1,0 +1,21 @@
+<div *ngIf="hasFinished" class="card bg-light">
+    <div class="card-header bg-dark text-white">
+      <b>
+        {{ student.name + " - Plan de estudios" }}
+      </b>
+    </div>
+    <div class="card-body m-0 p-0">
+      
+      <app-network
+      [student]="student.$key"
+      [career]="getCareerId()"
+      [careerOption]="getCareerOptionId()"
+      ></app-network>
+  
+    </div>
+    <div class="card-footer">
+      <div class="d-flex justify-content-between">
+        <button class="btn btn-primary" (click)="goBack()">Volver</button>
+      </div>
+    </div>
+  </div>

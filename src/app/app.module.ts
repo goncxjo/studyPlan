@@ -38,6 +38,8 @@ import { CareerOptionMultiselectorComponent } from './components/career/career-o
 import { StudentFormComponent } from './components/student/student-form/student-form.component';
 import { StudentListComponent } from './components/student/student-list/student-list.component';
 import { StudentService } from './services/student.service';
+import { CareerPlanComponent } from './components/career/career-plan/career-plan.component';
+import { StudentPlanComponent } from './components/student/student-plan/student-plan.component';
 
 
 @NgModule({
@@ -60,6 +62,8 @@ import { StudentService } from './services/student.service';
     CareerOptionMultiselectorComponent,
     StudentFormComponent,
     StudentListComponent,
+    CareerPlanComponent,
+    StudentPlanComponent,
   ],
   imports: [
     BrowserModule,

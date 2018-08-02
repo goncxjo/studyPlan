@@ -59,12 +59,12 @@ export class StudentListComponent implements OnInit {
 
     function onSuccess() {
       this.completeLoading();
-      this.toastr.success("Estudiante eliminado", "Operación exitosa");
+      this.toastr.success('Estudiante eliminado', 'Operación exitosa');
     }
     
     function onError(msg) {
       this.completeLoading();
-      this.toastr.success(msg, "Operación fallida");
+      this.toastr.success(msg, 'Operación fallida');
     }
   }
 
@@ -90,17 +90,17 @@ export class StudentListComponent implements OnInit {
   }
 
   getUniversityName(student: Student) {
-    const university = this.universities ? this.universities.find(x => x.$key.includes(student.universityId || '')) : [];
+    const university = this.universities ? this.universities.find(x => x.$key === (student.universityId || '')) : [];
     return university ? university['name'] : '';
   }
 
   getCareerName(student: Student) {
-    const career = this.careers ? this.careers.find(x => x.$key.includes(student.careerId || '')) : [];
+    const career = this.careers ? this.careers.find(x => x.$key === (student.careerId || '')) : [];
     return career ? career['name'] : '';
   }
 
   getCareerOptionName(student: Student) {
-    const option = this.careerOptions ? this.careerOptions.find(x => x.$key.includes(student.careerOptionId || '')) : [];
+    const option = this.careerOptions ? this.careerOptions.find(x => x.$key === (student.careerOptionId || '')) : [];
     return option ? option['name'] : '';
   }
 

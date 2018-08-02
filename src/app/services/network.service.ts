@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 
 import { SubjectService } from './subject.service';
 import { DataSet } from 'vis';
-import { Student } from '../models/student';
 import { map } from 'rxjs/operators';
 import { Subject } from '../models/subject';
 
@@ -17,18 +16,19 @@ export class NetworkService {
 
   constructor(private subjectService: SubjectService) {}
 
-  getCourses(student: Student) {
+  getCourses(studentId, careerId, careerOptionId) {
     return this.dataset = this.subjectService.getSubjects().pipe(
       map(subjects => {
         let edges = [];
-        const nodes = subjects.filter(s => s.careerId.includes(student.careerId))
+        const nodes = subjects
+        .filter(s => (s.careerId || '').includes(careerId) && (s.careerOptionId ? s.careerOptionId.includes(careerOptionId) : true))
         .map(element => {
           const node = {
             id: element.$key,
             label: element.name,
             level: element.quarter,
             rel: element.correlatives,
-            group: element.year,
+            group: studentId ? 0 : element.year,
             orientations: element.careerOptions,
           };
           if (element.correlatives) {

@@ -55,6 +55,9 @@
               <button type="button" class="btn btn-danger text-white" (click)="onDelete(career.$key)">
                 <i class="fas fa-trash-alt"></i>
               </button>
+              <button type="button" class="btn btn-success text-white" routerLink="/carreras/{{ career.$key }}/plan">
+                <i class="fas fa-draw-polygon"></i>
+              </button>
             </div>
           </td>
         </tr>
