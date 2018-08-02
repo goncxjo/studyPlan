@@ -20,7 +20,6 @@ export class UniversitySelectorComponent implements OnInit {
   constructor(private universityService: UniversityService) { }
 
   ngOnInit() {
-    this.change('');
     this.getUniversities();
   }
   

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { Career, CareerOption, LEVELS } from '../models/career';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -71,6 +71,7 @@ export class CareerService {
         return item;
       })
     }
+
     newCareer.options.forEach(element => {
       this.addOption(element);
     });
@@ -104,10 +105,9 @@ export class CareerService {
       })
     }
 
-    this.deleteOptionsByCareerId(career.$key);
-
+    // this.updateCareerOptions(career.$key, selectedCareer.options);
     selectedCareer.options.forEach(element => {
-      this.addOption(element);
+      this.setOption(element);
     });
 
     return this.db.list(this.route).set(selectedCareer.$key, {
@@ -124,10 +124,6 @@ export class CareerService {
 
   deleteCareer($key: string) {
     return this.db.list<Career>(this.route).remove($key);
-  }
-  
-  deleteOptionsByCareerId(careerKey: string) {
-    return this.db.list<CareerOption>(this.routeOptions, ref => ref.orderByChild('careerId').equalTo(careerKey)).remove();
   }
 
   getOptions() {
@@ -160,11 +156,20 @@ export class CareerService {
     });
   }
 
-  updateOption(option: CareerOption) {
-    return this.db.list<CareerOption>(this.routeOptions).update(option.$key, {
+  setOption(option: CareerOption) {
+    return this.db.list<CareerOption>(this.routeOptions).set(option.$key, {
       name: option.name,
       careerId: option.careerId,
     });
+  }
+
+  updateCareerOptions(careerKey: string, options: CareerOption[]) {
+    return this.options.forEach(os => os
+      .filter(o => o.$key == careerKey)
+      .forEach(o => {
+        const changedOption = options.find(x => x.$key == o.$key);
+        !changedOption ? this.deleteOption(o.$key) : this.setOption(changedOption); 
+      }));
   }
 
   deleteOption($key: string) {

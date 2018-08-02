@@ -19,24 +19,35 @@ export class NetworkService {
   constructor(private subjectService: SubjectService) {}
 
   getCourses(student: Student) {
-    return this.dataset = this.subjectService.getSubjectsByCareer(student.careerId).pipe(
+    return this.dataset = this.subjectService.getSubjects().pipe(
       map(subjects => {
         let edges = [];
-        const nodes = subjects.map(element => {
+        const nodes = subjects.filter(s => s.careerId.includes(student.careerId))
+        .map(element => {
           const node = {
             id: element.$key,
             label: element.name,
             level: element.quarter,
             rel: element.correlatives,
             group: element.year,
-            orientations: element.careerOptions
+            orientations: element.careerOptions,
           };
           if (element.correlatives) {
-            element.correlatives['approved'].forEach(i => {
+            (element.correlatives['approved'] || []).forEach(i => {
               edges.push({
                 from: i,
                 to: element.$key,
                 chosen: { label: false }
+              });
+            });
+          }
+          if (element.correlatives) {
+            (element.correlatives['regularized'] || []).forEach(i => {
+              edges.push({
+                from: i,
+                to: element.$key,
+                chosen: { label: false },
+                dashes:true
               });
             });
           }
@@ -146,7 +157,7 @@ export class NetworkService {
           direction: 'UD',
           levelSeparation: 200,
           nodeSpacing: 100,
-          treeSpacing: 10,
+          treeSpacing: 1,
           blockShifting: false,
           edgeMinimization: true
         }

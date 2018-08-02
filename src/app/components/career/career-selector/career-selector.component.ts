@@ -38,7 +38,7 @@ export class CareerSelectorComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChange) {
-    if(changes['filterUniversityId']) {
+    if(changes['filterUniversityId'] && !changes['filterUniversityId'].isFirstChange()) {
       const filterUniversityId = changes['filterUniversityId'].currentValue || '';
       this.filterResult = this.careers.filter(c => c.universityId == filterUniversityId);
       this.change('');

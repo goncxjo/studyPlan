@@ -6,6 +6,8 @@ import { UniversityService } from '../../../services/university.service';
 import { CareerService } from '../../../services/career.service';
 import { Student } from '../../../models/student';
 import { map, tap, flatMap } from 'rxjs/operators';
+import { University } from '../../../models/university';
+import { Career, CareerOption } from '../../../models/career';
 
 @Component({
   selector: 'app-student-list',
@@ -17,8 +19,11 @@ export class StudentListComponent implements OnInit {
   students: Student[];
   searchResult: Student[] = [];
   filter: Student = new Student();
+  universities: University[];
+  careers: Career[];
+  careerOptions: CareerOption[];
 
-  constructor(private studentService: StudentService, private universityService: UniversityService, private careerService: CareerService, private toastr: ToastrService) {}
+  constructor(private studentService: StudentService, private universityService: UniversityService, private careerService: CareerService, private toastr: ToastrService) { }
 
   ngOnInit() {
     this.getStudents();
@@ -29,51 +34,11 @@ export class StudentListComponent implements OnInit {
       tap(ss => this.students = this.searchResult = ss),
       flatMap(ss => ss
         .map(s => {
-          this.getUniversities(s);
-          this.getCareers(s);
-          this.getCareerOptions(s);
+          this.getUniversities();
+          this.getCareers();
+          this.getCareerOptions();
         }))
     ).subscribe();
-  }
-
-  getUniversities(student) {
-    this.universityService.getUniversities().pipe(
-        map(us =>
-          us.map(u => {
-            return {
-              $key: u.$key,
-              name: u.name
-            }
-          })))
-      .subscribe(us => {
-        student.university = us.find(x => x.$key == student.universityId)
-      });
-  }
-  getCareers(student) {
-    this.careerService.getCareers().pipe(
-        map(cs =>
-          cs.map(c => {
-            return {
-              $key: c.$key,
-              name: c.name
-            }
-          })))
-      .subscribe(cs => {
-        student.career = cs.find(x => x.$key == student.careerId)
-      });
-  }
-  getCareerOptions(student) {
-    this.careerService.getOptions().pipe(
-        map(cs =>
-          cs.map(c => {
-            return {
-              $key: c.$key,
-              name: c.name
-            }
-          })))
-      .subscribe(cs => {
-        student.careerOption = cs.find(x => x.$key == student.careerOptionId)
-      });
   }
 
   onDelete($key: string) {
@@ -85,11 +50,39 @@ export class StudentListComponent implements OnInit {
   }
 
   search() {
+    console.log(this.universities, this.careers, this.careerOptions)
     this.searchResult = this.students.filter(c =>
       c.universityId.includes(this.filter.universityId) &&
       c.careerId.includes(this.filter.careerId) &&
       c.careerOptionId.includes(this.filter.careerOptionId) &&
       c.name.toLowerCase().includes(this.filter.name.toLowerCase())
     );
+  }
+
+  getUniversities() {
+    this.universityService.getUniversities().subscribe(us => this.universities = us);
+  }
+
+  getCareers() {
+    this.careerService.getCareers().subscribe(cs => this.careers = cs);
+  }
+
+  getCareerOptions() {
+    this.careerService.getOptions().subscribe(cs => this.careerOptions = cs);
+  }
+
+  getUniversityName(student: Student) {
+    const university = this.universities ? this.universities.find(x => x.$key.includes(student.universityId || '')) : [];
+    return university ? university['name'] : '';
+  }
+
+  getCareerName(student: Student) {
+    const career = this.careers ? this.careers.find(x => x.$key.includes(student.careerId || '')) : [];
+    return career ? career['name'] : '';
+  }
+
+  getCareerOptionName(student: Student) {
+    const option = this.careerOptions ? this.careerOptions.find(x => x.$key.includes(student.careerOptionId || '')) : [];
+    return option ? option['name'] : '';
   }
 }
