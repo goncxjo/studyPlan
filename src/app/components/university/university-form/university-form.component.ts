@@ -113,7 +113,7 @@ export class UniversityFormComponent implements OnInit {
       this.headquarterService.getAllHeadquarters().pipe(
         tap(headquartersList => {
           headquartersList
-            .filter(h => h.universityId == university.$key)
+            .filter(h => h.universityId === university.$key)
             .forEach(h => {
               const group = this.fb.group({
                 $key: h.$key,
@@ -123,7 +123,7 @@ export class UniversityFormComponent implements OnInit {
                 country: h.country,
                 telephone: h.telephone
               });
-              this.addHeadquarters(group)
+              this.addHeadquarters(group);
             });
         })
       ).subscribe();
@@ -135,41 +135,41 @@ export class UniversityFormComponent implements OnInit {
       this.departmentService.getDepartments().pipe(
         tap(departments => {
           departments
-            .filter(d => d.universityId == university.$key)
+            .filter(d => d.universityId === university.$key)
             .forEach(d => {
               const group = this.fb.group({
                 $key: d.$key,
                 name: d.name,
               });
-              this.addDepartment(group)
+              this.addDepartment(group);
             });
         })
-      ).subscribe()
+      ).subscribe();
     }
   }
 
   onSubmit() {
     this.startLoading();
     if (!this.editMode) {
-      this.universityService.addUniversity(this.universityForm.value).then(onSuccess).catch(onError);
+      this.universityService.addUniversity(this.universityForm.value)
+      .then(() => this.onSuccess())
+      .catch((msg) => this.onError(msg));
     } else {
-      this.universityService.updateUniversity(this.universityForm.value).then(onSuccess).catch(onError)
-    }
-
-    function onSuccess() {
-      this.completeLoading();
-      this.toastr.success("Universidad" + (this.editMode ? "actualizada" : "creada"), "Operación exitosa");
-      this.goBack();
-    }
-    
-    function onError(msg) {
-      this.completeLoading();
-      this.toastr.error(msg, "Operación fallida");
+      this.universityService.updateUniversity(this.universityForm.value)
+      .then(() => this.onSuccess())
+      .catch((msg) => this.onError(msg));
     }
   }
 
-  goBack(): void {
-    this.location.back();
+  onSuccess() {
+    this.completeLoading();
+    this.toastr.success('Universidad' + (this.editMode ? 'actualizada' : 'creada'), 'Operación exitosa');
+    this.goBack();
+  }
+  
+  onError(msg) {
+    this.completeLoading();
+    this.toastr.error(msg, 'Operación fallida');
   }
 
   startLoading() {
@@ -178,5 +178,9 @@ export class UniversityFormComponent implements OnInit {
 
   completeLoading() {
     this.ngProgress.done();
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }

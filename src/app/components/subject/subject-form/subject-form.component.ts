@@ -87,29 +87,37 @@ export class SubjectFormComponent implements OnInit {
       });
     }
   }
-
+  
+  onUniversityChange() {
+    this.subjectForm.patchValue({ careerId: '', careerOptions: [] });
+  }
+  
+  onCareerChange() {
+    this.subjectForm.patchValue({ careerOptions: [] });
+  }
+  
   onSubmit() {
     this.startLoading();
     if (!this.editMode) {
-      this.subjectService.addSubject(this.subjectForm.value).then(onSuccess).catch(onError);
+      this.subjectService.addSubject(this.subjectForm.value)
+      .then(() => this.onSuccess())
+      .catch((msg) => this.onError(msg));
     } else {
-      this.subjectService.updateSubject(this.subjectForm.value).then(onSuccess).catch(onError)
-    }
-
-    function onSuccess() {
-      this.completeLoading();
-      this.toastr.success("Asignatura" + (this.editMode ? "actualizada" : "creada"), "Operación exitosa");
-      this.goBack();
-    }
-    
-    function onError(msg) {
-      this.completeLoading();
-      this.toastr.error(msg, "Operación fallida");
+      this.subjectService.updateSubject(this.subjectForm.value)
+      .then(() => this.onSuccess())
+      .catch((msg) => this.onError(msg));
     }
   }
 
-  goBack(): void {
-    this.location.back();
+  onSuccess() {
+    this.completeLoading();
+    this.toastr.success('Asignatura' + (this.editMode ? 'actualizada' : 'creada'), 'Operación exitosa');
+    this.goBack();
+  }
+  
+  onError(msg) {
+    this.completeLoading();
+    this.toastr.error(msg, 'Operación fallida');
   }
   
   startLoading() {
@@ -118,5 +126,9 @@ export class SubjectFormComponent implements OnInit {
 
   completeLoading() {
     this.ngProgress.done();
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }

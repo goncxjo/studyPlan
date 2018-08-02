@@ -62,35 +62,47 @@ export class StudentFormComponent implements OnInit {
       })).subscribe(() => this.completeLoading());
   }
 
+  onUniversityChange() {
+    this.studentForm.patchValue({ careerId: '', careerOptionId: '' });
+  }
+  
+  onCareerChange() {
+    this.studentForm.patchValue({ careerOptionId: '' });
+  }
+
   onSubmit() {
     this.startLoading();
     if (!this.editMode) {
-      this.studentService.addStudent(this.studentForm.value).then(onSuccess).catch(onError);
+      this.studentService.addStudent(this.studentForm.value)
+        .then(() => this.onSuccess())
+        .catch((msg) => this.onError(msg));
     } else {
-      this.studentService.updateStudent(this.studentForm.value).then(onSuccess).catch(onError);
-    }
-
-    function onSuccess() {
-      this.completeLoading();
-      this.toastr.success("Estudiante" + (this.editMode ? "actualizado" : "creado"), "Operación exitosa");
-      this.goBack();
-    }
-    
-    function onError(msg) {
-      this.completeLoading();
-      this.toastr.error(msg, "Operación fallida");
+      this.studentService.updateStudent(this.studentForm.value)
+        .then(() => this.onSuccess())
+        .catch((msg) => this.onError(msg));
     }
   }
-
-  goBack(): void {
-    this.location.back();
+  
+  onSuccess() {
+    this.completeLoading();
+    this.toastr.success('Estudiante' + (this.editMode ? 'actualizado' : 'creado'), 'Operación exitosa');
+    this.goBack();
   }
-
+  
+  onError(msg) {
+    this.completeLoading();
+    this.toastr.error(msg, 'Operación fallida');
+  }
+  
   startLoading() {
     this.ngProgress.start();
   }
-
+  
   completeLoading() {
     this.ngProgress.done();
+  }
+  
+  goBack(): void {
+    this.location.back();
   }
 }

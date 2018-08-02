@@ -9,7 +9,7 @@ import { Career } from '../../../models/career';
   templateUrl: './career-selector.component.html',
   styleUrls: ['./career-selector.component.css']
 })
-export class CareerSelectorComponent implements OnInit {
+export class CareerSelectorComponent {
   @Input() parent: FormGroup;
   @Input() name: string;
   @Input() filterUniversityId: string;
@@ -19,16 +19,14 @@ export class CareerSelectorComponent implements OnInit {
   careers: Career[];
   filterResult: Career[];
 
-  constructor(private careerService: CareerService) { }
-
-  ngOnInit() {
-    this.change('');
+  constructor(private careerService: CareerService) {
+    this.filterResult = [];
     this.getCareers();
   }
   
   getCareers() {
     this.careerService.getCareers().subscribe(careers => {
-      this.careers = this.filterResult = careers;
+      this.careers = careers;
     });
   }
 
@@ -38,9 +36,9 @@ export class CareerSelectorComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChange) {
-    if(changes['filterUniversityId'] && !changes['filterUniversityId'].isFirstChange()) {
+    if (changes['filterUniversityId']) {
       const filterUniversityId = changes['filterUniversityId'].currentValue || '';
-      this.filterResult = this.careers.filter(c => c.universityId == filterUniversityId);
+      this.filterResult = this.careers ? this.careers.filter(c => c.universityId === filterUniversityId) : [];
       this.change('');
     }
   }

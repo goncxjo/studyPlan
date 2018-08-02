@@ -5,7 +5,7 @@ import { Location } from '@angular/common';
 
 import { ToastrService } from 'ngx-toastr';
 import { NgProgress } from 'ngx-progressbar';
-import { tap } from 'rxjs/operators'
+import { tap } from 'rxjs/operators';
 
 import { CareerService } from '../../../services/career.service';
 
@@ -93,14 +93,14 @@ export class CareerFormComponent implements OnInit {
       this.careerService.getOptions().pipe(
         tap(options => {
           options
-            .filter(o => o.careerId == career.$key)
+            .filter(o => o.careerId === career.$key)
             .forEach(o => {
               const group = this.fb.group({
                 $key: o.$key,
                 name: o.name,
               });
               this.addOption(group);
-            })
+            });
         })
       ).subscribe();
     }
@@ -113,32 +113,36 @@ export class CareerFormComponent implements OnInit {
   onSubmit() {
     this.startLoading();
     if (!this.editMode) {
-      this.careerService.addCareer(this.careerForm.value).then(onSuccess).catch(onError);
+      this.careerService.addCareer(this.careerForm.value)
+      .then(() => this.onSuccess())
+      .catch((msg) => this.onError(msg));
     } else {
-      this.careerService.updateCareer(this.careerForm.value).then(onSuccess).catch(onError);
+      this.careerService.updateCareer(this.careerForm.value)
+      .then(() => this.onSuccess())
+      .catch((msg) => this.onError(msg));
     }
+  }
 
-    function onSuccess() {
-      this.completeLoading();
-      this.toastr.success("Carrera" + (this.editMode ? "actualizada" : "creada"), "Operación exitosa");
-      this.goBack();
-    }
-    
-    function onError(msg) {
-      this.completeLoading();
-      this.toastr.error(msg, "Operación fallida");
-    }
+  onSuccess() {
+    this.completeLoading();
+    this.toastr.success('Carrera' + (this.editMode ? 'actualizada' : 'creada'), 'Operación exitosa');
+    this.goBack();
+  }
+  
+  onError(msg) {
+    this.completeLoading();
+    this.toastr.error(msg, 'Operación fallida');
+  }
+  
+  startLoading() {
+    this.ngProgress.start();
+  }
+  
+  completeLoading() {
+    this.ngProgress.done();
   }
 
   goBack(): void {
     this.location.back();
-  }
-
-  startLoading() {
-    this.ngProgress.start();
-  }
-
-  completeLoading() {
-    this.ngProgress.done();
   }
 }

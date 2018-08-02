@@ -9,20 +9,17 @@ import { CareerOption } from '../../../models/career';
   templateUrl: './career-option-selector.component.html',
   styleUrls: ['./career-option-selector.component.css']
 })
-export class CareerOptionSelectorComponent implements OnInit {
+export class CareerOptionSelectorComponent {
   @Input() parent: FormGroup;
   @Input() name: string;
   @Input() filterCareerId: string;
   @Input() model: string;
   @Output() modelChange = new EventEmitter();
   
-  options: CareerOption[];
+  options: CareerOption[] = [];
   filterResult: CareerOption[];
 
-  constructor(private careerService: CareerService) { }
-
-  ngOnInit() {
-    this.change('');
+  constructor(private careerService: CareerService) {
     this.getOptions();
   }
   
@@ -38,9 +35,9 @@ export class CareerOptionSelectorComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChange) {
-    if(changes['filterCareerId'] && !changes['filterCareerId'].isFirstChange()) {
-      const filterCareerId = changes['filterCareerId'].currentValue;
-      this.filterResult = this.options.filter(o => o.careerId.includes(filterCareerId));
+    if (changes['filterCareerId']) {
+      const filterCareerId = changes['filterCareerId'].currentValue || '';
+      this.filterResult = this.options ? this.options.filter(o => o.careerId.includes(filterCareerId)) : [];
       this.change('');
     }
   }

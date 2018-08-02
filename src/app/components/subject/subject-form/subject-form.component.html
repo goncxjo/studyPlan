@@ -10,11 +10,11 @@
         <input type="hidden" name="$key" formControlName="$key">
         <div class="form-group col-md-6">
           <label for="universityId">Universidad:</label>
-          <app-university-selector [parent]="subjectForm" name="universityId"></app-university-selector>
+          <app-university-selector [parent]="subjectForm" name="universityId" (change)="onUniversityChange()"></app-university-selector>
         </div>
         <div class="form-group col-md-6">
           <label for="careerId">Carrera:</label>
-          <app-career-selector [parent]="subjectForm" [filterUniversityId]="subjectForm.value.universityId" name="careerId"></app-career-selector>
+          <app-career-selector [parent]="subjectForm" [filterUniversityId]="subjectForm.value.universityId" name="careerId" (change)="onCareerChange()"></app-career-selector>
         </div>
       </div>
       <div class="form-row">
@@ -56,11 +56,11 @@
           </h6>
           <div class="form-group col-md-12">
             <label for="regularized">Regularizadas:</label>
-            <app-subject-multiselector [parent]="subjectForm.get('correlatives')" name="regularized"></app-subject-multiselector>
+            <app-subject-multiselector [parent]="subjectForm.get('correlatives')" name="regularized" [filterCareerId]="subjectForm.value.careerId"></app-subject-multiselector>
           </div>
           <div class="form-group col-md-12">
             <label for="approved">Aprobadas:</label>
-            <app-subject-multiselector [parent]="subjectForm.get('correlatives')" name="approved"></app-subject-multiselector>
+            <app-subject-multiselector [parent]="subjectForm.get('correlatives')" name="approved" [filterCareerId]="subjectForm.value.careerId"></app-subject-multiselector>
           </div>
         </div>
       </div>
