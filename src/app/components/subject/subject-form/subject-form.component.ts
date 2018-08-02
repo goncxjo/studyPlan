@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+import { tap } from 'rxjs/operators';
 
 import { ToastrService } from 'ngx-toastr';
+import { NgProgress } from 'ngx-progressbar';
+
 import { SubjectService } from '../../../services/subject.service';
-import { Subject } from '../../../models/subject';
 
 @Component({
   selector: 'app-subject-form',
@@ -17,7 +19,12 @@ export class SubjectFormComponent implements OnInit {
   private editMode: boolean;
 
   constructor(
-    private route: ActivatedRoute, private location: Location, private subjectService: SubjectService, private toastr: ToastrService, private fb: FormBuilder
+    private route: ActivatedRoute, 
+    private location: Location, 
+    private subjectService: SubjectService, 
+    private toastr: ToastrService, 
+    public ngProgress: NgProgress, 
+    private fb: FormBuilder
   ) {
     this.subjectForm = this.fb.group({
       $key: '',
@@ -38,18 +45,17 @@ export class SubjectFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.startLoading();
     this.route.data.subscribe(d => {
       this.editMode = d['editMode'];
-      if (this.editMode) {
-        this.fillForm();
-      }
+      this.editMode ? this.fillForm() : this.completeLoading();
     });
   }
 
   fillForm() {
     const id = this.route.snapshot.paramMap.get('$key');
-    this.subjectService.getSubjectById(id)
-      .subscribe(subject => {
+    this.subjectService.getSubjectById(id).pipe(
+      tap(subject => {
         subject.$key = id || '';
         this.subjectForm.patchValue({
           $key: subject.$key || '',
@@ -64,7 +70,7 @@ export class SubjectFormComponent implements OnInit {
           careerOptions: subject.careerOptions || '',
         })
         this.addCorrelatives(subject);
-      });
+      })).subscribe(() => this.completeLoading());
   }
 
   addCorrelatives(subject) {
@@ -83,24 +89,34 @@ export class SubjectFormComponent implements OnInit {
   }
 
   onSubmit() {
+    this.startLoading();
     if (!this.editMode) {
-      this.subjectService.addSubject(this.subjectForm.value)
-        .then(x => {
-          this.toastr.success("Asignatura creada", "Operación exitosa");
-          this.goBack();
-        }, (r => this.toastr.error(r, "Operación fallida"))
-        );
+      this.subjectService.addSubject(this.subjectForm.value).then(onSuccess).catch(onError);
     } else {
-      this.subjectService.updateSubject(this.subjectForm.value)
-        .then(x => {
-          this.toastr.success("Asignatura editada", "Operación exitosa");
-          this.goBack();
-        })
-        .catch(x => this.toastr.error(x, "Operación fallida"));
+      this.subjectService.updateSubject(this.subjectForm.value).then(onSuccess).catch(onError)
+    }
+
+    function onSuccess() {
+      this.completeLoading();
+      this.toastr.success("Asignatura" + (this.editMode ? "actualizada" : "creada"), "Operación exitosa");
+      this.goBack();
+    }
+    
+    function onError(msg) {
+      this.completeLoading();
+      this.toastr.error(msg, "Operación fallida");
     }
   }
 
   goBack(): void {
     this.location.back();
+  }
+  
+  startLoading() {
+    this.ngProgress.start();
+  }
+
+  completeLoading() {
+    this.ngProgress.done();
   }
 }

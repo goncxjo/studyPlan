@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+import { tap } from 'rxjs/operators';
 
 import { ToastrService } from 'ngx-toastr';
+import { NgProgress } from 'ngx-progressbar';
+
 import { StudentService } from '../../../services/student.service';
-import { Student } from '../../../models/student';
 
 @Component({
   selector: 'app-student-form',
@@ -17,7 +19,12 @@ export class StudentFormComponent implements OnInit {
   private editMode: boolean;
 
   constructor(
-    private route: ActivatedRoute, private location: Location, private studentService: StudentService, private toastr: ToastrService, private fb: FormBuilder
+    private route: ActivatedRoute,
+    private location: Location, 
+    private studentService: StudentService, 
+    private toastr: ToastrService, 
+    public ngProgress: NgProgress, 
+    private fb: FormBuilder
   ) {
     this.studentForm = this.fb.group({
       $key: '',
@@ -31,18 +38,17 @@ export class StudentFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.startLoading();
     this.route.data.subscribe(d => {
       this.editMode = d['editMode'];
-      if (this.editMode) {
-        this.fillForm();
-      }
+      this.editMode ? this.fillForm() : this.completeLoading();
     });
   }
 
   fillForm() {
     const id = this.route.snapshot.paramMap.get('$key');
-    this.studentService.getStudentById(id)
-      .subscribe(student => {
+    this.studentService.getStudentById(id).pipe(
+      tap(student => {
         student.$key = id || '';
         this.studentForm.patchValue({
           $key: student.$key || '',
@@ -52,29 +58,39 @@ export class StudentFormComponent implements OnInit {
           universityId: student.universityId || '',
           careerId: student.careerId || '',
           careerOptionId: student.careerOptionId || '',
-        });
-      });
+        })
+      })).subscribe(() => this.completeLoading());
   }
 
   onSubmit() {
+    this.startLoading();
     if (!this.editMode) {
-      this.studentService.addStudent(this.studentForm.value)
-        .then(x => {
-          this.toastr.success("Estudiante creado", "Operación exitosa");
-          this.goBack();
-        }, (r => this.toastr.error(r, "Operación fallida"))
-        );
+      this.studentService.addStudent(this.studentForm.value).then(onSuccess).catch(onError);
     } else {
-      this.studentService.updateStudent(this.studentForm.value)
-        .then(x => {
-          this.toastr.success("Estudiante editado", "Operación exitosa");
-          this.goBack();
-        })
-        .catch(x => this.toastr.error(x, "Operación fallida"));
+      this.studentService.updateStudent(this.studentForm.value).then(onSuccess).catch(onError);
+    }
+
+    function onSuccess() {
+      this.completeLoading();
+      this.toastr.success("Estudiante" + (this.editMode ? "actualizado" : "creado"), "Operación exitosa");
+      this.goBack();
+    }
+    
+    function onError(msg) {
+      this.completeLoading();
+      this.toastr.error(msg, "Operación fallida");
     }
   }
 
   goBack(): void {
     this.location.back();
+  }
+
+  startLoading() {
+    this.ngProgress.start();
+  }
+
+  completeLoading() {
+    this.ngProgress.done();
   }
 }

@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { Observable } from 'rxjs';
+
 import { ToastrService } from 'ngx-toastr';
-import { CareerService } from '../../../services/career.service';
+import { NgProgress } from 'ngx-progressbar';
 import { tap } from 'rxjs/operators'
+
+import { CareerService } from '../../../services/career.service';
 
 @Component({
   selector: 'app-career-form',
@@ -18,7 +20,12 @@ export class CareerFormComponent implements OnInit {
   private editMode: boolean;
 
   constructor(
-    private route: ActivatedRoute, private location: Location, private careerService: CareerService, private toastr: ToastrService, private fb: FormBuilder
+    private route: ActivatedRoute, 
+    private location: Location, 
+    private careerService: CareerService, 
+    private toastr: ToastrService, 
+    public ngProgress: NgProgress, 
+    private fb: FormBuilder
   ) {
     this.careerForm = this.fb.group({
       $key: '',
@@ -35,19 +42,13 @@ export class CareerFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.levels = this.careerService.getLevels();
+    this.startLoading();
     this.route.data.subscribe(d => {
       this.editMode = d['editMode'];
-      if (this.editMode) {
-        this.fillForm();
-      }
+      this.editMode ? this.fillForm() : this.completeLoading();
     });
   }
-
-  getCareer() {
-
-  }
-
+  
   get optionsForm() {
     return this.careerForm.get('options') as FormArray;
   }
@@ -70,8 +71,8 @@ export class CareerFormComponent implements OnInit {
 
   fillForm() {
     const id = this.route.snapshot.paramMap.get('$key');
-    this.careerService.getCareerById(id)
-      .subscribe(career => {
+    this.careerService.getCareerById(id).pipe(
+      tap(career => {
         career.$key = id || '';
         this.careerForm.patchValue({
           $key: career.$key,
@@ -84,7 +85,7 @@ export class CareerFormComponent implements OnInit {
           universityId: career.universityId || '',
         });
         this.getOptions(career);
-      });
+      })).subscribe(() => this.completeLoading());
   }
 
   getOptions(career) {
@@ -110,23 +111,34 @@ export class CareerFormComponent implements OnInit {
   }
 
   onSubmit() {
+    this.startLoading();
     if (!this.editMode) {
-      this.careerService.addCareer(this.careerForm.value)
-        .then(x => {
-          this.toastr.success("Carrera creada", "Operación exitosa");
-          this.goBack();
-        }, (r => this.toastr.error(r, "Operación fallida")));
+      this.careerService.addCareer(this.careerForm.value).then(onSuccess).catch(onError);
     } else {
-      this.careerService.updateCareer(this.careerForm.value)
-        .then(x => {
-          this.toastr.success("Carrera editada", "Operación exitosa");
-          this.goBack();
-        })
-        .catch(x => this.toastr.error(x, "Operación fallida"));
+      this.careerService.updateCareer(this.careerForm.value).then(onSuccess).catch(onError);
+    }
+
+    function onSuccess() {
+      this.completeLoading();
+      this.toastr.success("Carrera" + (this.editMode ? "actualizada" : "creada"), "Operación exitosa");
+      this.goBack();
+    }
+    
+    function onError(msg) {
+      this.completeLoading();
+      this.toastr.error(msg, "Operación fallida");
     }
   }
 
   goBack(): void {
     this.location.back();
+  }
+
+  startLoading() {
+    this.ngProgress.start();
+  }
+
+  completeLoading() {
+    this.ngProgress.done();
   }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastrService, Toast } from 'ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
+import { NgProgress } from 'ngx-progressbar';
 
 import { SubjectService } from '../../../services/subject.service';
 import { Subject } from '../../../models/subject';
@@ -15,23 +16,38 @@ export class SubjectListComponent implements OnInit {
   searchResult: Subject[] = [];
   filter: Subject = new Subject();
 
-  constructor(private subjectService: SubjectService, private toastr: ToastrService) { }
+  constructor(
+    private subjectService: SubjectService, 
+    private toastr: ToastrService,
+    public ngProgress: NgProgress
+  ) { }
 
   ngOnInit() {
+    this.startLoading();
     this.getSubjects();
   }
 
   getSubjects() {
     this.subjectService.getSubjects().subscribe(subjects => {
       this.subjects = this.searchResult = subjects;
+      this.completeLoading();
     });
   }
 
   onDelete($key: string){
     if (confirm('¿Estás seguro?')) {
-      this.subjectService.deleteSubject($key)
-      .then(x => this.toastr.success("Asignatura eliminada", "Operación exitosa"))
-      .catch(x => this.toastr.success(x, "Operación fallida"));
+      this.startLoading();
+      this.subjectService.deleteSubject($key).then(onSuccess).catch(onError);
+    }
+
+    function onSuccess() {
+      this.completeLoading();
+      this.toastr.success("Asignatura eliminada", "Operación exitosa");
+    }
+    
+    function onError(msg) {
+      this.completeLoading();
+      this.toastr.success(msg, "Operación fallida");
     }
   }
 
@@ -47,5 +63,13 @@ export class SubjectListComponent implements OnInit {
     if(this.filter.quarter) {
       this.searchResult = this.searchResult.filter(c => c.quarter == this.filter.quarter);
     } 
+  }
+  
+  startLoading() {
+    this.ngProgress.start();
+  }
+
+  completeLoading() {
+    this.ngProgress.done();
   }
 }

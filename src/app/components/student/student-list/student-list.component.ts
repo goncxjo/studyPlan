@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
+import { map, tap, flatMap } from 'rxjs/operators';
 
-import { StudentService } from '../../../services/student.service';
+import { ToastrService } from 'ngx-toastr';
+import { NgProgress } from 'ngx-progressbar';
+
 import { UniversityService } from '../../../services/university.service';
 import { CareerService } from '../../../services/career.service';
-import { Student } from '../../../models/student';
-import { map, tap, flatMap } from 'rxjs/operators';
+import { StudentService } from '../../../services/student.service';
+
 import { University } from '../../../models/university';
 import { Career, CareerOption } from '../../../models/career';
+import { Student } from '../../../models/student';
 
 @Component({
   selector: 'app-student-list',
@@ -23,9 +26,16 @@ export class StudentListComponent implements OnInit {
   careers: Career[];
   careerOptions: CareerOption[];
 
-  constructor(private studentService: StudentService, private universityService: UniversityService, private careerService: CareerService, private toastr: ToastrService) { }
+  constructor(
+    private studentService: StudentService,
+    private universityService: UniversityService, 
+    private careerService: CareerService, 
+    private toastr: ToastrService,
+    public ngProgress: NgProgress  
+  ) { }
 
   ngOnInit() {
+    this.startLoading();
     this.getStudents();
   }
 
@@ -38,19 +48,27 @@ export class StudentListComponent implements OnInit {
           this.getCareers();
           this.getCareerOptions();
         }))
-    ).subscribe();
+    ).subscribe(() => this.completeLoading());
   }
 
   onDelete($key: string) {
     if (confirm('¿Estás seguro?')) {
-      this.studentService.deleteStudent($key)
-        .then(x => this.toastr.success("Estudiante eliminado", "Operación exitosa"))
-        .catch(x => this.toastr.success(x, "Operación fallida"));
+      this.startLoading();
+      this.studentService.deleteStudent($key).then(onSuccess).catch(onError);
+    }
+
+    function onSuccess() {
+      this.completeLoading();
+      this.toastr.success("Estudiante eliminado", "Operación exitosa");
+    }
+    
+    function onError(msg) {
+      this.completeLoading();
+      this.toastr.success(msg, "Operación fallida");
     }
   }
 
   search() {
-    console.log(this.universities, this.careers, this.careerOptions)
     this.searchResult = this.students.filter(c =>
       c.universityId.includes(this.filter.universityId) &&
       c.careerId.includes(this.filter.careerId) &&
@@ -84,5 +102,13 @@ export class StudentListComponent implements OnInit {
   getCareerOptionName(student: Student) {
     const option = this.careerOptions ? this.careerOptions.find(x => x.$key.includes(student.careerOptionId || '')) : [];
     return option ? option['name'] : '';
+  }
+
+  startLoading() {
+    this.ngProgress.start();
+  }
+
+  completeLoading() {
+    this.ngProgress.done();
   }
 }

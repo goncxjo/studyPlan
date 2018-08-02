@@ -4,6 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { ToastrService } from 'ngx-toastr';
+import { NgProgress } from 'ngx-progressbar';
+
 import { UniversityService } from '../../../services/university.service';
 import { HeadquartersService } from '../../../services/headquarters.service';
 import { DepartmentService } from '../../../services/department.service';
@@ -19,7 +21,14 @@ export class UniversityFormComponent implements OnInit {
   private editMode: boolean;
 
   constructor(
-    private route: ActivatedRoute, private location: Location, private universityService: UniversityService, private headquarterService: HeadquartersService, private departmentService: DepartmentService, private toastr: ToastrService, private fb: FormBuilder
+    private route: ActivatedRoute, 
+    private location: Location, 
+    private universityService: UniversityService, 
+    private headquarterService: HeadquartersService, 
+    private departmentService: DepartmentService, 
+    private toastr: ToastrService, 
+    public ngProgress: NgProgress, 
+    private fb: FormBuilder
   ) {
     this.universityForm = this.fb.group({
       $key: '',
@@ -30,11 +39,10 @@ export class UniversityFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.startLoading();
     this.route.data.subscribe(d => {
       this.editMode = d['editMode'];
-      if (this.editMode) {
-        this.fillForm();
-      }
+      this.editMode ? this.fillForm() : this.completeLoading();
     });
   }
 
@@ -97,7 +105,7 @@ export class UniversityFormComponent implements OnInit {
         this.getHeadquarters(university);
         this.getDepartments(university);
       })
-    ).subscribe();
+    ).subscribe(() => this.completeLoading());
   }
 
   getHeadquarters(university) {
@@ -141,22 +149,34 @@ export class UniversityFormComponent implements OnInit {
   }
 
   onSubmit() {
+    this.startLoading();
     if (!this.editMode) {
-      this.universityService.addUniversity(this.universityForm.value)
-        .then(x => {
-          this.toastr.success("Universidad creada", "Operación exitosa");
-          this.goBack();
-        }).catch(x => this.toastr.error(x, "Operación fallida"));
+      this.universityService.addUniversity(this.universityForm.value).then(onSuccess).catch(onError);
     } else {
-      this.universityService.updateUniversity(this.universityForm.value)
-        .then(x => {
-          this.toastr.success("Universidad actualizada", "Operación exitosa");
-          this.goBack();
-        }).catch(x => this.toastr.error(x, "Operación fallida"));
+      this.universityService.updateUniversity(this.universityForm.value).then(onSuccess).catch(onError)
+    }
+
+    function onSuccess() {
+      this.completeLoading();
+      this.toastr.success("Universidad" + (this.editMode ? "actualizada" : "creada"), "Operación exitosa");
+      this.goBack();
+    }
+    
+    function onError(msg) {
+      this.completeLoading();
+      this.toastr.error(msg, "Operación fallida");
     }
   }
 
   goBack(): void {
     this.location.back();
+  }
+
+  startLoading() {
+    this.ngProgress.start();
+  }
+
+  completeLoading() {
+    this.ngProgress.done();
   }
 }

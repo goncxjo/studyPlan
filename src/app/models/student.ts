@@ -11,5 +11,5 @@ export class Student {
   careerOption?: any;
   approved?: [string];
   regularized?: [string];
-  quantityApproved: number = 0;
+  quantityApproved?: number = 0;
 }

@@ -4,8 +4,7 @@ import * as _ from 'lodash';
 import { SubjectService } from './subject.service';
 import { DataSet } from 'vis';
 import { Student } from '../models/student';
-import { Observable } from 'rxjs';
-import { tap, map, flatMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Subject } from '../models/subject';
 
 @Injectable({
@@ -47,7 +46,7 @@ export class NetworkService {
                 from: i,
                 to: element.$key,
                 chosen: { label: false },
-                dashes:true
+                dashes: [10, 10]
               });
             });
           }
@@ -75,9 +74,9 @@ export class NetworkService {
             values.shadowSize = 75;
           }
         },
-        shadow: true,
+        shadow: false,
         font: {
-          face: 'verdana',
+          // face: 'consolas',
           size: 16,
           strokeWidth: 3
         },
@@ -105,14 +104,14 @@ export class NetworkService {
         },
         arrows: 'to',
         width: 2,
-        shadow: true,
+        shadow: false,
         smooth: {
           type: 'vertical',
           roundness: 0
         },
         chosen: {
           edge: function (values, id, selected, hovering) {
-            values.inheritsColor = "both";
+            values.inheritsColor = 'both';
             values.width = 6;
           }
         }
@@ -157,7 +156,7 @@ export class NetworkService {
           direction: 'UD',
           levelSeparation: 200,
           nodeSpacing: 100,
-          treeSpacing: 1,
+          treeSpacing: 0,
           blockShifting: false,
           edgeMinimization: true
         }

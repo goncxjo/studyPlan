@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { tap } from 'rxjs/operators';
+
 import { ToastrService } from 'ngx-toastr';
+import { NgProgress } from 'ngx-progressbar';
 
 import { CareerService } from '../../../services/career.service';
 import { Career } from '../../../models/career';
-import { tap, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-career-list',
@@ -17,9 +19,14 @@ export class CareerListComponent implements OnInit {
   searchResult: Career[] = [];
   filter: Career = new Career();
 
-  constructor(private careerService: CareerService, private toastr: ToastrService) { }
+  constructor(
+    private careerService: CareerService, 
+    private toastr: ToastrService,
+    public ngProgress: NgProgress 
+  ) { }
 
   ngOnInit() {
+    this.startLoading();
     this.getCareers();
   }
 
@@ -30,22 +37,30 @@ export class CareerListComponent implements OnInit {
         const careers = items.map(career => {
           career.level = {
             $key: career.level,
-            name: this.levels.find(l => l.key == career.level).value || ''
-          }
+            name: this.levels.find(l => l.key === career.level).value || ''
+          };
           return career;
-        })
+        });
 
         this.careers = careers;
         this.searchResult = careers;
       })
-    ).subscribe();
+    ).subscribe(() => this.completeLoading());
   }
 
-  onDelete($key: string){
+  onDelete($key: string) {
     if (confirm('¿Estás seguro?')) {
-      this.careerService.deleteCareer($key)
-      .then(x => this.toastr.success("Carrera eliminada", "Operación exitosa"))
-      .catch(x => this.toastr.success(x, "Operación fallida"));
+      this.startLoading();
+      this.careerService.deleteCareer($key).then(onSuccess).catch(onError);
+    }
+
+    function onSuccess() {
+      this.completeLoading();
+      this.toastr.success('Carrera eliminada', 'Operación exitosa');
+    }
+    function onError(msg) {
+      this.completeLoading();
+      this.toastr.success(msg, 'Operación fallida');
     }
   }
 
@@ -55,5 +70,13 @@ export class CareerListComponent implements OnInit {
       c.$key.includes(this.filter.name || '') &&
       c.level.$key.includes(this.filter.level || '')
     );
+  }
+
+  startLoading() {
+    this.ngProgress.start();
+  }
+
+  completeLoading() {
+    this.ngProgress.done();
   }
 }

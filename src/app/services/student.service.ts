@@ -44,18 +44,19 @@ export class StudentService {
   }
 
   addStudent(student: Student) {
-    return this.db.list(this.route).push({
+    const newStudentKey = this.db.createPushId(); 
+    return this.db.list<Student>(this.route).set(newStudentKey, {
       name: student.name,
       age: student.age,
       studentId: student.studentId,
       universityId: student.universityId,
       careerId: student.careerId,
-      careerOptionId: student.careerOptionId,
+      careerOptionId: student.careerOptionId
     });
   }
 
   updateStudent(student: Student) {
-    return this.db.list(this.route).update(student.$key, {
+    return this.db.list<Student>(this.route).update(student.$key, {
       name: student.name,
       age: student.age,
       studentId: student.studentId,

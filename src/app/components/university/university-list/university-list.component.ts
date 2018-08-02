@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-
+import { NgProgress } from 'ngx-progressbar';
 import { UniversityService } from '../../../services/university.service';
 import { University } from '../../../models/university';
 
@@ -15,28 +15,50 @@ export class UniversityListComponent implements OnInit {
   searchResult: University[] = [];
   filter: University = new University();
 
-  constructor(private universityService: UniversityService, private toastr: ToastrService) { }
+  constructor(
+    private universityService: UniversityService, 
+    private toastr: ToastrService, 
+    public ngProgress: NgProgress
+  ) { }
 
   ngOnInit() {
+    this.startLoading();
     this.getUniversities();
   }
 
   getUniversities() {
     this.universityService.getUniversities().subscribe(universities => {
-      this.universities = universities;
-      this.searchResult = universities;
+      this.universities = this.searchResult = universities;
+      this.completeLoading();
     });
   }
 
   onDelete($key: string) {
     if (confirm('¿Estás seguro?')) {
-      this.universityService.deleteUniversity($key)
-        .then(x => this.toastr.success("Universidad eliminada", "Operación exitosa"))
-        .catch(x => this.toastr.success(x, "Operación fallida"));;
+      this.startLoading();
+      this.universityService.deleteUniversity($key).then(onSuccess).catch(onError);
+    }
+
+    function onSuccess() {
+      this.completeLoading();
+      this.toastr.success("Universidad eliminada", "Operación exitosa");
+    }
+    
+    function onError(msg) {
+      this.completeLoading();
+      this.toastr.success(msg, "Operación fallida");
     }
   }
 
   search() {
     this.searchResult = this.universities.filter(u => u.$key.includes(this.filter.$key || '') && u.name.includes(this.filter.name || ''));
+  }
+
+  startLoading() {
+    this.ngProgress.start();
+  }
+
+  completeLoading() {
+    this.ngProgress.done();
   }
 }

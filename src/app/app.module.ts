@@ -6,12 +6,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { environment } from '../environments/environment';
 
-
 // FIREBASE
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 // TOASTR
 import { ToastrModule } from 'ngx-toastr';
+// PROGRESSBAR
+import { NgProgressModule } from 'ngx-progressbar';
 
 // COMPONENTS
 import { NetworkComponent } from './components/network/network.component';
@@ -69,8 +70,14 @@ import { StudentService } from './services/student.service';
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
     AppRoutingModule,
+    NgProgressModule,
   ],
-  providers: [SubjectService, UniversityService, CareerService, StudentService],
+  providers: [
+    SubjectService,
+    UniversityService,
+    CareerService,
+    StudentService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
