@@ -14,46 +14,60 @@ export class NetworkService {
   dataset: any;
   subjects: Subject[];
 
-  constructor(private subjectService: SubjectService) {}
+  constructor(private subjectService: SubjectService) { }
 
   getCourses(studentId, careerId, careerOptionId) {
     return this.dataset = this.subjectService.getSubjects().pipe(
       map(subjects => {
         let edges = [];
         const nodes = subjects
-        .filter(s => (s.careerId || '').includes(careerId) && (s.careerOptionId ? s.careerOptionId.includes(careerOptionId) : true))
-        .map(element => {
-          const node = {
-            id: element.$key,
-            label: element.name,
-            level: element.quarter,
-            group: studentId ? 0 : element.year,
-          };
-          if (element.correlatives) {
-            (element.correlatives['approved'] || []).forEach(i => {
-              edges.push({
-                from: i,
-                to: element.$key
-              });
-            });
-          }
-          if (element.correlatives) {
-            (element.correlatives['regularized'] || []).forEach(i => {
-              edges.push({
-                from: i,
-                to: element.$key,
-                chosen: { label: false },
-                dashes: [10, 10]
-              });
-            });
-          }
-          return node;
-        });
+          .filter(s => (s.careerId || '').includes(careerId) && (s.careerOptionId ? s.careerOptionId.includes(careerOptionId) : true))
+          .map(element => {
+            const node = this.generateNode(element, studentId);
+            edges = this.getEdges(element, edges);
+            return node;
+          });
         return {
           nodes: new DataSet(nodes),
           edges: new DataSet(edges),
         };
       }));
+  }
+
+  generateNode(subject, studentId) {
+    return {
+      id: subject.$key,
+      label: subject.name,
+      level: subject.quarter,
+      group: studentId ? 0 : subject.year,
+      title: subject.name
+    };
+  }
+
+  getEdges(subject, edges) {
+    const correlatives = subject.correlatives || { approved: [], regularized: [] }; 
+    const approved = correlatives['approved'] || []; 
+    const regularized = correlatives['regularized'] || [];
+    const realRegularized = _.difference(regularized, approved)
+    
+    approved.forEach(i => {
+      edges.push({
+        from: i,
+        to: subject.$key,
+        title: 'aprobada'
+      });
+    });
+
+    realRegularized.forEach(i => {
+      edges.push({
+        from: i,
+        to: subject.$key,
+        title: 'regularizada',
+        dashes: [10, 10]
+      });
+    });
+
+    return edges;
   }
 
   getOptions() {
@@ -126,27 +140,27 @@ export class NetworkService {
         }
       },
       physics: {
-    hierarchicalRepulsion: {
-      centralGravity: 0.5,
-      springLength: 100,
-      springConstant: 0.01,
-      nodeDistance: 120,
-      damping: 0.09
-    },
-    maxVelocity: 50,
-    minVelocity: 0.1,
-    solver: 'barnesHut',
-    stabilization: {
-      enabled: true,
-      iterations: 1000,
-      updateInterval: 100,
-      onlyDynamicEdges: false,
-      fit: true
-    },
+        hierarchicalRepulsion: {
+          centralGravity: 0.5,
+          springLength: 100,
+          springConstant: 0.01,
+          nodeDistance: 120,
+          damping: 0.09
+        },
+        maxVelocity: 50,
+        minVelocity: 0.1,
+        solver: 'barnesHut',
+        stabilization: {
+          enabled: true,
+          iterations: 1000,
+          updateInterval: 100,
+          onlyDynamicEdges: false,
+          fit: true
+        },
 
       },
       interaction: {
-        tooltipDelay: 200,
+        tooltipDelay: 10,
         navigationButtons: true,
       }
     };
