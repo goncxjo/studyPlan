@@ -23,7 +23,7 @@ export class StudentPlanComponent implements OnInit {
   universities: University[];
   careers: Career[];
   careerOptions: CareerOption[];
-  hasFinished: Boolean = false;
+  isReady: Boolean = false;
 
   constructor(
     private route: ActivatedRoute, 
@@ -43,7 +43,7 @@ export class StudentPlanComponent implements OnInit {
     this.studentService.getStudentById(id).subscribe(s => {
       this.student = s;
       this.student.$key = id;
-      this.hasFinished = true;
+      this.isReady = true;
       this.completeLoading();
     });
   }

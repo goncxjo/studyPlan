@@ -16,7 +16,7 @@ import { Career } from '../../../models/career';
 export class CareerPlanComponent implements OnInit {
 
   career: Career = new Career();
-  hasFinished: Boolean = false;
+  isReady: Boolean = false;
 
   constructor(
     private route: ActivatedRoute, 
@@ -35,7 +35,7 @@ export class CareerPlanComponent implements OnInit {
     this.careerService.getCareerById(id).subscribe(c => {
       this.career = c;
       this.career.$key = id;
-      this.hasFinished = true;
+      this.isReady = true;
       this.completeLoading();
     });
   }
