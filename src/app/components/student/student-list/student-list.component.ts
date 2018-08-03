@@ -25,6 +25,7 @@ export class StudentListComponent implements OnInit {
   universities: University[];
   careers: Career[];
   careerOptions: CareerOption[];
+  isReady: Boolean = false;
 
   constructor(
     private studentService: StudentService,
@@ -48,7 +49,10 @@ export class StudentListComponent implements OnInit {
           this.getCareers();
           this.getCareerOptions();
         }))
-    ).subscribe(() => this.completeLoading());
+    ).subscribe(() => {
+      this.isReady = true;
+      this.completeLoading();
+    });
   }
 
   onDelete($key: string) {

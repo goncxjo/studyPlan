@@ -26,6 +26,7 @@ import { CareerListComponent } from './components/career/career-list/career-list
 import { CareerFormComponent } from './components/career/career-form/career-form.component';
 import { CareerSelectorComponent } from './components/career/career-selector/career-selector.component';
 import { DepartmentMultiselectorComponent } from './components/department/department-multiselector/department-multiselector.component';
+import { LoadingComponent } from './components/shared/loading/loading.component';
 
 // SERVICES
 import { SubjectService } from './services/subject.service';
@@ -64,6 +65,7 @@ import { StudentPlanComponent } from './components/student/student-plan/student-
     StudentListComponent,
     CareerPlanComponent,
     StudentPlanComponent,
+    LoadingComponent,
   ],
   imports: [
     BrowserModule,

@@ -14,6 +14,7 @@ export class UniversityListComponent implements OnInit {
   universities: University[];
   searchResult: University[] = [];
   filter: University = new University();
+  isReady: Boolean = false;
 
   constructor(
     private universityService: UniversityService, 
@@ -29,6 +30,7 @@ export class UniversityListComponent implements OnInit {
   getUniversities() {
     this.universityService.getUniversities().subscribe(universities => {
       this.universities = this.searchResult = universities;
+      this.isReady = true;
       this.completeLoading();
     });
   }
@@ -41,12 +43,12 @@ export class UniversityListComponent implements OnInit {
 
     function onSuccess() {
       this.completeLoading();
-      this.toastr.success("Universidad eliminada", "Operación exitosa");
+      this.toastr.success('Universidad eliminada', 'Operación exitosa');
     }
     
     function onError(msg) {
       this.completeLoading();
-      this.toastr.success(msg, "Operación fallida");
+      this.toastr.success(msg, 'Operación fallida');
     }
   }
 

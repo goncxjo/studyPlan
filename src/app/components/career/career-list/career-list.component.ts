@@ -18,6 +18,7 @@ export class CareerListComponent implements OnInit {
   levels: any[];
   searchResult: Career[] = [];
   filter: Career = new Career();
+  isReady: Boolean = false;
 
   constructor(
     private careerService: CareerService, 
@@ -42,8 +43,8 @@ export class CareerListComponent implements OnInit {
           return career;
         });
 
-        this.careers = careers;
-        this.searchResult = careers;
+        this.careers = this.searchResult = careers;
+        this.isReady = true;
       })
     ).subscribe(() => this.completeLoading());
   }

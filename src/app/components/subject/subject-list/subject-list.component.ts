@@ -15,6 +15,7 @@ export class SubjectListComponent implements OnInit {
   subjects: Subject[];
   searchResult: Subject[] = [];
   filter: Subject = new Subject();
+  isReady: Boolean = false;
 
   constructor(
     private subjectService: SubjectService, 
@@ -30,6 +31,7 @@ export class SubjectListComponent implements OnInit {
   getSubjects() {
     this.subjectService.getSubjects().subscribe(subjects => {
       this.subjects = this.searchResult = subjects;
+      this.isReady = true;
       this.completeLoading();
     });
   }
