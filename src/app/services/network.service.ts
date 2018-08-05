@@ -21,7 +21,7 @@ export class NetworkService {
       map(subjects => {
         let edges = [];
         const nodes = subjects
-          .filter(s => (s.careerId || '').includes(careerId) && (s.careerOptionId ? s.careerOptionId.includes(careerOptionId) : true))
+          .filter(s => s.careerId === careerId && this.isEmptyOrContainsSelectedOption(s, careerOptionId))
           .map(element => {
             const node = this.generateNode(element, studentId);
             edges = this.getEdges(element, edges);
@@ -34,6 +34,10 @@ export class NetworkService {
       }));
   }
 
+  isEmptyOrContainsSelectedOption(subject, selectedOption) {
+    return subject.careerOptions ? subject.careerOptions.find(o => o === selectedOption) : true;
+  }
+
   generateNode(subject, studentId) {
     return {
       id: subject.$key,
@@ -44,10 +48,10 @@ export class NetworkService {
   }
 
   getEdges(subject, edges) {
-    const correlatives = subject.correlatives || { approved: [], regularized: [] }; 
-    const approved = correlatives['approved'] || []; 
+    const correlatives = subject.correlatives || { approved: [], regularized: [] };
+    const approved = correlatives['approved'] || [];
     const regularized = correlatives['regularized'] || [];
-    const realRegularized = _.difference(regularized, approved)
+    const realRegularized = _.difference(regularized, approved);
     
     approved.forEach(i => {
       edges.push({
@@ -134,7 +138,7 @@ export class NetworkService {
         }
       },
       layout: {
-        improvedLayout:false,
+        improvedLayout: false,
         hierarchical: {
           enabled: true,
           direction: 'LR',
@@ -151,7 +155,7 @@ export class NetworkService {
           damping: 0.09
         },
         maxVelocity: 50,
-        minVelocity: 0.1,
+        minVelocity: 1,
         solver: 'barnesHut',
         stabilization: false
 

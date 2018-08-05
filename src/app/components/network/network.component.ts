@@ -52,5 +52,8 @@ export class NetworkComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log(this.student, this.career, this.careerOption);
+    if (changes['careerOption'] && !changes['careerOption'].isFirstChange()) {
+      this.draw();
+    }
   }
 }

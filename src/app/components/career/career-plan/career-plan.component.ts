@@ -17,6 +17,7 @@ export class CareerPlanComponent implements OnInit {
 
   filter: Career = new Career();
   isReady: Boolean = false;
+  selectedOption: string;
 
   constructor(
     private route: ActivatedRoute, 
@@ -35,17 +36,15 @@ export class CareerPlanComponent implements OnInit {
     this.careerService.getCareerById(id).subscribe(c => {
       this.filter = c;
       this.filter.$key = id;
+      this.filter['selectedCareerOption'] = this.filter['options'] ? this.filter.options[0] : '';
+      this.selectedOption = this.filter['selectedCareerOption'];
       this.isReady = true;
       this.completeLoading();
     });
   }
 
-  getCareerId() {
-    return this.filter ? this.filter['$key'] : '';
-  }
-
-  getCareerOptionId() {
-    return this.filter ? this.filter.options ? this.filter.options : '' : '';
+  sendFiltersToNetwork() {
+    this.selectedOption = this.filter['selectedCareerOption'] || this.selectedOption;
   }
   
   startLoading() {
