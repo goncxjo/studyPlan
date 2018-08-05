@@ -8,6 +8,7 @@ import { AngularFireDatabase } from 'angularfire2/database';
 })
 export class AppComponent {
   title = "studyPlan!"
+  isNavbarCollapsed = true;
 
   constructor(private db: AngularFireDatabase) { }
   

@@ -9,10 +9,10 @@
 
 <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" routerLink="/">{{ title }}</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler" type="button" (click)="isNavbarCollapsed = !isNavbarCollapsed" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
+  <div [ngbCollapse]="isNavbarCollapsed" class="collapse navbar-collapse" id="navbarNav">
     <div class="navbar-nav">
       <a class="nav-item nav-link" routerLink="/universidades" routerLinkActive="active">Universidades</a>
       <a class="nav-item nav-link" routerLink="/carreras" routerLinkActive="active">Carreras</a>
