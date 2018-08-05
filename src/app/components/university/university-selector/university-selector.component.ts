@@ -12,6 +12,7 @@ import { University } from '../../../models/university';
 export class UniversitySelectorComponent implements OnInit {
   @Input() parent: FormGroup;
   @Input() name: string;
+  @Input() disabled: Boolean;
   @Input() model: string;
   @Output() modelChange = new EventEmitter();
 

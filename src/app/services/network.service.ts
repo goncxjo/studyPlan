@@ -40,7 +40,6 @@ export class NetworkService {
       label: subject.name,
       level: subject.quarter,
       group: studentId ? 0 : subject.year,
-      title: subject.name
     };
   }
 
@@ -91,6 +90,9 @@ export class NetworkService {
           minimum: 200,
           maximum: 250
         },
+         shapeProperties: {
+          interpolation: false
+        }
       },
       edges: {
         color: {
@@ -132,6 +134,7 @@ export class NetworkService {
         }
       },
       layout: {
+        improvedLayout:false,
         hierarchical: {
           enabled: true,
           direction: 'LR',
@@ -150,13 +153,7 @@ export class NetworkService {
         maxVelocity: 50,
         minVelocity: 0.1,
         solver: 'barnesHut',
-        stabilization: {
-          enabled: true,
-          iterations: 1000,
-          updateInterval: 100,
-          onlyDynamicEdges: false,
-          fit: true
-        },
+        stabilization: false
 
       },
       interaction: {

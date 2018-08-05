@@ -13,6 +13,8 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { ToastrModule } from 'ngx-toastr';
 // PROGRESSBAR
 import { NgProgressModule } from 'ngx-progressbar';
+// NG-BOOTSTRAP
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 // COMPONENTS
 import { NetworkComponent } from './components/network/network.component';
@@ -77,6 +79,7 @@ import { StudentPlanComponent } from './components/student/student-plan/student-
     ToastrModule.forRoot(),
     AppRoutingModule,
     NgProgressModule,
+    NgbModule.forRoot(),
   ],
   providers: [
     SubjectService,

@@ -15,7 +15,7 @@ import { Career } from '../../../models/career';
 })
 export class CareerPlanComponent implements OnInit {
 
-  career: Career = new Career();
+  filter: Career = new Career();
   isReady: Boolean = false;
 
   constructor(
@@ -33,19 +33,19 @@ export class CareerPlanComponent implements OnInit {
   getCareer() {
     const id = this.route.snapshot.paramMap.get('$key');
     this.careerService.getCareerById(id).subscribe(c => {
-      this.career = c;
-      this.career.$key = id;
+      this.filter = c;
+      this.filter.$key = id;
       this.isReady = true;
       this.completeLoading();
     });
   }
 
   getCareerId() {
-    return this.career ? this.career['$key'] : '';
+    return this.filter ? this.filter['$key'] : '';
   }
 
   getCareerOptionId() {
-    return this.career ? this.career.options ? this.career.options : '' : '';
+    return this.filter ? this.filter.options ? this.filter.options : '' : '';
   }
   
   startLoading() {

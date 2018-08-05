@@ -13,6 +13,7 @@ export class CareerSelectorComponent {
   @Input() parent: FormGroup;
   @Input() name: string;
   @Input() filterUniversityId: string;
+  @Input() disabled: Boolean;
   @Input() model: string;
   @Output() modelChange = new EventEmitter();
 
@@ -20,26 +21,32 @@ export class CareerSelectorComponent {
   filterResult: Career[];
 
   constructor(private careerService: CareerService) {
-    this.filterResult = [];
     this.getCareers();
   }
   
   getCareers() {
     this.careerService.getCareers().subscribe(careers => {
       this.careers = careers;
+      this.filterByUniversityId(this.filterUniversityId);
     });
   }
 
   change(newValue) {
-    this.model = newValue;
-    this.modelChange.emit(newValue);
+    if (!this.disabled) {
+      this.model = newValue;
+      this.modelChange.emit(newValue);
+    }
   }
 
   ngOnChanges(changes: SimpleChange) {
-    if (changes['filterUniversityId']) {
-      const filterUniversityId = changes['filterUniversityId'].currentValue || '';
-      this.filterResult = this.careers ? this.careers.filter(c => c.universityId === filterUniversityId) : [];
-      this.change('');
+    if (changes['filterUniversityId'] && !changes['filterUniversityId'].isFirstChange()) {
+      this.filterByUniversityId(changes['filterUniversityId'].currentValue);
     }
+  }
+
+  filterByUniversityId(universityId: string) {
+    const filterUniversityId = universityId || '';
+    this.filterResult = this.careers ? this.careers.filter(c => c.universityId === filterUniversityId) : [];
+    this.change('');
   }
 }

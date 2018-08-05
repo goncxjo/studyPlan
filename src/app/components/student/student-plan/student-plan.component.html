@@ -1,21 +1,35 @@
-<div *ngIf="isReady" class="card bg-light">
+<div *ngIf="isReady">
+
+  <div class="mb-3 card">
     <div class="card-header bg-dark text-white">
-      <b>
-        {{ student.name + " - Plan de estudios" }}
-      </b>
+      <b>{{ student.name + " - Plan de estudios" }}</b>
     </div>
-    <div class="card-body m-0 p-0">
-      
-      <app-network
-      [student]="student.$key"
-      [career]="getCareerId()"
-      [careerOption]="getCareerOptionId()"
-      ></app-network>
-  
-    </div>
-    <div class="card-footer">
-      <div class="d-flex justify-content-between">
-        <button class="btn btn-primary" (click)="goBack()">Volver</button>
-      </div>
+    <div class="card-body">
+      <form>
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label for="universityId">Universidad:</label>
+            <app-university-selector [(model)]="student.universityId" [disabled]="true"></app-university-selector>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="careerId">Carrera:</label>
+            <app-career-selector [(model)]="student.careerId" [filterUniversityId]="student.universityId" [disabled]="true"></app-career-selector>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="careerOptionId">Orientacion:</label>
+            <app-career-option-selector [(model)]="student.careerOptionId" [filterCareerId]="student.careerId"></app-career-option-selector>
+          </div>
+        </div>
+        <div class="d-flex">
+          <button class="p-2 btn btn-primary" (click)="goBack()">
+            <i class="fas fa-arrow-left"></i> Volver</button>
+          <button type="button" class="ml-auto p-2 btn btn-primary">
+            <i class="fas fa-sync-alt"></i> Regenerar</button>
+        </div>
+      </form>
     </div>
   </div>
+
+  <app-network [student]="student.$key" [career]="getCareerId()" [careerOption]="getCareerOptionId()"></app-network>
+
+</div>
