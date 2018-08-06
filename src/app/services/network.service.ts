@@ -73,7 +73,7 @@ export class NetworkService {
     return edges;
   }
 
-  getOptions() {
+  getDefaultOptions() {
     let config = {
       locale: 'es',
       nodes: {
@@ -154,18 +154,26 @@ export class NetworkService {
           nodeDistance: 120,
           damping: 0.09
         },
-        maxVelocity: 50,
-        minVelocity: 1,
-        solver: 'barnesHut',
-        stabilization: false
-
+        forceAtlas2Based: {
+          gravitationalConstant: -26,
+          centralGravity: 0.005,
+          springLength: 230,
+          springConstant: 0.18
+        },
+        maxVelocity: 146,
+        solver: 'forceAtlas2Based',
+        timestep: 0.35,
+        stabilization: {
+            enabled: true,
+            iterations: 2000,
+            updateInterval: 25
+        }
       },
       interaction: {
         tooltipDelay: 10,
         navigationButtons: true,
       }
     };
-
     return config;
   }
 }

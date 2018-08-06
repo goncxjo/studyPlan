@@ -26,12 +26,11 @@ export class NetworkComponent implements OnInit {
 
   ngOnInit() {
     this.container = document.getElementById('mynetwork');
-    this.options = this.networkService.getOptions();
+    this.options = this.networkService.getDefaultOptions();
     this.generateNetwork(this.student, this.career, this.careerOption);
   }
   
   generateNetwork(student, career, option) {
-    console.log(student, career, option);
     return this.networkService.getCourses(student, career, option).subscribe(dataset => {
       this.data = dataset;
       this.network = new Network(this.container, this.data, this.options);
@@ -51,7 +50,6 @@ export class NetworkComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.student, this.career, this.careerOption);
     if (changes['careerOption'] && !changes['careerOption'].isFirstChange()) {
       this.draw();
     }

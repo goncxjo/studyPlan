@@ -1,31 +1,54 @@
-<ng-progress
-    [positionUsing]="'marginLeft'"
-    [direction]="'leftToRightIncreased'"
-    [color]="'#4286f4'"
-    [trickleSpeed]="500" 
-    [thick]="true" 
-    [ease]="'easeInSine'"
-></ng-progress>
+<ng-progress [positionUsing]="'marginLeft'" [direction]="'leftToRightIncreased'" [color]="'#4286f4'" [trickleSpeed]="500"
+ [thick]="true" [ease]="'easeInSine'"></ng-progress>
 
 <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" routerLink="/">{{ title }}</a>
-  <button class="navbar-toggler" type="button" (click)="isNavbarCollapsed = !isNavbarCollapsed" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+	<a class="navbar-brand" routerLink="/"><b>{{ title }}</b></a>
+	<button *ngIf="!isHome()" class="navbar-toggler" type="button" (click)="isNavbarCollapsed = !isNavbarCollapsed"
+	 data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <div [ngbCollapse]="isNavbarCollapsed" class="collapse navbar-collapse" id="navbarNav">
-    <div class="navbar-nav">
-      <a class="nav-item nav-link" routerLink="/universidades" routerLinkActive="active">Universidades</a>
-      <a class="nav-item nav-link" routerLink="/carreras" routerLinkActive="active">Carreras</a>
-      <a class="nav-item nav-link" routerLink="/asignaturas" routerLinkActive="active">Asignaturas</a>
-      <a class="nav-item nav-link" routerLink="/estudiantes" routerLinkActive="active">Estudiantes</a>
-    </div>
-  </div>
+	<div *ngIf="!isHome()" [ngbCollapse]="isNavbarCollapsed" class="collapse navbar-collapse" id="navbarNav">
+		<div class="navbar-nav">
+			<a class="nav-item nav-link" routerLink="/universidades" routerLinkActive="active">Universidades</a>
+			<a class="nav-item nav-link" routerLink="/carreras" routerLinkActive="active">Carreras</a>
+			<a class="nav-item nav-link" routerLink="/asignaturas" routerLinkActive="active">Asignaturas</a>
+			<a class="nav-item nav-link" routerLink="/estudiantes" routerLinkActive="active">Estudiantes</a>
+		</div>
+	</div>
 </nav>
 
 <div class="container">
-  <div class="row">
-    <div class="col-md-12">
-        <router-outlet></router-outlet>
+	<div class="row">
+
+		<div *ngIf="isHome()" class="col-md-12 mx-auto text-center">
+			<button type="button" class="btn btn-primary btn-sq-lg" routerLink="/universidades">
+          <i class="fas fa-university fa-5x"></i>
+        <div class="mt-4">
+          <h3>Universidades</h3>
+        </div>
+      </button>
+			<button type="button" class="btn btn-primary btn-sq-lg" routerLink="/carreras">
+          <i class="fas fa-graduation-cap fa-5x"></i>
+        <div class="mt-4">
+          <h3>Carreras</h3>
+        </div>
+      </button>
+			<button type="button" class="btn btn-primary btn-sq-lg" routerLink="/asignaturas">
+          <i class="fas fa-book fa-5x"></i>
+        <div class="mt-4">
+          <h3>Asignaturas</h3>
+        </div>
+      </button>
+			<button type="button" class="btn btn-primary btn-sq-lg" routerLink="/estudiantes">
+          <i class="fas fa-user-graduate fa-5x"></i>
+        <div class="mt-4">
+          <h3>Estudiantes</h3>
+        </div>
+      </button>
     </div>
-  </div>
+    
+		<div class="col-md-12">
+			<router-outlet></router-outlet>
+		</div>
+	</div>
 </div>
