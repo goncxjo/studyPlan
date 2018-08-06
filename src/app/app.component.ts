@@ -14,6 +14,6 @@ export class AppComponent {
   constructor(private db: AngularFireDatabase, public router: Router) { }
 
   isHome() {
-    return this.router.url !== '/';
+    return this.router.url === '/';
   }
 }
