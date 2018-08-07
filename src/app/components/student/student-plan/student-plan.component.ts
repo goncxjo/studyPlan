@@ -41,6 +41,10 @@ export class StudentPlanComponent implements OnInit {
     });
   }
 
+  getUniversityId() {
+    return this.student ? this.student['universityId'] || '' : '';
+  }
+
   getCareerId() {
     return this.student ? this.student['careerId'] || '' : '';
   }

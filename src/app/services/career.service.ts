@@ -44,7 +44,6 @@ export class CareerService {
             value: levels.find(l => l.key === val.level).value || ''
           };
           val.$key = key;
-          console.log(val);
           return val;
         })));
 
