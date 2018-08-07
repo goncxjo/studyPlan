@@ -52,9 +52,9 @@
           <td class="align-middle">{{ student.studentId }}</td>
           <td class="align-middle">{{ student.name }}</td>
           <td class="align-middle">{{ student.age }}</td>
-          <td class="align-middle">{{ getUniversityName(student) }}</td>
-          <td class="align-middle">{{ getCareerName(student) }}</td>
-          <td class="align-middle">{{ getCareerOptionName(student) }}</td>
+          <td class="align-middle">{{ student.universityName }}</td>
+          <td class="align-middle">{{ student.careerName }}</td>
+          <td class="align-middle">{{ student.careerOptionName }}</td>
           <td class="align-middle">
             <div class="btn-group" role="group">
               <button type="button" class="btn btn-primary text-white" routerLink="/estudiantes/editar/{{ student.$key }}" placement="top" ngbTooltip="Editar">

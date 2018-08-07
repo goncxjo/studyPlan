@@ -2,7 +2,7 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { UniversityService } from '../../../services/university.service';
-import { University } from '../../../models/university';
+import { UniversityMiniList } from '../../../models/university/university';
 
 @Component({
   selector: 'app-university-selector',
@@ -16,16 +16,16 @@ export class UniversitySelectorComponent implements OnInit {
   @Input() model: string;
   @Output() modelChange = new EventEmitter();
 
-  universities: University[];
+  universities: UniversityMiniList[];
 
   constructor(private universityService: UniversityService) { }
 
   ngOnInit() {
     this.getUniversities();
   }
-  
+
   getUniversities() {
-    this.universityService.getUniversities().subscribe(universities => { this.universities = universities });
+    this.universityService.getUniversityMiniList().subscribe(universities => { this.universities = universities; });
   }
 
   change(newValue) {

@@ -2,7 +2,7 @@ import { Component, Input, OnInit, SimpleChange, EventEmitter, Output } from '@a
 import { FormGroup } from '@angular/forms';
 
 import { CareerService } from '../../../services/career.service';
-import { CareerOption } from '../../../models/career';
+import { CareerOptionMiniList } from '../../../models/career/option';
 
 @Component({
   selector: 'app-career-option-selector',
@@ -16,16 +16,16 @@ export class CareerOptionSelectorComponent {
   @Input() disabled: Boolean;
   @Input() model: string;
   @Output() modelChange = new EventEmitter();
-  
-  options: CareerOption[];
-  filterResult: CareerOption[];
+
+  options: CareerOptionMiniList[];
+  filterResult: CareerOptionMiniList[];
 
   constructor(private careerService: CareerService) {
     this.getOptions();
   }
-  
+
   getOptions() {
-    this.careerService.getOptions().subscribe(options => {
+    this.careerService.getOptionMiniList().subscribe(options => {
       this.options = options;
       this.filterByCareerId(this.filterCareerId);
       });

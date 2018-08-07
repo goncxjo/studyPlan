@@ -6,4 +6,5 @@ export class Headquarters {
     country?: string;
     telephone?: string;
     universityId?: string;
+    isHeadOffice: boolean;
 }

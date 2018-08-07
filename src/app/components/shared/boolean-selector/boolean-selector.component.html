@@ -1,12 +1,14 @@
 <div *ngIf="!parent">
   <select class="form-control select" [ngModel]="model" (ngModelChange)="change($event)">
-    <option *ngFor="let element of elements" [value]="element.key">{{ element.value }}</option>
+    <option [ngValue]="true">Sí</option>
+    <option [ngValue]="false">No</option>
   </select>
 </div>
 <div *ngIf="parent">
   <div [formGroup]="parent">
     <select class="form-control select" [formControlName]="name">
-      <option *ngFor="let element of elements" [value]="element.key">{{ element.value }}</option>
+      <option [ngValue]="true">Sí</option>
+      <option [ngValue]="false">No</option>
     </select>
   </div>
 </div>

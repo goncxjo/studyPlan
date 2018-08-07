@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NgProgress } from 'ngx-progressbar';
 
 import { CareerService } from '../../../services/career.service';
-import { Career } from '../../../models/career';
+import { Career } from '../../../models/career/career';
 
 @Component({
   selector: 'app-career-plan',
@@ -20,17 +20,17 @@ export class CareerPlanComponent implements OnInit {
   selectedOption: string;
 
   constructor(
-    private route: ActivatedRoute, 
-    private location: Location, 
-    public ngProgress: NgProgress, 
-    private careerService: CareerService
+    private route: ActivatedRoute
+    , private location: Location
+    , public ngProgress: NgProgress
+    , private careerService: CareerService
   ) {}
 
   ngOnInit() {
     this.startLoading();
     this.getCareer();
   }
-  
+
   getCareer() {
     const id = this.route.snapshot.paramMap.get('$key');
     this.careerService.getCareerById(id).subscribe(c => {
@@ -46,11 +46,11 @@ export class CareerPlanComponent implements OnInit {
   sendFiltersToNetwork() {
     this.selectedOption = this.filter['selectedCareerOption'] || this.selectedOption;
   }
-  
+
   startLoading() {
     this.ngProgress.start();
   }
-  
+
   completeLoading() {
     this.ngProgress.done();
   }

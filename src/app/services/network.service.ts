@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { SubjectService } from './subject.service';
 import { DataSet } from 'vis';
 import { map } from 'rxjs/operators';
-import { Subject } from '../models/subject';
+import { Subject } from '../models/subject/subject';
 
 @Injectable({
   providedIn: 'root'
@@ -16,12 +16,16 @@ export class NetworkService {
 
   constructor(private subjectService: SubjectService) { }
 
-  getCourses(studentId, careerId, careerOptionId) {
+  getCourses(studentId, universityId, careerId, careerOptionId) {
     return this.dataset = this.subjectService.getSubjects().pipe(
       map(subjects => {
         let edges = [];
         const nodes = subjects
-          .filter(s => s.careerId === careerId && this.isEmptyOrContainsSelectedOption(s, careerOptionId))
+          .filter(s => {
+            const matchesUniversity = s.universityId === universityId;
+            const matchesCareer = (s.careerId === careerId || s.isCrossDisciplinary);
+            return matchesUniversity && matchesCareer && this.isEmptyOrContainsSelectedOption(s, careerOptionId);
+          })
           .map(element => {
             const node = this.generateNode(element, studentId);
             edges = this.getEdges(element, edges);

@@ -21,14 +21,14 @@ export class UniversityFormComponent implements OnInit {
   private editMode: boolean;
 
   constructor(
-    private route: ActivatedRoute, 
-    private location: Location, 
-    private universityService: UniversityService, 
-    private headquarterService: HeadquartersService, 
-    private departmentService: DepartmentService, 
-    private toastr: ToastrService, 
-    public ngProgress: NgProgress, 
-    private fb: FormBuilder
+    private route: ActivatedRoute
+    , private location: Location
+    , private universityService: UniversityService
+    , private headquarterService: HeadquartersService
+    , private departmentService: DepartmentService
+    , private toastr: ToastrService
+    , public ngProgress: NgProgress
+    , private fb: FormBuilder
   ) {
     this.universityForm = this.fb.group({
       $key: '',
@@ -163,10 +163,10 @@ export class UniversityFormComponent implements OnInit {
 
   onSuccess() {
     this.completeLoading();
-    this.toastr.success('Universidad' + (this.editMode ? 'actualizada' : 'creada'), 'Operación exitosa');
+    this.toastr.success('Universidad ' + (this.editMode ? 'actualizada' : 'creada'), 'Operación exitosa');
     this.goBack();
   }
-  
+
   onError(msg) {
     this.completeLoading();
     this.toastr.error(msg, 'Operación fallida');

@@ -2,7 +2,7 @@ import { Component, Input, OnInit, SimpleChange, EventEmitter, Output } from '@a
 import { FormGroup } from '@angular/forms';
 
 import { CareerService } from '../../../services/career.service';
-import { Career } from '../../../models/career';
+import { Career } from '../../../models/career/career';
 
 @Component({
   selector: 'app-career-selector',
@@ -23,7 +23,7 @@ export class CareerSelectorComponent {
   constructor(private careerService: CareerService) {
     this.getCareers();
   }
-  
+
   getCareers() {
     this.careerService.getCareers().subscribe(careers => {
       this.careers = careers;

@@ -1,16 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { map, tap, flatMap } from 'rxjs/operators';
 
 import { ToastrService } from 'ngx-toastr';
 import { NgProgress } from 'ngx-progressbar';
 
-import { UniversityService } from '../../../services/university.service';
-import { CareerService } from '../../../services/career.service';
 import { StudentService } from '../../../services/student.service';
-
-import { University } from '../../../models/university';
-import { Career, CareerOption } from '../../../models/career';
-import { Student } from '../../../models/student';
+import { StudentList } from '../../../models/student/student';
 
 @Component({
   selector: 'app-student-list',
@@ -19,20 +13,16 @@ import { Student } from '../../../models/student';
 })
 export class StudentListComponent implements OnInit {
 
-  students: Student[];
-  searchResult: Student[] = [];
-  filter: Student = new Student();
-  universities: University[];
-  careers: Career[];
-  careerOptions: CareerOption[];
+  students: StudentList[];
+  searchResult: StudentList[] = [];
+  filter: StudentList = new StudentList();
+
   isReady: Boolean = false;
 
   constructor(
-    private studentService: StudentService,
-    private universityService: UniversityService, 
-    private careerService: CareerService, 
-    private toastr: ToastrService,
-    public ngProgress: NgProgress  
+    private studentService: StudentService
+    , private toastr: ToastrService
+    , public ngProgress: NgProgress
   ) { }
 
   ngOnInit() {
@@ -41,15 +31,8 @@ export class StudentListComponent implements OnInit {
   }
 
   getStudents() {
-    this.studentService.getStudents().pipe(
-      tap(ss => this.students = this.searchResult = ss),
-      flatMap(ss => ss
-        .map(s => {
-          this.getUniversities();
-          this.getCareers();
-          this.getCareerOptions();
-        }))
-    ).subscribe(() => {
+    this.studentService.getStudentList().subscribe(students => {
+      this.students = this.searchResult = students;
       this.isReady = true;
       this.completeLoading();
     });
@@ -58,18 +41,20 @@ export class StudentListComponent implements OnInit {
   onDelete($key: string) {
     if (confirm('¿Estás seguro?')) {
       this.startLoading();
-      this.studentService.deleteStudent($key).then(onSuccess).catch(onError);
+      this.studentService.deleteStudent($key)
+      .then(() => this.onSuccess())
+      .catch((msg) => this.onError(msg));
     }
+  }
 
-    function onSuccess() {
-      this.completeLoading();
-      this.toastr.success('Estudiante eliminado', 'Operación exitosa');
-    }
-    
-    function onError(msg) {
-      this.completeLoading();
-      this.toastr.success(msg, 'Operación fallida');
-    }
+  onSuccess() {
+    this.completeLoading();
+    this.toastr.success('Alumno eliminado', 'Operación exitosa');
+  }
+
+  onError(msg) {
+    this.completeLoading();
+    this.toastr.error(msg, 'Operación fallida');
   }
 
   search() {
@@ -79,33 +64,6 @@ export class StudentListComponent implements OnInit {
       c.careerOptionId.includes(this.filter.careerOptionId) &&
       c.name.toLowerCase().includes(this.filter.name.toLowerCase())
     );
-  }
-
-  getUniversities() {
-    this.universityService.getUniversities().subscribe(us => this.universities = us);
-  }
-
-  getCareers() {
-    this.careerService.getCareers().subscribe(cs => this.careers = cs);
-  }
-
-  getCareerOptions() {
-    this.careerService.getOptions().subscribe(cs => this.careerOptions = cs);
-  }
-
-  getUniversityName(student: Student) {
-    const university = this.universities ? this.universities.find(x => x.$key === (student.universityId || '')) : [];
-    return university ? university['name'] : '';
-  }
-
-  getCareerName(student: Student) {
-    const career = this.careers ? this.careers.find(x => x.$key === (student.careerId || '')) : [];
-    return career ? career['name'] : '';
-  }
-
-  getCareerOptionName(student: Student) {
-    const option = this.careerOptions ? this.careerOptions.find(x => x.$key === (student.careerOptionId || '')) : [];
-    return option ? option['name'] : '';
   }
 
   startLoading() {

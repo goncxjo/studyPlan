@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { tap } from 'rxjs/operators';
 
 import { ToastrService } from 'ngx-toastr';
 import { NgProgress } from 'ngx-progressbar';
 
 import { CareerService } from '../../../services/career.service';
-import { Career } from '../../../models/career';
+import { CareerList } from '../../../models/career/career';
 
 @Component({
   selector: 'app-career-list',
@@ -14,16 +13,15 @@ import { Career } from '../../../models/career';
 })
 export class CareerListComponent implements OnInit {
 
-  careers: Career[];
-  levels: any[];
-  searchResult: Career[] = [];
-  filter: Career = new Career();
+  careers: CareerList[];
+  searchResult: CareerList[] = [];
+  filter: CareerList = new CareerList();
   isReady: Boolean = false;
 
   constructor(
-    private careerService: CareerService, 
-    private toastr: ToastrService,
-    public ngProgress: NgProgress 
+    private careerService: CareerService
+    , private toastr: ToastrService
+    , public ngProgress: NgProgress
   ) { }
 
   ngOnInit() {
@@ -32,42 +30,35 @@ export class CareerListComponent implements OnInit {
   }
 
   getCareers() {
-    this.careerService.getCareers().pipe(
-      tap(items => {
-        this.levels = this.careerService.getLevels();
-        const careers = items.map(career => {
-          career.level = {
-            $key: career.level,
-            name: this.levels.find(l => l.key === career.level).value || ''
-          };
-          return career;
-        });
-
-        this.careers = this.searchResult = careers;
-        this.isReady = true;
-      })
-    ).subscribe(() => this.completeLoading());
+    this.careerService.getCareerList().subscribe(careers => {
+      this.careers = this.searchResult = careers;
+      this.isReady = true;
+      this.completeLoading();
+    });
   }
 
   onDelete($key: string) {
     if (confirm('¿Estás seguro?')) {
       this.startLoading();
-      this.careerService.deleteCareer($key).then(onSuccess).catch(onError);
-    }
-
-    function onSuccess() {
-      this.completeLoading();
-      this.toastr.success('Carrera eliminada', 'Operación exitosa');
-    }
-    function onError(msg) {
-      this.completeLoading();
-      this.toastr.success(msg, 'Operación fallida');
+      this.careerService.deleteCareer($key)
+      .then(() => this.onSuccess())
+      .catch((msg) => this.onError(msg));
     }
   }
 
+  onSuccess() {
+    this.completeLoading();
+    this.toastr.success('Carrera eliminada', 'Operación exitosa');
+  }
+
+  onError(msg) {
+    this.completeLoading();
+    this.toastr.error(msg, 'Operación fallida');
+  }
+
   search() {
-    this.searchResult = this.careers.filter(c => 
-      c.universityId.includes(this.filter.universityId || '') &&
+    this.searchResult = this.careers.filter(c =>
+      c.university.includes(this.filter.university || '') &&
       c.$key.includes(this.filter.name || '') &&
       c.level.$key.includes(this.filter.level || '')
     );

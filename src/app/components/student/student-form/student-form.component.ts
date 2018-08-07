@@ -85,7 +85,7 @@ export class StudentFormComponent implements OnInit {
   
   onSuccess() {
     this.completeLoading();
-    this.toastr.success('Estudiante' + (this.editMode ? 'actualizado' : 'creado'), 'Operación exitosa');
+    this.toastr.success('Estudiante ' + (this.editMode ? 'actualizado' : 'creado'), 'Operación exitosa');
     this.goBack();
   }
   

@@ -1,53 +1,71 @@
 import { Injectable } from '@angular/core';
-import { AngularFireDatabase, DatabaseSnapshot, AngularFireAction } from 'angularfire2/database';
-import { Subject, SubjectCorrelative } from '../models/subject';
+import { AngularFireDatabase } from 'angularfire2/database';
+
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
+import { Subject, SubjectForm, SubjectList, SubjectMiniList } from '../models/subject/subject';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SubjectService {
-  private route: string = '/subjects';
+  private route = '/subjects';
 
   subject: Observable<Subject>;
   subjects: Observable<Subject[]>;
-  subjectCorrelatives: Observable<SubjectCorrelative[]>;
+  subjectList: Observable<SubjectList[]>;
+  subjectMiniList: Observable<SubjectMiniList[]>;
 
   constructor(private db: AngularFireDatabase) {
     this.subjects = db.list<Subject>(this.route)
-      .snapshotChanges().pipe(
+    .snapshotChanges().pipe(
       map(changes => changes.map(c => {
         const key = c.payload.key;
-        let val = c.payload.val();
+        const val = c.payload.val();
         val.$key = key;
         return val;
-      }
-      ))
-      );
+      }))
+    );
+
+    this.subjectList = db.list<SubjectList>(this.route)
+    .snapshotChanges().pipe(
+      map(changes => changes.map(c => {
+        const key = c.payload.key;
+        const val = c.payload.val();
+        val.$key = key;
+        return val;
+      }))
+    );
+
+    this.subjectMiniList = db.list<SubjectMiniList>(this.route)
+    .snapshotChanges().pipe(
+      map(changes => changes.map(c => {
+        const key = c.payload.key;
+        const val = c.payload.val();
+        val.$key = key;
+        return val;
+      }))
+    );
   }
 
   getSubjects() {
     return this.subjects;
   }
 
+  getSubjectList() {
+    return this.subjectList;
+  }
+
+  getSubjectMiniList() {
+    return this.subjectMiniList;
+  }
+
   getSubjectById(id: string) {
     return this.subject = this.db.object<Subject>(this.route + '/' + id).valueChanges();
   }
 
-  getSubjectsByCareer(id: string) {
-    return this.subjects = this.db.list<Subject>(this.route,
-      ref => ref.orderByChild('careerId').startAt(id))
-      .snapshotChanges().pipe(
-      map(changes => changes.map(c => {
-        const key = c.payload.key;
-        let val = c.payload.val();
-        val.$key = key;
-        return val;
-      })));
-  }
-
-  addSubject(subject: Subject) {
+  addSubject(subject: SubjectForm) {
     const newSubjectKey = this.db.createPushId();
     return this.db.list(this.route).set(newSubjectKey, {
       name: subject.name,
@@ -57,9 +75,10 @@ export class SubjectService {
       classLoad: subject.classLoad,
       credits: subject.credits,
       correlatives: subject.correlatives,
+      universityId: subject.universityId,
       careerId: subject.careerId,
       careerOptions: subject.careerOptions,
-      universityId: subject.universityId,
+      isCrossDisciplinary: subject.isCrossDisciplinary
     });
   }
 
@@ -72,9 +91,10 @@ export class SubjectService {
       classLoad: subject.classLoad,
       credits: subject.credits,
       correlatives: subject.correlatives,
+      universityId: subject.universityId,
       careerId: subject.careerId,
       careerOptions: subject.careerOptions,
-      universityId: subject.universityId,
+      isCrossDisciplinary: subject.isCrossDisciplinary
     });
   }
 

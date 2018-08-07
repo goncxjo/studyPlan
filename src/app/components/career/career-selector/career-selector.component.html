@@ -1,12 +1,12 @@
 <div *ngIf="!parent">
-    <select class="form-control select" [ngModel]="model" (ngModelChange)="change($event)" [attr.disabled]="disabled">
+    <select class="form-control select" [ngModel]="model" (ngModelChange)="change($event)" [attr.disabled]="disabled ? 'disabled' : null">
       <option [value]="''">-- Carreras --</option>
       <option *ngFor="let career of filterResult" [value]="career.$key">{{ career.name }}</option>
     </select>
   </div>
   <div *ngIf="parent">
     <div [formGroup]="parent">
-      <select class="form-control select" [formControlName]="name" [attr.disabled]="disabled">
+      <select class="form-control select" [formControlName]="name" [attr.disabled]="disabled ? 'disabled' : null">
         <option [value]="''">-- Carreras --</option>
         <option *ngFor="let career of filterResult" [value]="career.$key">{{ career.name }}</option>
       </select>

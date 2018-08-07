@@ -19,12 +19,12 @@ export class SubjectFormComponent implements OnInit {
   private editMode: boolean;
 
   constructor(
-    private route: ActivatedRoute, 
-    private location: Location, 
-    private subjectService: SubjectService, 
-    private toastr: ToastrService, 
-    public ngProgress: NgProgress, 
-    private fb: FormBuilder
+    private route: ActivatedRoute
+    , private location: Location
+    , private subjectService: SubjectService
+    , private toastr: ToastrService
+    , public ngProgress: NgProgress
+    , private fb: FormBuilder
   ) {
     this.subjectForm = this.fb.group({
       $key: '',
@@ -33,7 +33,7 @@ export class SubjectFormComponent implements OnInit {
       year: '',
       quarter: '',
       classLoad: '',
-      credits: '',
+      credits: 0,
       correlatives: this.fb.group({
         regularized: [],
         approved: []
@@ -41,6 +41,7 @@ export class SubjectFormComponent implements OnInit {
       universityId: '',
       careerId: '',
       careerOptions: [],
+      isCrossDisciplinary: false,
     });
   }
 
@@ -68,7 +69,8 @@ export class SubjectFormComponent implements OnInit {
           universityId: subject.universityId || '',
           careerId: subject.careerId || '',
           careerOptions: subject.careerOptions || '',
-        })
+          isCrossDisciplinary: subject.isCrossDisciplinary,
+        });
         this.addCorrelatives(subject);
       })).subscribe(() => this.completeLoading());
   }
@@ -87,15 +89,15 @@ export class SubjectFormComponent implements OnInit {
       });
     }
   }
-  
+
   onUniversityChange() {
     this.subjectForm.patchValue({ careerId: '', careerOptions: [] });
   }
-  
+
   onCareerChange() {
     this.subjectForm.patchValue({ careerOptions: [] });
   }
-  
+
   onSubmit() {
     this.startLoading();
     if (!this.editMode) {
@@ -111,15 +113,15 @@ export class SubjectFormComponent implements OnInit {
 
   onSuccess() {
     this.completeLoading();
-    this.toastr.success('Asignatura' + (this.editMode ? 'actualizada' : 'creada'), 'Operación exitosa');
+    this.toastr.success('Asignatura ' + (this.editMode ? 'actualizada' : 'creada'), 'Operación exitosa');
     this.goBack();
   }
-  
+
   onError(msg) {
     this.completeLoading();
     this.toastr.error(msg, 'Operación fallida');
   }
-  
+
   startLoading() {
     this.ngProgress.start();
   }

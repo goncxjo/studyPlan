@@ -20,12 +20,12 @@ export class CareerFormComponent implements OnInit {
   private editMode: boolean;
 
   constructor(
-    private route: ActivatedRoute, 
-    private location: Location, 
-    private careerService: CareerService, 
-    private toastr: ToastrService, 
-    public ngProgress: NgProgress, 
-    private fb: FormBuilder
+    private route: ActivatedRoute
+    , private location: Location
+    , private careerService: CareerService
+    , private toastr: ToastrService
+    , public ngProgress: NgProgress
+    , private fb: FormBuilder
   ) {
     this.careerForm = this.fb.group({
       $key: '',
@@ -48,7 +48,7 @@ export class CareerFormComponent implements OnInit {
       this.editMode ? this.fillForm() : this.completeLoading();
     });
   }
-  
+
   get optionsForm() {
     return this.careerForm.get('options') as FormArray;
   }
@@ -125,19 +125,19 @@ export class CareerFormComponent implements OnInit {
 
   onSuccess() {
     this.completeLoading();
-    this.toastr.success('Carrera' + (this.editMode ? 'actualizada' : 'creada'), 'Operación exitosa');
+    this.toastr.success('Carrera ' + (this.editMode ? 'actualizada' : 'creada'), 'Operación exitosa');
     this.goBack();
   }
-  
+
   onError(msg) {
     this.completeLoading();
     this.toastr.error(msg, 'Operación fallida');
   }
-  
+
   startLoading() {
     this.ngProgress.start();
   }
-  
+
   completeLoading() {
     this.ngProgress.done();
   }

@@ -1,57 +1,82 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
+
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { HeadquartersService } from './headquarters.service';
 import { DepartmentService } from './department.service';
 
-import { University } from '../models/university';
-import { Headquarters } from '../models/headquarters';
-import { Department } from '../models/department';
+import { University, UniversityForm, UniversityList, UniversityMiniList } from '../models/university/university';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UniversityService {
-  private route: string = '/universities';
+  private route = '/universities';
 
   university: Observable<University>;
   universities: Observable<University[]>;
+  universityList: Observable<UniversityList[]>;
+  universityMiniList: Observable<UniversityMiniList[]>;
 
-  constructor(private db: AngularFireDatabase, private headquarterService: HeadquartersService, private departmentService: DepartmentService) {
+  constructor(
+    private db: AngularFireDatabase
+    , private headquarterService: HeadquartersService
+    , private departmentService: DepartmentService
+  ) {
     this.universities = db.list<University>(this.route)
-      .snapshotChanges().pipe(
-        map(changes => changes.map(c => {
-          const key = c.payload.key;
-          let val = c.payload.val();
-          val.$key = key;
-          return val;
-        }))
-      );
+    .snapshotChanges().pipe(
+      map(us => us.map(u => {
+        const key = u.payload.key;
+        const val = u.payload.val();
+        val.$key = key;
+        return val;
+      }))
+    );
+
+    this.universityList = db.list<UniversityList>(this.route)
+    .snapshotChanges().pipe(
+      map(us => us.map(u => {
+        const key = u.payload.key;
+        const val = u.payload.val();
+        val.$key = key;
+        return val;
+      }))
+    );
+
+    this.universityMiniList = db.list<UniversityMiniList>(this.route)
+    .snapshotChanges().pipe(
+      map(us => us.map(u => {
+        const key = u.payload.key;
+        const val = u.payload.val();
+        val.$key = key;
+        return val;
+      }))
+    );
   }
 
   getUniversities() {
     return this.universities;
   }
 
+  getUniversityList() {
+    return this.universityList;
+  }
+
+  getUniversityMiniList() {
+    return this.universityMiniList;
+  }
+
   getUniversityById(id: string) {
     return this.university = this.db.object<University>(this.route + '/' + id.toLowerCase()).valueChanges();
   }
 
-  addUniversity(university: University) {
-    let newUniversity = {
+  addUniversity(university: UniversityForm) {
+    const newUniversity = {
       name: university.name,
-      headquarters: university.headquarters.map((item: Headquarters) => {
-        item.$key = item.$key || this.db.createPushId();
-        item.universityId = university.$key;
-        return item;
-      }),
-      departments: university.departments.map((item: Department) => {
-        item.$key = item.$key || this.db.createPushId();
-        item.universityId = university.$key;
-        return item;
-      })
+      headquarters: this.adjustProperty(university.headquarters, university.$key),
+      departments: this.adjustProperty(university.departments, university.$key)
     };
 
     newUniversity.headquarters.forEach(element => {
@@ -63,28 +88,20 @@ export class UniversityService {
 
     return this.db.list(this.route).set(university.$key, {
       name: newUniversity.name,
-      headquarters: newUniversity.headquarters.map((item: Headquarters) => item.$key),
-      departments: newUniversity.departments.map((item: Department) => item.$key)
+      headquarters: newUniversity.headquarters.map(item => item.$key),
+      departments: newUniversity.departments.map(item => item.$key)
     });
   }
 
-  updateUniversity(university: University) {
-    let selectedUniversity = {
+  updateUniversity(university: UniversityForm) {
+    const selectedUniversity = {
       name: university.name,
-      headquarters: university.headquarters.map((item: Headquarters) => {
-        item.$key = item.$key || this.db.createPushId();
-        item.universityId = university.$key;
-        return item;
-      }),
-      departments: university.departments.map((item: Department) => {
-        item.$key = item.$key || this.db.createPushId();
-        item.universityId = university.$key;
-        return item;
-      })
+      headquarters: this.adjustProperty(university.headquarters, university.$key),
+      departments: this.adjustProperty(university.departments, university.$key)
     };
 
-    //this.headquarterService.deleteHeadquartersListByUniversityId(university.$key);
-    //this.departmentService.deleteDepartmentsByUniversityId(university.$key);
+    // this.headquarterService.deleteHeadquartersListByUniversityId(university.$key);
+    // this.departmentService.deleteDepartmentsByUniversityId(university.$key);
 
     selectedUniversity.headquarters.forEach(element => {
       this.headquarterService.addHeadquarters(element);
@@ -95,12 +112,20 @@ export class UniversityService {
 
     return this.db.list(this.route).update(university.$key, {
       name: selectedUniversity.name,
-      headquarters: selectedUniversity.headquarters.map((item: Headquarters) => item.$key),
-      departments: selectedUniversity.departments.map((item: Department) => item.$key)
+      headquarters: selectedUniversity.headquarters.map(item => item.$key),
+      departments: selectedUniversity.departments.map(item => item.$key)
     });
   }
 
   deleteUniversity($key: string) {
     return this.db.list<University>(this.route).remove($key);
+  }
+
+  adjustProperty(property = [], universityKey: string ) {
+    return property.map(item => {
+      item['$key'] = item['$key'] || this.db.createPushId();
+      item['universityId'] = universityKey;
+      return item;
+    });
   }
 }

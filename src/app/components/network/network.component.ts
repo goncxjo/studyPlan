@@ -2,7 +2,7 @@ import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 
 import { NetworkService } from '../../services/network.service';
 import { Network } from 'vis';
-import { Subscription } from '../../../../node_modules/rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-network',
@@ -11,6 +11,7 @@ import { Subscription } from '../../../../node_modules/rxjs';
 })
 export class NetworkComponent implements OnInit {
   @Input() student: string;
+  @Input() university: string;
   @Input() career: string;
   @Input() careerOption: string;
 
@@ -27,19 +28,19 @@ export class NetworkComponent implements OnInit {
   ngOnInit() {
     this.container = document.getElementById('mynetwork');
     this.options = this.networkService.getDefaultOptions();
-    this.generateNetwork(this.student, this.career, this.careerOption);
+    this.generateNetwork(this.student, this.university, this.career, this.careerOption);
   }
-  
-  generateNetwork(student, career, option) {
-    return this.networkService.getCourses(student, career, option).subscribe(dataset => {
+
+  generateNetwork(student, university, career, option) {
+    return this.networkService.getCourses(student, university, career, option).subscribe(dataset => {
       this.data = dataset;
       this.network = new Network(this.container, this.data, this.options);
     });
   }
-  
+
   draw() {
     destroy(this.network);
-    this.generateNetwork(this.student, this.career, this.careerOption);
+    this.generateNetwork(this.student, this.university, this.career, this.careerOption);
 
     function destroy(network) {
       if (network) {

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StateSelectorComponent } from './state-selector.component';
+import { BooleanSelectorComponent } from './boolean-selector.component';
 
-describe('StateSelectorComponent', () => {
-  let component: StateSelectorComponent;
-  let fixture: ComponentFixture<StateSelectorComponent>;
+describe('BooleanSelectorComponent', () => {
+  let component: BooleanSelectorComponent;
+  let fixture: ComponentFixture<BooleanSelectorComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StateSelectorComponent ]
+      declarations: [ BooleanSelectorComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(StateSelectorComponent);
+    fixture = TestBed.createComponent(BooleanSelectorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

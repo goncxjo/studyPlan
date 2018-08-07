@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { NgProgress } from 'ngx-progressbar';
 import { UniversityService } from '../../../services/university.service';
-import { University } from '../../../models/university';
+import { UniversityList } from '../../../models/university/university';
 
 @Component({
   selector: 'app-university-list',
@@ -11,15 +11,15 @@ import { University } from '../../../models/university';
 })
 export class UniversityListComponent implements OnInit {
 
-  universities: University[];
-  searchResult: University[] = [];
-  filter: University = new University();
+  universities: UniversityList[];
+  searchResult: UniversityList[] = [];
+  filter: UniversityList = new UniversityList();
   isReady: Boolean = false;
 
   constructor(
-    private universityService: UniversityService, 
-    private toastr: ToastrService, 
-    public ngProgress: NgProgress
+    private universityService: UniversityService
+    , private toastr: ToastrService
+    , public ngProgress: NgProgress
   ) { }
 
   ngOnInit() {
@@ -28,7 +28,7 @@ export class UniversityListComponent implements OnInit {
   }
 
   getUniversities() {
-    this.universityService.getUniversities().subscribe(universities => {
+    this.universityService.getUniversityList().subscribe(universities => {
       this.universities = this.searchResult = universities;
       this.isReady = true;
       this.completeLoading();
@@ -38,18 +38,20 @@ export class UniversityListComponent implements OnInit {
   onDelete($key: string) {
     if (confirm('¿Estás seguro?')) {
       this.startLoading();
-      this.universityService.deleteUniversity($key).then(onSuccess).catch(onError);
+      this.universityService.deleteUniversity($key)
+      .then(() => this.onSuccess())
+      .catch((msg) => this.onError(msg));
     }
+  }
 
-    function onSuccess() {
-      this.completeLoading();
-      this.toastr.success('Universidad eliminada', 'Operación exitosa');
-    }
-    
-    function onError(msg) {
-      this.completeLoading();
-      this.toastr.success(msg, 'Operación fallida');
-    }
+  onSuccess() {
+    this.completeLoading();
+    this.toastr.success('Universidad eliminada', 'Operación exitosa');
+  }
+
+  onError(msg) {
+    this.completeLoading();
+    this.toastr.error(msg, 'Operación fallida');
   }
 
   search() {

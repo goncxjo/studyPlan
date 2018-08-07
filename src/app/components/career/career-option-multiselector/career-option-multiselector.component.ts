@@ -1,8 +1,8 @@
-import { Component, Input, OnInit, SimpleChange, EventEmitter, Output } from '@angular/core';
+import { Component, Input, SimpleChange, EventEmitter, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { CareerService } from '../../../services/career.service';
-import { CareerOption } from '../../../models/career';
+import { CareerOptionMiniList } from '../../../models/career/option';
 
 @Component({
   selector: 'app-career-option-multiselector',
@@ -13,11 +13,12 @@ export class CareerOptionMultiselectorComponent {
   @Input() parent: FormGroup;
   @Input() name: string;
   @Input() filterCareerId: string;
+  @Input() disabled: Boolean;
   @Input() model: string;
   @Output() modelChange = new EventEmitter();
-  
-  options: CareerOption[];
-  filterResult: CareerOption[];
+
+  options: CareerOptionMiniList[];
+  filterResult: CareerOptionMiniList[];
 
   constructor(private careerService: CareerService) {
     this.filterResult = [];
@@ -25,14 +26,16 @@ export class CareerOptionMultiselectorComponent {
   }
 
   getOptions() {
-    this.careerService.getOptions().subscribe(options => {
+    this.careerService.getCareerMiniList().subscribe(options => {
        this.options = options;
       });
   }
 
   change(newValue) {
-    this.model = newValue;
-    this.modelChange.emit(newValue);
+    if (!this.disabled) {
+      this.model = newValue;
+      this.modelChange.emit(newValue);
+    }
   }
 
   ngOnChanges(changes: SimpleChange) {

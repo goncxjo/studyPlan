@@ -1,36 +1,76 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
-import { Career, CareerOption, LEVELS } from '../models/career';
+
 import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+
+import { Career, CareerForm, CareerList, CareerMiniList } from '../models/career/career';
+import { CareerOption, CareerOptionMiniList } from '../models/career/option';
+import { LEVELS } from '../models/career/level';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CareerService {
-  private route: string = '/careers';
-  private routeOptions: string = '/careerOptions';
+  private route = '/careers';
+  private routeOptions = '/careerOptions';
 
   career: Observable<Career>;
   careers: Observable<Career[]>;
+  careerList: Observable<CareerList[]>;
+  careerMiniList: Observable<CareerMiniList[]>;
   option: Observable<CareerOption>;
   options: Observable<CareerOption[]>;
+  optionMiniList: Observable<CareerOptionMiniList[]>;
 
   constructor(private db: AngularFireDatabase) {
     this.careers = db.list<Career>(this.route)
-      .snapshotChanges().pipe(
-      map(changes => changes.map(c => {
+    .snapshotChanges().pipe(
+      map(cs => cs.map(c => {
         const key = c.payload.key;
-        let val = c.payload.val();
+        const val = c.payload.val();
+        val.$key = key;
+        return val;
+      })));
+
+      this.careerList = db.list<CareerList>(this.route)
+      .snapshotChanges().pipe(
+        map(cl => cl.map(c => {
+          const key = c.payload.key;
+          const val = c.payload.val();
+          const levels = this.getLevels();
+          val.level = {
+            $key: val.level,
+            value: levels.find(l => l.key === val.level).value || ''
+          };
+          val.$key = key;
+          console.log(val);
+          return val;
+        })));
+
+    this.careerMiniList = db.list<CareerMiniList>(this.route)
+    .snapshotChanges().pipe(
+      map(cs => cs.map(c => {
+        const key = c.payload.key;
+        const val = c.payload.val();
         val.$key = key;
         return val;
       })));
 
     this.options = db.list<CareerOption>(this.routeOptions)
-      .snapshotChanges().pipe(
-      map(changes => changes.map(c => {
-        const key = c.payload.key;
-        let val = c.payload.val();
+    .snapshotChanges().pipe(
+      map(os => os.map(o => {
+        const key = o.payload.key;
+        const val = o.payload.val();
+        val.$key = key;
+        return val;
+      })));
+
+    this.optionMiniList = db.list<CareerOptionMiniList>(this.routeOptions)
+    .snapshotChanges().pipe(
+      map(os => os.map(o => {
+        const key = o.payload.key;
+        const val = o.payload.val();
         val.$key = key;
         return val;
       })));
@@ -38,6 +78,14 @@ export class CareerService {
 
   getCareers() {
     return this.careers;
+  }
+
+  getCareerList() {
+    return this.careerList;
+  }
+
+  getCareerMiniList() {
+    return this.careerMiniList;
   }
 
   getCareerById(id: string) {
@@ -49,12 +97,12 @@ export class CareerService {
   }
 
   getLevelValue(key: string) {
-    return LEVELS.find(i => i.key == key).value || '';
+    return LEVELS.find(i => i.key === key).value || '';
   }
 
-  addCareer(career: Career) {
+  addCareer(career: CareerForm) {
     const newCareerKey = this.db.createPushId();
-    let newCareer = {
+    const newCareer = {
       $key: newCareerKey,
       name: career.name,
       length: career.length,
@@ -63,14 +111,8 @@ export class CareerService {
       goals: career.goals,
       universityId: career.universityId,
       departmentId: career.departmentId,
-      options: career.options.map((item: CareerOption) => {
-        if (!item.$key) {
-          item.$key = this.db.createPushId();
-          item.careerId = newCareerKey;
-        }
-        return item;
-      })
-    }
+      options: this.adjustProperty(career.options, newCareerKey)
+    };
 
     newCareer.options.forEach(element => {
       this.addOption(element);
@@ -83,13 +125,13 @@ export class CareerService {
       about: newCareer.about,
       goals: newCareer.goals,
       universityId: newCareer.universityId,
-      options: newCareer.options.map((item: CareerOption) => item.$key),
+      options: newCareer.options.map(item => item.$key),
       departmentId: newCareer.departmentId
     });
   }
 
-  updateCareer(career: Career) {
-    let selectedCareer = {
+  updateCareer(career: CareerForm) {
+    const selectedCareer = {
       $key: career.$key,
       name: career.name,
       length: career.length,
@@ -98,12 +140,8 @@ export class CareerService {
       goals: career.goals,
       universityId: career.universityId,
       departmentId: career.departmentId,
-      options: career.options.map((item: CareerOption) => {
-        item.$key = item.$key || this.db.createPushId();
-        item.careerId = item.careerId || career.$key;
-        return item;
-      })
-    }
+      options: this.adjustProperty(career.options, career.$key)
+    };
 
     // this.updateCareerOptions(career.$key, selectedCareer.options);
     selectedCareer.options.forEach(element => {
@@ -117,7 +155,7 @@ export class CareerService {
       about: selectedCareer.about,
       goals: selectedCareer.goals,
       universityId: selectedCareer.universityId,
-      options: selectedCareer.options.map((item: CareerOption) => item.$key),
+      options: selectedCareer.options.map(item => item.$key),
       departmentId: selectedCareer.departmentId
     });
   }
@@ -126,26 +164,18 @@ export class CareerService {
     return this.db.list<Career>(this.route).remove($key);
   }
 
+  // OPTIONS
   getOptions() {
     return this.options;
   }
 
-  getOptionsByCareerId(id: string) {
-    return this.options = this.db.list<CareerOption>(this.routeOptions,
-      ref => ref.orderByChild('careerId').startAt(id))
-      .snapshotChanges().pipe(
-      map(changes => changes.map(c => {
-        const key = c.payload.key;
-        let val = c.payload.val();
-        val.$key = key;
-        return val;
-      })));;
+  getOptionMiniList() {
+    return this.optionMiniList;
   }
 
   getOptionById(id: string) {
     return this.option = this.db.object<CareerOption>(this.routeOptions + '/' + id).valueChanges();
   }
-
 
   addOption(option: CareerOption) {
     const ref = this.db.list(this.routeOptions).query.ref;
@@ -163,16 +193,15 @@ export class CareerService {
     });
   }
 
-  updateCareerOptions(careerKey: string, options: CareerOption[]) {
-    return this.options.forEach(os => os
-      .filter(o => o.$key == careerKey)
-      .forEach(o => {
-        const changedOption = options.find(x => x.$key == o.$key);
-        !changedOption ? this.deleteOption(o.$key) : this.setOption(changedOption); 
-      }));
-  }
-
   deleteOption($key: string) {
     return this.db.list<CareerOption>(this.routeOptions).remove($key);
+  }
+
+  adjustProperty(property = [], careerKey: string) {
+    return property.map(item => {
+      item['$key'] = item['$key'] || this.db.createPushId();
+      item['careerId'] = careerKey;
+      return item;
+    });
   }
 }

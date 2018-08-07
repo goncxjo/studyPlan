@@ -43,6 +43,7 @@ import { StudentListComponent } from './components/student/student-list/student-
 import { StudentService } from './services/student.service';
 import { CareerPlanComponent } from './components/career/career-plan/career-plan.component';
 import { StudentPlanComponent } from './components/student/student-plan/student-plan.component';
+import { BooleanSelectorComponent } from './components/shared/boolean-selector/boolean-selector.component';
 
 
 @NgModule({
@@ -68,6 +69,7 @@ import { StudentPlanComponent } from './components/student/student-plan/student-
     CareerPlanComponent,
     StudentPlanComponent,
     LoadingComponent,
+    BooleanSelectorComponent,
   ],
   imports: [
     BrowserModule,

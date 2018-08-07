@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
-import { Headquarters } from '../models/headquarters';
+
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
+import { Headquarters } from '../models/university/headquarters';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HeadquartersService {
-  private route: string = '/headquarters';
+  private route = '/headquarters';
 
   headquarters: Observable<Headquarters>;
   headquartersList: Observable<Headquarters[]>;
@@ -18,7 +20,7 @@ export class HeadquartersService {
       .snapshotChanges().pipe(
           map(changes => changes.map(c => {
             const key = c.payload.key;
-            let val = c.payload.val();
+            const val = c.payload.val();
             val.$key = key;
             return val;
           }
@@ -34,18 +36,6 @@ export class HeadquartersService {
     return this.headquarters = this.db.object<Headquarters>(this.route + '/' + id).valueChanges();
   }
 
-  getHeadquartersListByUniversity(id: string) {
-    return this.headquartersList = this.db.list<Headquarters>(this.route,
-      ref => ref.orderByChild('universityId').startAt(id))
-      .snapshotChanges().pipe(
-      map(changes => changes.map(c => {
-        const key = c.payload.key;
-        let val = c.payload.val();
-        val.$key = key;
-        return val;
-      })));
-  }
-
   addHeadquarters(headquarters: Headquarters) {
     const ref = this.db.list(this.route).query.ref;
     const child = ref.child(headquarters.$key);
@@ -54,7 +44,8 @@ export class HeadquartersService {
       address: headquarters.address,
       city: headquarters.city,
       country: headquarters.country,
-      telephone: headquarters.telephone
+      telephone: headquarters.telephone,
+      isHeadOffice: headquarters.isHeadOffice
     });
   }
 
@@ -64,15 +55,12 @@ export class HeadquartersService {
       address: headquarters.address,
       city: headquarters.city,
       country: headquarters.country,
-      telephone: headquarters.telephone
+      telephone: headquarters.telephone,
+      isHeadOffice: headquarters.isHeadOffice
     });
   }
 
   deleteHeadquarters($key: string) {
     return this.db.list<Headquarters>(this.route).remove($key);
-  }
-
-  deleteHeadquartersListByUniversityId(universityKey: string) {
-    return this.db.list<Headquarters>(this.route, ref => ref.orderByChild('universityId').equalTo(universityKey)).remove();
   }
 }

@@ -6,23 +6,7 @@
   </div>
   <div class="card-body">
     <form [formGroup]="subjectForm" (ngSubmit)="onSubmit()">
-      <div class="form-row">
-        <input type="hidden" name="$key" formControlName="$key">
-        <div class="form-group col-md-6">
-          <label for="universityId">Universidad:</label>
-          <app-university-selector [parent]="subjectForm" name="universityId" (change)="onUniversityChange()"></app-university-selector>
-        </div>
-        <div class="form-group col-md-6">
-          <label for="careerId">Carrera:</label>
-          <app-career-selector [parent]="subjectForm" [filterUniversityId]="subjectForm.value.universityId" name="careerId" (change)="onCareerChange()"></app-career-selector>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group col-md-12">
-          <label for="careerOptions">Orientaciones:</label>
-          <app-career-option-multiselector [parent]="subjectForm" [filterCareerId]="subjectForm.value.careerId" name="careerOptions"></app-career-option-multiselector>
-        </div>
-      </div>
+      <input type="hidden" name="$key" formControlName="$key">
       <div class="form-row">
         <div class="form-group col-md-6">
           <label for="name">Código:</label>
@@ -50,17 +34,58 @@
         </div>
       </div>
       <div class="form-row">
-        <div formGroupName="correlatives" class="col-md-12">
-          <h6 class="card-subtitle mb-2 text-muted">
+        <div class="form-group col-md-6">
+          <label for="universityId">Universidad:</label>
+          <app-university-selector [parent]="subjectForm" name="universityId" (change)="onUniversityChange()"></app-university-selector>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="isCrossDisciplinary">Asignatura transversal:</label>
+          <app-boolean-selector [parent]="subjectForm" name="isCrossDisciplinary"></app-boolean-selector>
+        </div>
+        <div class="form-group col-md-12">
+          <label for="careerId">Carrera:</label>
+          <app-career-selector name="careerId"
+          [parent]="subjectForm" 
+          [filterUniversityId]="subjectForm.value.universityId"
+          [disabled]="subjectForm.value.isCrossDisciplinary"
+          (change)="onCareerChange()"
+          ></app-career-selector>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label for="careerOptions">Orientaciones:</label>
+          <app-career-option-multiselector name="careerOptions"
+          [parent]="subjectForm" 
+          [filterCareerId]="subjectForm.value.careerId" 
+          [disabled]="subjectForm.value.isCrossDisciplinary"
+          ></app-career-option-multiselector>
+        </div>
+      </div>
+      <div formGroupName="correlatives">
+        <div class="form-row">
+          <h6 class="card-subtitle mb-3 text-muted">
             Correlativas
           </h6>
+        </div>
+        <div class="form-row">
           <div class="form-group col-md-12">
             <label for="regularized">Regularizadas:</label>
-            <app-subject-multiselector [parent]="subjectForm.get('correlatives')" name="regularized" [filterCareerId]="subjectForm.value.careerId"></app-subject-multiselector>
+            <app-subject-multiselector name="regularized"
+            [parent]="subjectForm.get('correlatives')" 
+            [filterUniversityId]="subjectForm.value.universityId"
+            [filterCareerId]="subjectForm.value.careerId"
+            [filterIsCrossDisciplinary]="subjectForm.value.isCrossDisciplinary"
+            ></app-subject-multiselector>
           </div>
           <div class="form-group col-md-12">
             <label for="approved">Aprobadas:</label>
-            <app-subject-multiselector [parent]="subjectForm.get('correlatives')" name="approved" [filterCareerId]="subjectForm.value.careerId"></app-subject-multiselector>
+            <app-subject-multiselector name="approved"
+            [parent]="subjectForm.get('correlatives')" 
+            [filterUniversityId]="subjectForm.value.universityId"
+            [filterCareerId]="subjectForm.value.careerId"
+            [filterIsCrossDisciplinary]="subjectForm.value.isCrossDisciplinary"
+            ></app-subject-multiselector>
           </div>
         </div>
       </div>
@@ -72,7 +97,8 @@
   </div>
   <div class="card-footer">
     <div class="d-flex justify-content-between">
-                  <button class="btn btn-primary" (click)="goBack()"><i class="fas fa-arrow-left"></i> Volver</button>
+      <button class="btn btn-primary" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i> Volver</button>
     </div>
   </div>
 </div>
