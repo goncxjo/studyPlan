@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
+
+import { DataSet } from 'vis';
 import * as _ from 'lodash';
 
+import { Observable, of } from 'rxjs';
+import { tap, map } from 'rxjs/operators';
+
 import { SubjectService } from './subject.service';
-import { DataSet } from 'vis';
-import { map } from 'rxjs/operators';
 import { Subject } from '../models/subject/subject';
 
 @Injectable({
@@ -11,13 +14,16 @@ import { Subject } from '../models/subject/subject';
 })
 export class NetworkService {
 
-  dataset: any;
+  dataset: Observable<{ nodes: DataSet, edges: DataSet }>;
   subjects: Subject[];
 
-  constructor(private subjectService: SubjectService) { }
+  constructor(private subjectService: SubjectService) {
+    this.subjectService.getSubjects().subscribe(ss => this.subjects = ss);
+  }
 
-  getCourses(studentId, universityId, careerId, careerOptionId) {
+  generateDataSet(studentId, universityId, careerId, careerOptionId) {
     return this.dataset = this.subjectService.getSubjects().pipe(
+      tap(subjects => this.subjects = subjects),
       map(subjects => {
         let edges = [];
         const nodes = subjects
@@ -38,6 +44,23 @@ export class NetworkService {
       }));
   }
 
+  getDataSet(studentId, universityId, careerId, careerOptionId) {
+    let edges = [];
+    const nodes = (this.subjects || [])
+    .filter(s => {
+      const matchesUniversity = s.universityId === universityId;
+      const matchesCareer = (s.careerId === careerId || s.isCrossDisciplinary);
+      return matchesUniversity && matchesCareer && this.isEmptyOrContainsSelectedOption(s, careerOptionId);
+    })
+    .map(element => {
+      const node = this.generateNode(element, studentId);
+      edges = this.getEdges(element, edges);
+      return node;
+    });
+
+    return this.dataset = of({ nodes: new DataSet(nodes), edges: new DataSet(edges) });
+  }
+
   isEmptyOrContainsSelectedOption(subject, selectedOption) {
     return subject.careerOptions ? subject.careerOptions.find(o => o === selectedOption) : true;
   }
@@ -56,12 +79,12 @@ export class NetworkService {
     const approved = correlatives['approved'] || [];
     const regularized = correlatives['regularized'] || [];
     const realRegularized = _.difference(regularized, approved);
-    
+
     approved.forEach(i => {
       edges.push({
         from: i,
         to: subject.$key,
-        title: 'aprobada'
+        title: 'Se necesita tener aprobada \"' + this.getSubjectName(i) + '\".'
       });
     });
 
@@ -69,12 +92,16 @@ export class NetworkService {
       edges.push({
         from: i,
         to: subject.$key,
-        title: 'regularizada',
+        title: 'Se necesita tener regularizada \"' + this.getSubjectName(i) + '\".',
         dashes: [10, 10]
       });
     });
 
     return edges;
+  }
+
+  getSubjectName(subjectKey) {
+    return this.subjects.find(s => s.$key === subjectKey).name;
   }
 
   getDefaultOptions() {

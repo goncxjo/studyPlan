@@ -2,7 +2,6 @@ import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 
 import { NetworkService } from '../../services/network.service';
 import { Network } from 'vis';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-network',
@@ -19,11 +18,8 @@ export class NetworkComponent implements OnInit {
   public options: any;
   public data: any;
   public container: HTMLElement;
-  public subscription: Subscription;
 
-  constructor(
-    private networkService: NetworkService
-  ) { }
+  constructor(private networkService: NetworkService) { }
 
   ngOnInit() {
     this.container = document.getElementById('mynetwork');
@@ -32,15 +28,19 @@ export class NetworkComponent implements OnInit {
   }
 
   generateNetwork(student, university, career, option) {
-    return this.networkService.getCourses(student, university, career, option).subscribe(dataset => {
+    return this.networkService.generateDataSet(student, university, career, option).subscribe(dataset => {
       this.data = dataset;
       this.network = new Network(this.container, this.data, this.options);
     });
   }
 
-  draw() {
+  regenerateNetwork() {
     destroy(this.network);
-    this.generateNetwork(this.student, this.university, this.career, this.careerOption);
+
+    this.networkService.getDataSet(this.student, this.university, this.career, this.careerOption).subscribe(dataset => {
+      this.data = dataset;
+      this.network = new Network(this.container, this.data, this.options);
+    });
 
     function destroy(network) {
       if (network) {
@@ -52,7 +52,7 @@ export class NetworkComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['careerOption'] && !changes['careerOption'].isFirstChange()) {
-      this.draw();
+      this.regenerateNetwork();
     }
   }
 }
