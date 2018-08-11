@@ -8,6 +8,7 @@ import { UniversityService } from './university.service';
 import { CareerService } from './career.service';
 
 import { Student, StudentForm, StudentList } from '../models/student/student';
+import { SubjectMiniForm } from '../models/subject/subject';
 
 @Injectable({
   providedIn: 'root'
@@ -92,6 +93,39 @@ export class StudentService {
       universityId: student.universityId,
       careerId: student.careerId,
       careerOptionId: student.careerOptionId,
+    });
+  }
+
+  updateStudentsSubjectState(student: Student, subjectKey: string, subjectState: string) {
+    const approved = student['approved'] || [] as [string];
+    const regularized = student['regularized'] || [] as [string];
+    const inProgress = student['inProgress'] || [] as [string];
+
+    switch (subjectState) {
+      case 'approved': {
+        approved.push(subjectKey);
+        break;
+      }
+      case 'regularized': {
+        regularized.push(subjectKey);
+        break;
+      }
+      case 'inProgress': {
+        inProgress.push(subjectKey);
+        break;
+      }
+    }
+
+    return this.db.list(this.route).update(student.$key, {
+      name: student.name,
+      age: student.age,
+      studentId: student.studentId,
+      universityId: student.universityId,
+      careerId: student.careerId,
+      careerOptionId: student.careerOptionId,
+      approved: approved,
+      regularized: regularized,
+      inProgress: inProgress
     });
   }
 

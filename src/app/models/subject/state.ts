@@ -1,21 +1,13 @@
-export class State {
-    key: string;
-    value: string;
+// export const STATES = [
+//     { key: 'available', value: 'Disponible' },
+//     { key: 'notAvailable', value: 'No disponible' },
+//     { key: 'inProgress', value: 'En curso' },
+//     { key: 'regularized', value: 'Regularizada' },
+//     { key: 'approved', value: 'Aprobada' }
+// ];
 
-    constructor(key: string, value: string) {
-      this.key = key;
-      this.value = value;
-    }
-
-    getValue() {
-      return this.value;
-    }
-}
-
-export const STATES: State[] = [
-    new State('available', 'Disponible'),
-    new State('notApproved', 'No disponible'),
-    new State('inProgress', 'En curso'),
-    new State('regularized', 'Regularizada'),
-    new State('approved', 'Aprobada')
+export const STATES = [
+    { key: 'approved', value: 'Aprobada' },
+    { key: 'regularized', value: 'Regularizada' },
+    { key: 'inProgress', value: 'En curso' },
 ];

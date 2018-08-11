@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
+import { Network } from 'vis';
 
 import { NetworkService } from '../../services/network.service';
-import { Network } from 'vis';
+import { Student } from '../../models/student/student';
 
 @Component({
   selector: 'app-network',
@@ -9,7 +10,7 @@ import { Network } from 'vis';
   styleUrls: ['./network.component.css']
 })
 export class NetworkComponent implements OnInit {
-  @Input() student: string;
+  @Input() student: Student;
   @Input() university: string;
   @Input() career: string;
   @Input() careerOption: string;
@@ -51,7 +52,9 @@ export class NetworkComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['careerOption'] && !changes['careerOption'].isFirstChange()) {
+    if (changes['student'] && !changes['student'].isFirstChange()) {
+      this.regenerateNetwork();
+    } else if (changes['careerOption'] && !changes['careerOption'].isFirstChange()) {
       this.regenerateNetwork();
     }
   }

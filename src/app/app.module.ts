@@ -44,6 +44,8 @@ import { StudentService } from './services/student.service';
 import { CareerPlanComponent } from './components/career/career-plan/career-plan.component';
 import { StudentPlanComponent } from './components/student/student-plan/student-plan.component';
 import { BooleanSelectorComponent } from './components/shared/boolean-selector/boolean-selector.component';
+import { FormModalComponent } from './components/shared/form-modal/form-modal.component';
+import { StateSelectorComponent } from './components/subject/state-selector/state-selector.component';
 
 
 @NgModule({
@@ -70,6 +72,8 @@ import { BooleanSelectorComponent } from './components/shared/boolean-selector/b
     StudentPlanComponent,
     LoadingComponent,
     BooleanSelectorComponent,
+    FormModalComponent,
+    StateSelectorComponent,
   ],
   imports: [
     BrowserModule,
@@ -89,6 +93,9 @@ import { BooleanSelectorComponent } from './components/shared/boolean-selector/b
     CareerService,
     StudentService,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [
+    FormModalComponent
+  ]
 })
 export class AppModule { }

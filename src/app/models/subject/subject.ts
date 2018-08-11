@@ -39,6 +39,12 @@ export class SubjectForm {
     isCrossDisciplinary: boolean;
 }
 
+export class SubjectMiniForm {
+    id?: string;
+    name: string;
+    state?: string;
+}
+
 export class Subject {
     $key?: string;
     code?: string;

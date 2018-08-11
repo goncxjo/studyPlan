@@ -1,0 +1,12 @@
+<div *ngIf="!parent">
+  <select class="form-control select" [ngModel]="model" (ngModelChange)="change($event)">
+    <option *ngFor="let state of states" [value]="state.key">{{ state.value }}</option>
+  </select>
+</div>
+<div *ngIf="parent">
+  <div [formGroup]="parent">
+    <select class="form-control select" [formControlName]="name">
+      <option *ngFor="let state of states" [value]="state.key">{{ state.value }}</option>
+    </select>
+  </div>
+</div>

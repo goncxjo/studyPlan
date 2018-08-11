@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Subject, SubjectForm, SubjectList, SubjectMiniList } from '../models/subject/subject';
+import { STATES } from '../models/subject/state';
 
 @Injectable({
   providedIn: 'root'
@@ -63,6 +64,14 @@ export class SubjectService {
 
   getSubjectById(id: string) {
     return this.subject = this.db.object<Subject>(this.route + '/' + id).valueChanges();
+  }
+
+  getStates(): any[] {
+    return STATES;
+  }
+
+  getStateValue(key: string) {
+    return STATES.find(i => i.key === key).value || '';
   }
 
   addSubject(subject: SubjectForm) {
