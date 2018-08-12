@@ -14,12 +14,12 @@ export class NetworkComponent implements AfterViewInit {
   @Input() student: Student;
   @Input() subjects: Subject[];
 
-  @ViewChild('container')
-    container: ElementRef;
+  @ViewChild('container') container: ElementRef;
 
   public network?: Network;
   public options: any;
   public data: any;
+  private isDrawing: Boolean = false;
 
   constructor(private networkService: NetworkService) { }
 
@@ -29,9 +29,43 @@ export class NetworkComponent implements AfterViewInit {
   }
 
   initNetwork() {
+    this.isDrawing = true;
+
     this.networkService.set(this.student, this.subjects);
     this.data = this.networkService.getDataSet();
     this.network = new Network(this.container.nativeElement, this.data, this.options);
+    this.handleNetworkStabilization();
+  }
+
+  handleNetworkStabilization() {
+    const loadingBar = document.getElementById('loadingBar');
+    const bar = document.getElementById('bar');
+
+    bar.style.width = '0%';
+    loadingBar.style.opacity = '1';
+    loadingBar.style.display = 'block';
+
+    this.network.on('stabilizationProgress', function(params) {
+      const maxWidth = 496;
+      const minWidth = 20;
+      const widthFactor = params.iterations/params.total;
+      const width = Math.max(minWidth,maxWidth * widthFactor);
+
+      const bar = document.getElementById('bar');
+      bar.style.width = width + '%';
+    });
+    this.network.once('stabilizationIterationsDone', function() {
+      const bar = document.getElementById('bar');
+      const loadingBar = document.getElementById('loadingBar');
+      
+      bar.style.width = '496px';
+      loadingBar.style.opacity = '0';
+      // really clean the dom element
+      setTimeout(() => {
+        const loadingBar = document.getElementById('loadingBar');
+        loadingBar.style.display = 'none';
+      }, 500);
+    });
   }
 
   regenerateNetwork() {

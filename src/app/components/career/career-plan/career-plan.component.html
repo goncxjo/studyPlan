@@ -30,7 +30,7 @@
     </div>
   </div>
 
-  <app-network
+  <app-network *ngIf="filterSubjects"
     [subjects]="filterSubjects"
   ></app-network>
 

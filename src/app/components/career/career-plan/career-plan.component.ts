@@ -20,7 +20,7 @@ export class CareerPlanComponent implements OnInit {
 
   career: Career = new Career();
   subjects: Subject[];
-  filterSubjects: Subject[] = [] as Subject[];
+  filterSubjects: Subject[];
   isReady: Boolean = false;
   selectedOption: string;
 
