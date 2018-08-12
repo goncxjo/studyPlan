@@ -16,6 +16,9 @@ import { NgProgressModule } from 'ngx-progressbar';
 // NG-BOOTSTRAP
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+// MODULES
+import { CoreModule } from './core/core.module';
+
 // COMPONENTS
 import { NetworkComponent } from './components/network/network.component';
 import { SubjectFormComponent } from './components/subject/subject-form/subject-form.component';
@@ -46,6 +49,7 @@ import { StudentPlanComponent } from './components/student/student-plan/student-
 import { BooleanSelectorComponent } from './components/shared/boolean-selector/boolean-selector.component';
 import { FormModalComponent } from './components/shared/form-modal/form-modal.component';
 import { StateSelectorComponent } from './components/subject/state-selector/state-selector.component';
+import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
 
 
 @NgModule({
@@ -74,6 +78,7 @@ import { StateSelectorComponent } from './components/subject/state-selector/stat
     BooleanSelectorComponent,
     FormModalComponent,
     StateSelectorComponent,
+    UserProfileComponent,
   ],
   imports: [
     BrowserModule,
@@ -86,6 +91,7 @@ import { StateSelectorComponent } from './components/subject/state-selector/stat
     AppRoutingModule,
     NgProgressModule,
     NgbModule.forRoot(),
+    CoreModule,
   ],
   providers: [
     SubjectService,
