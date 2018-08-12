@@ -7,6 +7,8 @@ import { NgProgress } from 'ngx-progressbar';
 
 import { CareerService } from '../../../services/career.service';
 import { Career } from '../../../models/career/career';
+import { StudentService } from '../../../services/student.service';
+import { Student } from '../../../models/student/student';
 
 @Component({
   selector: 'app-career-plan',
@@ -15,7 +17,9 @@ import { Career } from '../../../models/career/career';
 })
 export class CareerPlanComponent implements OnInit {
 
-  filter: Career = new Career();
+  private careerView: boolean;
+  career: Career = new Career();
+  student: Student = new Student();
   isReady: Boolean = false;
   selectedOption: string;
 
@@ -24,27 +28,46 @@ export class CareerPlanComponent implements OnInit {
     , private location: Location
     , public ngProgress: NgProgress
     , private careerService: CareerService
+    , private studentService: StudentService
   ) {}
 
   ngOnInit() {
     this.startLoading();
-    this.getCareer();
+    this.route.data.subscribe(d => {
+      this.careerView = d['careerView'];
+      this.careerView ? this.getCareer() : this.getStudent();
+    });
+    this.getSubjects();
   }
 
   getCareer() {
     const id = this.route.snapshot.paramMap.get('$key');
     this.careerService.getCareerById(id).subscribe(c => {
-      this.filter = c;
-      this.filter.$key = id;
-      this.filter['selectedCareerOption'] = this.filter['options'] ? this.filter.options[0] : '';
-      this.selectedOption = this.filter['selectedCareerOption'];
+      this.career = c;
+      this.career.$key = id;
+      this.career['selectedCareerOption'] = this.career['options'] ? this.career.options[0] : '';
+      this.selectedOption = this.career['selectedCareerOption'];
       this.isReady = true;
       this.completeLoading();
     });
   }
 
+  getStudent() {
+    const id = this.route.snapshot.paramMap.get('$key');
+    this.studentService.getStudentById(id).subscribe(s => {
+      this.student = s;
+      this.student.$key = id;
+      this.isReady = true;
+      this.completeLoading();
+    });
+  }
+
+  getSubjects() {
+    
+  }
+
   sendFiltersToNetwork() {
-    this.selectedOption = this.filter['selectedCareerOption'] || this.selectedOption;
+    this.selectedOption = this.career['selectedCareerOption'] || this.selectedOption;
   }
 
   startLoading() {

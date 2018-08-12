@@ -3,6 +3,7 @@ import { Network } from 'vis';
 
 import { NetworkService } from '../../services/network.service';
 import { Student } from '../../models/student/student';
+import { Subject } from '../../models/subject/subject';
 
 @Component({
   selector: 'app-network',
@@ -11,9 +12,7 @@ import { Student } from '../../models/student/student';
 })
 export class NetworkComponent implements OnInit {
   @Input() student: Student;
-  @Input() university: string;
-  @Input() career: string;
-  @Input() careerOption: string;
+  @Input() subjects: Subject[];
 
   public network?: Network;
   public options: any;
@@ -25,28 +24,21 @@ export class NetworkComponent implements OnInit {
   ngOnInit() {
     this.container = document.getElementById('mynetwork');
     this.options = this.networkService.getDefaultOptions();
-    this.generateNetwork(this.student, this.university, this.career, this.careerOption);
-  }
-
-  generateNetwork(student, university, career, option) {
-    return this.networkService.generateDataSet(student, university, career, option).subscribe(dataset => {
-      this.data = dataset;
-      this.network = new Network(this.container, this.data, this.options);
-    });
+    this.networkService.init(this.student, this.subjects);
+    this.data = this.networkService.getDataSet();
+    this.network = new Network(this.container, this.data, this.options);
   }
 
   regenerateNetwork() {
-    destroy(this.network);
-
-    this.networkService.getDataSet(this.student, this.university, this.career, this.careerOption).subscribe(dataset => {
-      this.data = dataset;
-      this.network = new Network(this.container, this.data, this.options);
-    });
-
-    function destroy(network) {
+    destroy(this.network, this.data);
+    this.data = this.networkService.getDataSet();
+    this.network = new Network(this.container, this.data, this.options);
+    
+    function destroy(network, data) {
       if (network) {
         network.destroy();
         network = null;
+        data = null;
       }
     }
   }

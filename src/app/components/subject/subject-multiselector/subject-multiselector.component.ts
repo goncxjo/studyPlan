@@ -38,12 +38,9 @@ export class SubjectMultiselectorComponent {
       filterCareerId = changes['filterCareerId'].currentValue || filterUniversityId;
     }
 
-    if (this.filterIsCrossDisciplinary) {
-      this.filterResult = this.subjects ? this.subjects.filter(s => {
-        return s.universityId === filterUniversityId && s.isCrossDisciplinary === true;
+    this.filterResult = this.subjects ? this.subjects.filter(s => {
+        return (s.universityId === filterUniversityId && s.isCrossDisciplinary === true) ||
+        (!this.filterIsCrossDisciplinary ? s.careerId === filterCareerId : false)
       }) : [];
-    } else {
-      this.filterResult = this.subjects ? this.subjects.filter(s => s.careerId === filterCareerId) : [];
-    }
   }
 }

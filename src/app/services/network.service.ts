@@ -19,74 +19,44 @@ import { Student } from '../models/student/student';
 })
 export class NetworkService {
 
-  dataset: Observable<{ nodes: DataSet, edges: DataSet }>;
+  // dataset: Observable<{ nodes: DataSet, edges: DataSet }>;
   subjects: Subject[];
   student: Student;
+  dataset: { nodes: DataSet, edges: DataSet };
 
   constructor(
     private subjectService: SubjectService
     , private studentService: StudentService
     , private modalService: NgbModal
-  ) {
+  ) { }
+
+  init(student, subjects) {
+    this.student = student || new Student();
+    this.subjects = subjects || [] as Subject[];
   }
 
-  generateDataSet(student, universityId, careerId, careerOptionId) {
-    return this.dataset = this.subjectService.getSubjects().pipe(
-      tap(subjects => {
-        this.subjects = subjects;
-        this.student = student;
-      }),
-      map(subjects => {
-        let edges = [];
-        const nodes = subjects
-          .filter(s => {
-            const matchesUniversity = s.universityId === universityId;
-            const matchesCareer = (s.careerId === careerId || s.isCrossDisciplinary);
-            return matchesUniversity && matchesCareer && this.isEmptyOrContainsSelectedOption(s, careerOptionId);
-          })
-          .map(element => {
-            const node = this.generateNode(element, student);
-            edges = this.getEdges(element, edges);
-            return node;
-          });
-        return {
-          nodes: new DataSet(nodes),
-          edges: new DataSet(edges),
-        };
-      }));
-  }
-
-  getDataSet(student, universityId, careerId, careerOptionId) {
+  getDataSet() {
     let edges = [];
-    const nodes = (this.subjects || [])
-    .filter(s => {
-      const matchesUniversity = s.universityId === universityId;
-      const matchesCareer = (s.careerId === careerId || s.isCrossDisciplinary);
-      return matchesUniversity && matchesCareer && this.isEmptyOrContainsSelectedOption(s, careerOptionId);
-    })
+    const nodes = this.subjects
     .map(element => {
-      const node = this.generateNode(element, student);
+      const node = this.generateNode(element);
       edges = this.getEdges(element, edges);
       return node;
     });
 
-    return this.dataset = of({ nodes: new DataSet(nodes), edges: new DataSet(edges) });
+    return this.dataset = { nodes: new DataSet(nodes), edges: new DataSet(edges) };
   }
 
-  isEmptyOrContainsSelectedOption(subject, selectedOption) {
-    return subject.careerOptions ? subject.careerOptions.find(o => o === selectedOption) : true;
-  }
-
-  generateNode(subject, student) {
+  generateNode(subject) {
     return {
       id: subject.$key,
       label: subject.name,
       level: subject.quarter,
-      group: student['$key'] ? this.getSubjectState(subject, student) : subject.year,
+      group: this.student['$key'] ? this.getSubjectState(subject) : subject.year,
     };
   }
 
-  getSubjectState(subject: Subject, student: Student) {
+  getSubjectState(subject: Subject) {
     let group = 'notAvailable';
     const subjectKey = subject.$key;
 
@@ -95,9 +65,9 @@ export class NetworkService {
     const regularized = correlatives['regularized'] || [];
     const realRegularized = _.difference(regularized, approved);
 
-    const studentApproved = student['approved'] || [];
-    const studentRegularized = student['regularized'] || [];
-    const studentInProgress = student['inProgress'] || [];
+    const studentApproved = this.student['approved'] || [];
+    const studentRegularized = this.student['regularized'] || [];
+    const studentInProgress = this.student['inProgress'] || [];
 
     const isApproved = _.includes(studentApproved, subjectKey);
     const isRegularized = _.includes(studentRegularized, subjectKey);

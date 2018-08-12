@@ -18,14 +18,14 @@ const routes: Routes = [
   { path: 'carreras', component: CareerListComponent },
   { path: 'carreras/crear', component: CareerFormComponent, data: { editMode: false } },
   { path: 'carreras/editar/:$key', component: CareerFormComponent, data: { editMode: true } },
-  { path: 'carreras/:$key/plan', component: CareerPlanComponent },
+  { path: 'carreras/:$key/plan', component: CareerPlanComponent, data: { careerView: true } }
   { path: 'asignaturas', component: SubjectListComponent },
   { path: 'asignaturas/crear', component: SubjectFormComponent, data: { editMode: false } },
   { path: 'asignaturas/editar/:$key', component: SubjectFormComponent, data: { editMode: true } },
   { path: 'estudiantes', component: StudentListComponent },
   { path: 'estudiantes/crear', component: StudentFormComponent, data: { editMode: false } },
   { path: 'estudiantes/editar/:$key', component: StudentFormComponent, data: { editMode: true } },
-  { path: 'estudiantes/:$key/plan', component: StudentPlanComponent },
+  { path: 'estudiantes/:$key/plan', component: CareerPlanComponent, data: { careerView: false } },
 ];
 
 @NgModule({

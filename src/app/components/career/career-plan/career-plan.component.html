@@ -2,22 +2,22 @@
 
   <div class="mb-3 card">
     <div class="card-header bg-dark text-white">
-      <b>{{ filter.name + " - Plan de estudios" }}</b>
+      <b>{{ career.name + " - Plan de estudios" }}</b>
     </div>
     <div class="card-body">
       <form>
         <div class="form-row">
           <div class="form-group col-md-4">
             <label for="universityId">Universidad:</label>
-            <app-university-selector [(model)]="filter.universityId" [disabled]="true"></app-university-selector>
+            <app-university-selector [(model)]="career.universityId" [disabled]="true"></app-university-selector>
           </div>
           <div class="form-group col-md-4">
             <label for="careerId">Carrera:</label>
-            <app-career-selector [(model)]="filter.$key" [filterUniversityId]="filter.universityId" [disabled]="true"></app-career-selector>
+            <app-career-selector [(model)]="career.$key" [filterUniversityId]="career.universityId" [disabled]="true"></app-career-selector>
           </div>
           <div class="form-group col-md-4">
             <label for="selectedCareerOption">Orientacion:</label>
-            <app-career-option-selector [filterCareerId]="filter.$key" [(model)]="filter.selectedCareerOption"></app-career-option-selector>
+            <app-career-option-selector [filterCareerId]="career.$key" [(model)]="career.selectedCareerOption"></app-career-option-selector>
           </div>
         </div>
         <div class="d-flex">
@@ -30,6 +30,9 @@
     </div>
   </div>
 
-  <app-network [university]="filter.universityId" [career]="filter.$key" [careerOption]="selectedOption"></app-network>
+  <app-network
+    [student]="student"
+    [subjects]="subjects"
+  ></app-network>
 
 </div>
