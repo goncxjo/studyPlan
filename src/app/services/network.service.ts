@@ -30,7 +30,7 @@ export class NetworkService {
     , private modalService: NgbModal
   ) { }
 
-  init(student, subjects) {
+  set(student: Student, subjects: Subject[]) {
     this.student = student || new Student();
     this.subjects = subjects || [] as Subject[];
   }
@@ -43,7 +43,6 @@ export class NetworkService {
       edges = this.getEdges(element, edges);
       return node;
     });
-
     return this.dataset = { nodes: new DataSet(nodes), edges: new DataSet(edges) };
   }
 

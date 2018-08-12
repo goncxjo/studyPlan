@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
+import { Component, Input, SimpleChanges, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Network } from 'vis';
 
 import { NetworkService } from '../../services/network.service';
@@ -10,43 +10,44 @@ import { Subject } from '../../models/subject/subject';
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.css']
 })
-export class NetworkComponent implements OnInit {
+export class NetworkComponent implements AfterViewInit {
   @Input() student: Student;
   @Input() subjects: Subject[];
+
+  @ViewChild('container')
+    container: ElementRef;
 
   public network?: Network;
   public options: any;
   public data: any;
-  public container: HTMLElement;
 
   constructor(private networkService: NetworkService) { }
 
-  ngOnInit() {
-    this.container = document.getElementById('mynetwork');
+  ngAfterViewInit() {
     this.options = this.networkService.getDefaultOptions();
-    this.networkService.init(this.student, this.subjects);
+    this.initNetwork();
+  }
+
+  initNetwork() {
+    this.networkService.set(this.student, this.subjects);
     this.data = this.networkService.getDataSet();
-    this.network = new Network(this.container, this.data, this.options);
+    this.network = new Network(this.container.nativeElement, this.data, this.options);
   }
 
   regenerateNetwork() {
-    destroy(this.network, this.data);
-    this.data = this.networkService.getDataSet();
-    this.network = new Network(this.container, this.data, this.options);
-    
-    function destroy(network, data) {
+    destroy(this.network);
+    this.initNetwork();
+
+    function destroy(network) {
       if (network) {
         network.destroy();
         network = null;
-        data = null;
       }
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['student'] && !changes['student'].isFirstChange()) {
-      this.regenerateNetwork();
-    } else if (changes['careerOption'] && !changes['careerOption'].isFirstChange()) {
+    if ((changes['student'] && !changes['student'].isFirstChange()) || (changes['subjects'] && !changes['subjects'].isFirstChange())) {
       this.regenerateNetwork();
     }
   }
