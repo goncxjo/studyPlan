@@ -9,7 +9,7 @@ import { CareerService } from '../../../services/career.service';
 import { Career } from '../../../models/career/career';
 import { SubjectService } from '../../../services/subject.service';
 import { Subject } from '../../../models/subject/subject';
-import { tap, map } from '../../../../../node_modules/rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-career-plan',

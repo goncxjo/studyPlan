@@ -7,7 +7,7 @@ import { NgProgress } from 'ngx-progressbar';
 
 import { StudentService } from '../../../services/student.service';
 import { Student } from '../../../models/student/student';
-import { tap, map } from '../../../../../node_modules/rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 import { SubjectService } from '../../../services/subject.service';
 import { Subject } from '../../../models/subject/subject';
 

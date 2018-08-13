@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './core/auth.guard';
+
 import { UniversityListComponent } from './components/university/university-list/university-list.component';
 import { UniversityFormComponent } from './components/university/university-form/university-form.component';
 import { CareerListComponent } from './components/career/career-list/career-list.component';
@@ -10,6 +12,7 @@ import { SubjectFormComponent } from './components/subject/subject-form/subject-
 import { StudentListComponent } from './components/student/student-list/student-list.component';
 import { StudentFormComponent } from './components/student/student-form/student-form.component';
 import { StudentPlanComponent } from './components/student/student-plan/student-plan.component';
+import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
 
 const routes: Routes = [
   { path: 'universidades', component: UniversityListComponent },
@@ -26,6 +29,8 @@ const routes: Routes = [
   { path: 'estudiantes/crear', component: StudentFormComponent, data: { editMode: false } },
   { path: 'estudiantes/editar/:$key', component: StudentFormComponent, data: { editMode: true } },
   { path: 'estudiantes/:$key/plan', component: StudentPlanComponent },
+  { path: 'usuarios', component: UserProfileComponent },
+  { path: 'usuariosFake', component: UserProfileComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

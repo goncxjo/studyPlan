@@ -5,11 +5,11 @@
 
 <!-- User NOT logged in -->
 <ng-template #guest>
-<h3>Howdy, GUEST</h3>
-<p>Login to get started...</p>
+<h3>Bienvenido, INVITADO</h3>
+<p>Para comenzar, inicie sesión...</p>
 
-<button (click)="auth.googleLogin()">
-    <i class="fa fa-google"></i> Connect Google
+<button class="btn btn-primary" (click)="auth.googleLogin()">
+    <i class="fab fa-google"></i> Iniciar sesión mediante Google
 </button>
 
 </ng-template>
@@ -18,10 +18,10 @@
 <!-- User logged in -->
 <ng-template #authenticated>
 <div *ngIf="auth.user | async as user">
-    <h3>Howdy, {{ user.displayName }}</h3>
+    <h3>Bienvenido, {{ user.displayName }}</h3>
     <img  [src]="user.photoURL">
     <p>UID: {{ user.uid }}</p>
     <p>Favorite Color: {{ user?.favoriteColor }} </p>
-    <button (click)="auth.signOut()">Logout</button>
+    <button class="btn btn-danger" (click)="auth.signOut()">Cerrar sesión</button>
 </div>
 </ng-template>

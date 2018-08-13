@@ -9,6 +9,7 @@ import { environment } from '../environments/environment';
 // FIREBASE
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireAuthModule } from 'angularfire2/auth';
 // TOASTR
 import { ToastrModule } from 'ngx-toastr';
 // PROGRESSBAR
@@ -32,25 +33,27 @@ import { CareerFormComponent } from './components/career/career-form/career-form
 import { CareerSelectorComponent } from './components/career/career-selector/career-selector.component';
 import { DepartmentMultiselectorComponent } from './components/department/department-multiselector/department-multiselector.component';
 import { LoadingComponent } from './components/shared/loading/loading.component';
-
-// SERVICES
-import { SubjectService } from './services/subject.service';
-import { UniversityService } from './services/university.service';
-import { CareerService } from './services/career.service';
 import { SelectorComponent } from './components/shared/selector/selector.component';
 import { DepartmentSelectorComponent } from './components/department/department-selector/department-selector.component';
 import { CareerOptionSelectorComponent } from './components/career/career-option-selector/career-option-selector.component';
 import { CareerOptionMultiselectorComponent } from './components/career/career-option-multiselector/career-option-multiselector.component';
 import { StudentFormComponent } from './components/student/student-form/student-form.component';
 import { StudentListComponent } from './components/student/student-list/student-list.component';
-import { StudentService } from './services/student.service';
 import { CareerPlanComponent } from './components/career/career-plan/career-plan.component';
 import { StudentPlanComponent } from './components/student/student-plan/student-plan.component';
 import { BooleanSelectorComponent } from './components/shared/boolean-selector/boolean-selector.component';
 import { FormModalComponent } from './components/shared/form-modal/form-modal.component';
 import { StateSelectorComponent } from './components/subject/state-selector/state-selector.component';
 import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
+// SERVICES
+import { SubjectService } from './services/subject.service';
+import { UniversityService } from './services/university.service';
+import { CareerService } from './services/career.service';
+import { StudentService } from './services/student.service';
+import { AuthService } from './core/auth.service';
 
+// GUARD
+import { AuthGuard } from './core/auth.guard';
 
 @NgModule({
   declarations: [
@@ -92,12 +95,15 @@ import { UserProfileComponent } from './components/user/user-profile/user-profil
     NgProgressModule,
     NgbModule.forRoot(),
     CoreModule,
+    AngularFireAuthModule,
   ],
   providers: [
     SubjectService,
     UniversityService,
     CareerService,
     StudentService,
+    AuthService,
+    AuthGuard,
   ],
   bootstrap: [AppComponent],
   entryComponents: [
