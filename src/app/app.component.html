@@ -1,66 +1,106 @@
 <ng-progress [positionUsing]="'marginLeft'" [direction]="'leftToRightIncreased'" [color]="'#4286f4'" [trickleSpeed]="500"
- [thick]="true" [ease]="'easeInSine'"></ng-progress>
+  [thick]="true" [ease]="'easeInSine'"></ng-progress>
 
 <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-	<a class="navbar-brand" routerLink="/"><b>{{ title }}</b></a>
-	<button *ngIf="!isHome()" class="navbar-toggler" type="button" (click)="isNavbarCollapsed = !isNavbarCollapsed"
-	 data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+  <a class="navbar-brand" routerLink="/">
+    <b>{{ title }}</b>
+  </a>
+  <button *ngIf="!isHome()" class="navbar-toggler" type="button" (click)="isNavbarCollapsed = !isNavbarCollapsed" data-toggle="collapse"
+    data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-	<div *ngIf="!isHome()" [ngbCollapse]="isNavbarCollapsed" class="collapse navbar-collapse" id="navbarNav">
-		<div class="navbar-nav">
-			<a class="nav-item nav-link" routerLink="/universidades" routerLinkActive="active">Universidades</a>
-			<a class="nav-item nav-link" routerLink="/carreras" routerLinkActive="active">Carreras</a>
-			<a class="nav-item nav-link" routerLink="/asignaturas" routerLinkActive="active">Asignaturas</a>
-			<a class="nav-item nav-link" routerLink="/estudiantes" routerLinkActive="active">Estudiantes</a>
-		</div>
-	</div>
+  <div [ngbCollapse]="isNavbarCollapsed" class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav mr-auto" *ngIf="!isHome()">
+      <li class="nav-item" routerLinkActive="active">
+        <a class="nav-link" routerLink="/universidades">Universidades</a>
+      </li>
+      <li class="nav-item" routerLinkActive="active">
+        <a class="nav-link" routerLink="/carreras">Carreras</a>
+      </li>
+      <li class="nav-item" routerLinkActive="active">
+        <a class="nav-link" routerLink="/asignaturas">Asignaturas</a>
+      </li>
+      <li class="nav-item" routerLinkActive="active">
+        <a class="nav-link" routerLink="/estudiantes">Estudiantes</a>
+      </li>
+    </ul>
+    <ul class="navbar-nav flex-row ml-md-auto d-md-flex">
+      <div *ngIf="auth.user | async; then authenticated else guest"></div>
+    </ul>
+  </div>
 </nav>
 
 <div class="container">
-	<div class="row">
+  <div class="row">
 
-		<div *ngIf="isHome()" class="col-md-12 mx-auto text-center">
-			<button type="button" class="btn btn-primary btn-sq-lg" routerLink="/universidades">
-          <i class="fas fa-university fa-5x"></i>
+    <div *ngIf="isHome()" class="col-md-12 mx-auto text-center">
+      <button type="button" class="btn btn-primary btn-sq-lg" routerLink="/universidades">
+        <i class="fas fa-university fa-5x"></i>
         <div class="mt-4">
           <h3>Universidades</h3>
         </div>
       </button>
-			<button type="button" class="btn btn-primary btn-sq-lg" routerLink="/carreras">
-          <i class="fas fa-graduation-cap fa-5x"></i>
+      <button type="button" class="btn btn-primary btn-sq-lg" routerLink="/carreras">
+        <i class="fas fa-graduation-cap fa-5x"></i>
         <div class="mt-4">
           <h3>Carreras</h3>
         </div>
       </button>
-			<button type="button" class="btn btn-primary btn-sq-lg" routerLink="/asignaturas">
-          <i class="fas fa-book fa-5x"></i>
+      <button type="button" class="btn btn-primary btn-sq-lg" routerLink="/asignaturas">
+        <i class="fas fa-book fa-5x"></i>
         <div class="mt-4">
           <h3>Asignaturas</h3>
         </div>
       </button>
-			<button type="button" class="btn btn-primary btn-sq-lg" routerLink="/estudiantes">
-          <i class="fas fa-user-graduate fa-5x"></i>
+      <button type="button" class="btn btn-primary btn-sq-lg" routerLink="/estudiantes">
+        <i class="fas fa-user-graduate fa-5x"></i>
         <div class="mt-4">
           <h3>Estudiantes</h3>
         </div>
       </button>
-			<button type="button" class="btn btn-primary btn-sq-lg" routerLink="/usuarios">
-          <i class="fas fa-user fa-5x"></i>
+      <button type="button" class="btn btn-primary btn-sq-lg" routerLink="/usuarios">
+        <i class="fas fa-user fa-5x"></i>
         <div class="mt-4">
           <h3>Usuarios</h3>
         </div>
       </button>
-			<button type="button" class="btn btn-primary btn-sq-lg" routerLink="/usuariosFake">
-          <i class="fas fa-ban fa-5x"></i>
+      <button type="button" class="btn btn-primary btn-sq-lg" routerLink="/usuariosFake">
+        <i class="fas fa-ban fa-5x"></i>
         <div class="mt-4">
           <h3>Privado</h3>
         </div>
       </button>
     </div>
-    
-		<div class="col-md-12">
-			<router-outlet></router-outlet>
-		</div>
-	</div>
+
+    <div class="col-md-12">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
 </div>
+
+<!-- User NOT logged in -->
+<ng-template #guest>
+    <li ngbDropdown class="nav-item">
+        <a id="dropdownGuest" class="nav-link ng-bootstrap-nav-link" ngbDropdownToggle>
+          Hola, Invitado!
+        </a>
+        <div ngbDropdownMenu aria-labelledby="dropdownGuest">
+          <button class="dropdown-item">Iniciar sesión</button>
+          <button class="dropdown-item">Registrarse</button>
+        </div>
+      </li>
+</ng-template>
+
+
+<!-- User logged in -->
+<ng-template #authenticated>
+  <li *ngIf="auth.user | async as user" ngbDropdown class="nav-item">
+      <a id="dropdownUser" class="nav-link ng-bootstrap-nav-link" ngbDropdownToggle>
+        Hola, {{ user.displayName }}!
+      </a>
+      <div ngbDropdownMenu aria-labelledby="dropdownUser">
+        <button class="dropdown-item">Ver perfil</button>
+        <button class="dropdown-item">Cerrar sesión</button>
+      </div>
+    </li>
+</ng-template>
