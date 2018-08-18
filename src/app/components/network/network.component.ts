@@ -4,6 +4,7 @@ import { Network } from 'vis';
 import { NetworkService } from '../../services/network.service';
 import { Student } from '../../models/student/student';
 import { Subject } from '../../models/subject/subject';
+import * as d3 from 'd3';
 
 @Component({
   selector: 'app-network',
@@ -13,76 +14,110 @@ import { Subject } from '../../models/subject/subject';
 export class NetworkComponent implements AfterViewInit {
   @Input() student: Student;
   @Input() subjects: Subject[];
+  simulation: any;
+  dataset: any;
 
   @ViewChild('container') container: ElementRef;
-
-  public network?: Network;
-  public options: any;
-  public data: any;
-  private isDrawing: Boolean = false;
 
   constructor(private networkService: NetworkService) { }
 
   ngAfterViewInit() {
-    this.options = this.networkService.getDefaultOptions();
-    this.initNetwork();
+    this.generateGraph();
   }
 
-  initNetwork() {
-    this.isDrawing = true;
-
+  generateGraph() {
     this.networkService.set(this.student, this.subjects);
-    this.data = this.networkService.getDataSet();
-    this.network = new Network(this.container.nativeElement, this.data, this.options);
-    this.handleNetworkStabilization();
-  }
+    this.dataset = this.networkService.getDataSet();
 
-  handleNetworkStabilization() {
-    const loadingBar = document.getElementById('loadingBar');
-    const bar = document.getElementById('bar');
+    const width = 900, height = 400, radius = 10;
+    const fill = d3.scaleOrdinal(d3.schemeCategory10);
 
-    bar.style.width = '0%';
-    loadingBar.style.opacity = '1';
-    loadingBar.style.display = 'block';
+    const svg = d3.select('svg')
+      .attr('width',  width)
+      .attr('height', height);
 
-    this.network.on('stabilizationProgress', function(params) {
-      const maxWidth = 496;
-      const minWidth = 20;
-      const widthFactor = params.iterations/params.total;
-      const width = Math.max(minWidth,maxWidth * widthFactor);
+    const simulation = d3.forceSimulation()
+      .force('link', d3.forceLink().id(function(d) { return d.id; }))
+      // .force('charge', d3.forceManyBody())
+      // .force('center', d3.forceCenter(width / 2, height / 2))
+      .force('charge', d3.forceManyBody().strength(-200).distanceMin(10000))
+      .force('collide', d3.forceCollide(25));
 
-      const bar = document.getElementById('bar');
-      bar.style.width = width + '%';
-    });
-    this.network.once('stabilizationIterationsDone', function() {
-      const bar = document.getElementById('bar');
-      const loadingBar = document.getElementById('loadingBar');
-      
-      bar.style.width = '496px';
-      loadingBar.style.opacity = '0';
-      // really clean the dom element
-      setTimeout(() => {
-        const loadingBar = document.getElementById('loadingBar');
-        loadingBar.style.display = 'none';
-      }, 500);
-    });
-  }
+    simulation.force('xAxis', d3.forceX(function(d) {
+      return d.quarter * 100;
+    }).strength(5));
+    simulation.force('yAxis', d3.forceY(height / 2).strength(0.05));
 
-  regenerateNetwork() {
-    destroy(this.network);
-    this.initNetwork();
+    const link = svg.append('g')
+      .attr('class', 'links')
+      .selectAll('line')
+      .data(this.dataset.links)
+      .enter().append('line');
 
-    function destroy(network) {
-      if (network) {
-        network.destroy();
-        network = null;
+    const node = svg.append('g')
+      .attr('class', 'nodes')
+      .selectAll('circle')
+      .data(this.dataset.nodes)
+      .enter().append('circle')
+      .attr('r', radius)
+      .attr('fill', function(d) { return fill(d.group); })
+      .call(d3.drag()
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended));
+
+    node.append('title')
+      .text(function(d) { return d.name; });
+
+    simulation
+      .nodes(this.dataset.nodes)
+      .on('tick', ticked);
+
+    simulation.force('link')
+      .distance(function(d) {
+        return Math.exp(d.distance) || 100;
+      })
+      .strength(0.005)
+      .links(this.dataset.links);
+
+    function dragstarted(d) {
+      if (!d3.event.active) {
+        simulation.alphaTarget(0.3).restart();
       }
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+
+    function dragged(d) {
+      d.fx = d3.event.x;
+      d.fy = d3.event.y;
+    }
+
+    function dragended(d) {
+      if (!d3.event.active) {
+        simulation.alphaTarget(0);
+      }
+      d.fx = null;
+      d.fy = null;
+    }
+
+    function ticked() {
+      link
+          .attr('x1', function(d) { return d.source.x; })
+          .attr('y1', function(d) { return d.source.y; })
+          .attr('x2', function(d) { return d.target.x; })
+          .attr('y2', function(d) { return d.target.y; });
+
+      node
+          .attr('cx', function(d) { return d.x; })
+          .attr('cy', function(d) { return d.y; });
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if ((changes['student'] && !changes['student'].isFirstChange()) || (changes['subjects'] && !changes['subjects'].isFirstChange())) {
-      this.regenerateNetwork();
+      // this.regenerateNetwork();
+      this.generateGraph();
     }
   }
 }

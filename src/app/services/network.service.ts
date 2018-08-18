@@ -19,10 +19,10 @@ import { Student } from '../models/student/student';
 })
 export class NetworkService {
 
-  // dataset: Observable<{ nodes: DataSet, edges: DataSet }>;
+  // dataset: Observable<{ nodes: DataSet, links: DataSet }>;
   subjects: Subject[];
   student: Student;
-  dataset: { nodes: DataSet, edges: DataSet };
+  dataset: { nodes: any, links: any };
 
   constructor(
     private subjectService: SubjectService
@@ -36,21 +36,24 @@ export class NetworkService {
   }
 
   getDataSet() {
-    let edges = [];
+    let links = [];
+
     const nodes = this.subjects
     .map(element => {
       const node = this.generateNode(element);
-      edges = this.getEdges(element, edges);
+      links = this.getLinks(element, links);
       return node;
     });
-    return this.dataset = { nodes: new DataSet(nodes), edges: new DataSet(edges) };
+    this.dataset = { nodes, links };
+    return this.dataset;
   }
 
   generateNode(subject) {
     return {
       id: subject.$key,
-      label: subject.name,
-      level: subject.quarter,
+      name: subject.name,
+      quarter: subject.quarter,
+      year: subject.year,
       group: this.student['$key'] ? this.getSubjectState(subject) : subject.year,
     };
   }
@@ -85,163 +88,32 @@ export class NetworkService {
     return group;
   }
 
-  getEdges(subject, edges) {
+  getLinks(subject, links) {
     const correlatives = subject.correlatives || { approved: [], regularized: [] };
     const approved = correlatives['approved'] || [];
     const regularized = correlatives['regularized'] || [];
     const realRegularized = _.difference(regularized, approved);
 
     approved.forEach(i => {
-      edges.push({
-        from: i,
-        to: subject.$key,
-        title: 'Se necesita tener aprobada \'' + this.getSubjectName(i) + '\'.'
+      links.push({
+        source: i,
+        target: subject.$key,
+        distance: subject.year
       });
     });
 
     realRegularized.forEach(i => {
-      edges.push({
-        from: i,
-        to: subject.$key,
-        title: 'Se necesita tener regularizada \'' + this.getSubjectName(i) + '\'.',
-        dashes: [10, 10]
+      links.push({
+        source: i,
+        target: subject.$key,
+        distance: subject.year
       });
     });
 
-    return edges;
+    return links;
   }
 
   getSubjectName(subjectKey) {
     return this.subjects.find(s => s.$key === subjectKey).name;
-  }
-
-  getDefaultOptions() {
-    const config = {
-      locale: 'es',
-      nodes: {
-        shape: 'dot',
-        borderWidth: 3,
-        chosen: {
-          node: function (values, id, selected, hovering) {
-            values.color = '#D2E5FF';
-            values.borderColor = '#2B7CE9';
-            values.shadowColor = '#D2E5FF';
-          }
-        },
-        font: {
-          size: 16,
-          strokeWidth: 3
-        },
-        widthConstraint: {
-          minimum: 200,
-          maximum: 250
-        },
-         shapeProperties: {
-          interpolation: false
-        }
-      },
-      edges: {
-        color: {
-          inherit: 'from'
-        },
-        arrows: 'to',
-        width: 2,
-        chosen: {
-          edge: function (values, id, selected, hovering) {
-            values.inheritsColor = 'both';
-            values.width = 6;
-          }
-        }
-      },
-      groups: {
-        approved: {
-          color: {
-            background: 'lime',
-            border: 'green'
-          },
-        },
-        regularized: {
-          color: {
-            background: 'yellowgreen',
-            border: 'green'
-          },
-        },
-        inProgress: {
-          color: {
-            background: 'yellow',
-            border: 'orange'
-          }
-        },
-        available: {
-          color: {
-            background: 'deepskyblue',
-            border: 'dodgerblue'
-          }
-        },
-        notAvailable: {
-          color: {
-            background: 'LightGray ',
-            border: 'gray'
-          },
-        }
-      },
-      layout: {
-        improvedLayout: false,
-        hierarchical: {
-          enabled: true,
-          direction: 'LR',
-          levelSeparation: 250,
-          treeSpacing: 1,
-        }
-      },
-      physics: {
-        hierarchicalRepulsion: {
-          centralGravity: 0.5,
-          springLength: 100,
-          springConstant: 0.01,
-          nodeDistance: 120,
-          damping: 0.09
-        },
-        forceAtlas2Based: {
-          gravitationalConstant: -26,
-          centralGravity: 0.005,
-          springLength: 230,
-          springConstant: 0.18
-        },
-        maxVelocity: 146,
-        solver: 'forceAtlas2Based',
-        timestep: 0.35,
-        stabilization: {
-            enabled: true,
-            iterations: 2000,
-            updateInterval: 25
-        }
-      },
-      interaction: {
-        tooltipDelay: 10,
-        navigationButtons: true,
-      },
-      manipulation: {
-        addNode: false,
-        editNode: (data, callback) => {
-          const modalRef = this.modalService.open(FormModalComponent);
-          modalRef.componentInstance.id = data.id;
-          modalRef.componentInstance.name = data.label;
-          modalRef.componentInstance.state = data.group;
-
-          modalRef.result.then((result) => {
-            this.studentService.updateStudentsSubjectState(this.student, result.id, result.state);
-            callback(data);
-          }).catch((error) => {
-            console.log(error);
-          });
-        },
-        deleteNode: false,
-        addEdge: false,
-        editEdge: false,
-        deleteEdge: false
-      }
-    };
-    return config;
   }
 }
