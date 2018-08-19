@@ -28,15 +28,23 @@ export class NetworkComponent implements AfterViewInit {
   generateGraph() {
     this.networkService.set(this.student, this.subjects);
     this.dataset = this.networkService.getDataSet();
+
+    console.log(this.dataset);
+
     const numberOfQuarters = this.dataset.numberOfQuarters;
     const maxNodesQuarter = this.dataset.maxNodesQuarter;
 
+    console.log(numberOfQuarters);
+    console.log(maxNodesQuarter);
+
     const margin = {top: 50, right: 50, bottom: 50, left: 50},
-          width = 960 - margin.left - margin.right,
+          width = 1000 - margin.left - margin.right,
           height = 500 - margin.top - margin.bottom;
+    const radius = 15;
+    const fill = d3.scaleOrdinal(d3.schemeSet2);
 
     const x = d3.scaleLinear()
-      .domain( [1, 6] )
+      .domain( [1, numberOfQuarters] )
       .range( [margin.left, width + margin.right ] );
 
     const y = d3.scaleLinear()
@@ -44,12 +52,9 @@ export class NetworkComponent implements AfterViewInit {
       .range( [margin.top + height, margin.bottom ] );
 
     const xAxis = d3.axisBottom(x).ticks(numberOfQuarters);
-    // const yAxis = d3.axisLeft(y);
 
-    const radius = 15;
-    const fill = d3.scaleOrdinal(d3.schemeSet2);
-
-    const svg = d3.select('svg')
+    const svg = d3.select('#container')
+      .append('svg')
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
       .attr('shape-rendering', 'geometric-precision');
@@ -58,11 +63,6 @@ export class NetworkComponent implements AfterViewInit {
       .attr('class', 'x axis')
       .attr('transform', `translate(0,${margin.top + height})`)
       .call(xAxis);
-
-    // svg.append('g')
-    //   .attr('class', 'y axis')
-    //   .attr('transform', `translate(${margin.left},0)`)
-    //   .call(yAxis);
 
     const simulation = d3.forceSimulation()
       .force('link', d3.forceLink().id(function(d) { return d.id; }))
@@ -120,12 +120,12 @@ export class NetworkComponent implements AfterViewInit {
       ;
 
     const labels = node.append('text')
-    .attr('text-anchor', 'middle')
-    .attr('dx', 0)
-    .attr('dy', radius * 2)
-    .attr('font-size', '8px')
-    .text((d) => d.name)
-    .call(getTextBox);
+      .attr('text-anchor', 'middle')
+      .attr('dx', 0)
+      .attr('dy', radius * 2)
+      .attr('font-size', '8px')
+      .text((d) => d.name)
+      .call(getTextBox);
 
     node.insert('rect', 'text')
       .attr('x', (d) => d.bbox.x)
@@ -206,7 +206,7 @@ export class NetworkComponent implements AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if ((changes['student'] && !changes['student'].isFirstChange()) || (changes['subjects'] && !changes['subjects'].isFirstChange())) {
-      // this.regenerateNetwork();
+      d3.select('svg').remove();
       this.generateGraph();
     }
   }
