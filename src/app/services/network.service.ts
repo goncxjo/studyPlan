@@ -22,12 +22,14 @@ export class NetworkService {
   // dataset: Observable<{ nodes: DataSet, links: DataSet }>;
   subjects: Subject[];
   student: Student;
-  dataset: { nodes: any, links: any };
+  dataset: { nodes: any, links: any, numberOfQuarters: any, maxNodesQuarter: any };
+  numberOfQuarters: number;
+  maxNodesQuarter: number;
 
   constructor(
-    private subjectService: SubjectService
-    , private studentService: StudentService
-    , private modalService: NgbModal
+    // private subjectService: SubjectService
+    // , private studentService: StudentService
+    // , private modalService: NgbModal
   ) { }
 
   set(student: Student, subjects: Subject[]) {
@@ -37,24 +39,34 @@ export class NetworkService {
 
   getDataSet() {
     let links = [];
-
+    this.numberOfQuarters = 0;
+    this.maxNodesQuarter = 0;
     const nodes = this.subjects
     .map(element => {
       const node = this.generateNode(element);
       links = this.getLinks(element, links);
       return node;
     });
-    this.dataset = { nodes, links };
+    const numberOfQuarters = this.numberOfQuarters;
+    const maxNodesQuarter = this.maxNodesQuarter;
+    this.dataset = { nodes, links, numberOfQuarters, maxNodesQuarter };
     return this.dataset;
   }
 
   generateNode(subject) {
+    const subjectsPerQuarter = this.subjects.filter(x => x.quarter === subject.quarter);
+    this.numberOfQuarters = Math.max(this.numberOfQuarters, subject.quarter);
+    this.maxNodesQuarter = Math.max(this.maxNodesQuarter, subjectsPerQuarter.length);
+
     return {
       id: subject.$key,
       name: subject.name,
       quarter: subject.quarter,
       year: subject.year,
       group: this.student['$key'] ? this.getSubjectState(subject) : subject.year,
+      xPos: subject.quarter,
+      yPos: subjectsPerQuarter.findIndex(x => x.$key === subject.$key),
+      nodesPerQuarter: subjectsPerQuarter.length
     };
   }
 
