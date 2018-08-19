@@ -29,15 +29,10 @@ export class NetworkComponent implements AfterViewInit {
     this.networkService.set(this.student, this.subjects);
     this.dataset = this.networkService.getDataSet();
 
-    console.log(this.dataset);
-
     const numberOfQuarters = this.dataset.numberOfQuarters;
     const maxNodesQuarter = this.dataset.maxNodesQuarter;
 
-    console.log(numberOfQuarters);
-    console.log(maxNodesQuarter);
-
-    const margin = {top: 50, right: 50, bottom: 50, left: 50},
+    const margin = {top: 50, right: 50, bottom: 50, left: 100},
           width = 1000 - margin.left - margin.right,
           height = 500 - margin.top - margin.bottom;
     const radius = 15;
@@ -51,7 +46,7 @@ export class NetworkComponent implements AfterViewInit {
       .domain( [0, maxNodesQuarter] )
       .range( [margin.top + height, margin.bottom ] );
 
-    const xAxis = d3.axisBottom(x).ticks(numberOfQuarters);
+    // const xAxis = d3.axisBottom(x).ticks(numberOfQuarters);
 
     const svg = d3.select('#container')
       .append('svg')
@@ -59,10 +54,10 @@ export class NetworkComponent implements AfterViewInit {
       .attr('height', height + margin.top + margin.bottom)
       .attr('shape-rendering', 'geometric-precision');
 
-    svg.append('g')
-      .attr('class', 'x axis')
-      .attr('transform', `translate(0,${margin.top + height})`)
-      .call(xAxis);
+    // svg.append('g')
+    //   .attr('class', 'x axis')
+    //   .attr('transform', `translate(0,${margin.top + height})`)
+    //   .call(xAxis);
 
     const simulation = d3.forceSimulation()
       .force('link', d3.forceLink().id(function(d) { return d.id; }))
@@ -82,7 +77,7 @@ export class NetworkComponent implements AfterViewInit {
       .enter().append('marker')
       .attr('id', d => d.id)
       .attr('viewBox', '0 0 10 10')
-      .attr('refX', radius + 8)
+      .attr('refX', radius + 13)
       .attr('refY', radius / 3)
       .attr('markerWidth', 4)
       .attr('markerHeight', 4)
@@ -110,7 +105,6 @@ export class NetworkComponent implements AfterViewInit {
     const circles = node.append('circle')
       .attr('r', radius)
       .attr('fill', function(d) { return fill(d.group); })
-      .attr('cx', function(d) { return d.quarter; } )
       .on('mouseover', fade(0.1))
       .on('mouseout', fade(1))
       .call(d3.drag()
@@ -137,6 +131,43 @@ export class NetworkComponent implements AfterViewInit {
     function getTextBox(selection) {
       selection.each(function(d) { d.bbox = this.getBBox(); });
     }
+
+    const references = svg.append('g')
+    .attr('class', 'refWrapper');
+
+    const titleRef = references.append('g')
+      .attr('class', 'titleRef')
+      .append('text')
+      .text('Referencias:')
+      .attr('x', 9)
+      .attr('y', 9)
+      .style('text-anchor', 'start')
+      .style('font-weight', 'bold')
+      .style('font-size', '10px');
+
+    const legend = references.selectAll('.legend')
+      .data(fill.domain())
+      .enter().append('g')
+      .attr('class', 'legend')
+      .attr('transform', (d, i) => `translate(0, ${(i * 20) + 20})`);
+
+    legend.append('circle')
+      .attr('cx', 18)
+      .attr('cy', 9)
+      .attr('r', 9)
+      .attr('font-size', '8px')
+      .style('stroke', 'black')
+      .style('stroke-width', '3px')
+      .style('stroke-opacity', 0.1)
+      .style('fill', fill);
+
+    legend.append('text')
+    .attr('x', 40)
+    .attr('y', 9)
+    .attr('dy', '.35em')
+    .style('text-anchor', 'start')
+    .style('font-size', '8px')
+    .text((d) => `${d}° año`);
 
     // node.append('title')
     //   .text((d) => d.id);
