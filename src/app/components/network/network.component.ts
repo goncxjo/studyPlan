@@ -28,24 +28,25 @@ export class NetworkComponent implements AfterViewInit {
   generateGraph() {
     this.networkService.set(this.student, this.subjects);
     this.dataset = this.networkService.getDataSet();
+    const dataset = this.dataset;
 
     const numberOfQuarters = this.dataset.numberOfQuarters;
     const maxNodesQuarter = this.dataset.maxNodesQuarter;
 
     const margin = {top: 50, right: 100, bottom: 50, left: 100},
-          width = 1000 - margin.left - margin.right,
-          height = 500 - margin.top - margin.bottom;
+          wrapperWidth = 1200,
+          wrapperHeight = 600,
+          width = wrapperWidth - margin.left - margin.right,
+          height = wrapperHeight - margin.top - margin.bottom;
 
     const wrapper = d3.select('#graph');
-    const parentWidth = wrapper.node().parentNode.getBoundingClientRect().width;
-    const parentHeight = 500;
     const refWidth = 150;
     const radius = 15;
     const fill = d3.scaleOrdinal(d3.schemeSet2);
 
     const x = d3.scaleLinear()
       .domain( [1, numberOfQuarters] )
-      .range( [margin.left, parentWidth - margin.right] );
+      .range( [margin.left, margin.right + width] );
 
     const y = d3.scaleLinear()
       .domain( [0, maxNodesQuarter] )
@@ -53,21 +54,34 @@ export class NetworkComponent implements AfterViewInit {
 
     const xAxis = d3.axisBottom(x).ticks(numberOfQuarters);
 
-    const svg = d3.select('#graph')
+    const zoom = d3.zoom()
+      .on('zoom', zoomed)
+      // .scaleExtent([1, 10])
+      // .translateExtent([[0, 0], [wrapperWidth, wrapperHeight]])
+      // .extent([[0, 0], [wrapperWidth, wrapperHeight]])
+      ;
+
+    const _svg = d3.select('#graph')
       .classed('svg-container', true)
       .append('svg')
-      .attr('width', parentWidth)
-      .attr('height', parentHeight)
-      .attr('viewBox', `0 0 ${parentWidth} ${parentHeight}`)
+      .attr('width', wrapperWidth)
+      .attr('height', wrapperHeight)
+      .attr('viewBox', `0 0 ${wrapperWidth} ${wrapperHeight}`)
       .attr('perserveAspectRatio', 'xMinYMid')
-      .classed('svg-content-responsive', true)
-      .call(d3.zoom()
-        // .translateExtent([[0, 0], [width + margin.left + margin.right, height + margin.top + margin.bottom]])
-        .scaleExtent([1, 10])
-        .on('zoom', function () {
-          svg.attr('transform', d3.event.transform);
-        }))
-      .append('g');
+      .classed('svg-content-responsive', true);
+
+    const svg = _svg.append('g');
+
+    function zoomed() {
+      svg.attr('transform', d3.event.transform); // updated for d3 v4
+    }
+
+    _svg
+      .call(zoom)
+      .call(zoom.transform, d3.zoomIdentity
+        .scale( _svg.node().parentNode.getBoundingClientRect().width / wrapperWidth)
+        .translate(0, 0)
+      );
 
     svg.append('g')
       .attr('class', 'x axis')
@@ -200,15 +214,17 @@ export class NetworkComponent implements AfterViewInit {
 
     d3.select(window)
       .on('resize', function() {
-        const target = svg.node().parentNode.getBoundingClientRect();
-        svg.attr('width', target.width);
-        svg.attr('height', target.height);
+        const target = _svg.node().parentNode.getBoundingClientRect();
+        svg.call(zoom.transform, d3.zoomIdentity
+          .scale(target.width / wrapperWidth)
+          .translate(0, 0))
+          ;
     });
 
     function ticked() {
       node.attr('transform', function(d) {
-        d.x = Math.max(radius, Math.min(parentWidth - (radius * 2), d.x));
-        d.y = Math.max(radius, Math.min(parentHeight - (radius * 2), d.y));
+        d.x = Math.max(radius, Math.min(wrapperWidth - (radius * 2), d.x));
+        d.y = Math.max(radius, Math.min(wrapperWidth - (radius * 2), d.y));
         return 'translate(' + d.x + ',' + d.y + ')';
     });
 
