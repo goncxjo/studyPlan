@@ -33,11 +33,11 @@ export class NetworkComponent implements AfterViewInit {
     const numberOfQuarters = this.dataset.numberOfQuarters;
     const maxNodesQuarter = this.dataset.maxNodesQuarter;
 
-    const margin = {top: 50, right: 100, bottom: 50, left: 100},
-          wrapperWidth = 1200,
-          wrapperHeight = 600,
-          width = wrapperWidth - margin.left - margin.right,
-          height = wrapperHeight - margin.top - margin.bottom;
+    const margin = { top: 50, right: 100, bottom: 50, left: 100 };
+    const wrapperWidth = 1200;
+    const wrapperHeight = 600;
+    const width = wrapperWidth - margin.left - margin.right;
+    const height = wrapperHeight - margin.top - margin.bottom;
 
     const wrapper = d3.select('#graph');
     const refWidth = 150;
@@ -56,7 +56,7 @@ export class NetworkComponent implements AfterViewInit {
 
     const zoom = d3.zoom()
       .on('zoom', zoomed)
-      // .scaleExtent([1, 10])
+      .scaleExtent([0.25, 3])
       // .translateExtent([[0, 0], [wrapperWidth, wrapperHeight]])
       // .extent([[0, 0], [wrapperWidth, wrapperHeight]])
       ;
@@ -66,22 +66,9 @@ export class NetworkComponent implements AfterViewInit {
       .append('svg')
       .attr('width', wrapperWidth)
       .attr('height', wrapperHeight)
-      .attr('viewBox', `0 0 ${wrapperWidth} ${wrapperHeight}`)
-      .attr('perserveAspectRatio', 'xMinYMid')
       .classed('svg-content-responsive', true);
 
     const svg = _svg.append('g');
-
-    function zoomed() {
-      svg.attr('transform', d3.event.transform); // updated for d3 v4
-    }
-
-    _svg
-      .call(zoom)
-      .call(zoom.transform, d3.zoomIdentity
-        .scale( _svg.node().parentNode.getBoundingClientRect().width / wrapperWidth)
-        .translate(0, 0)
-      );
 
     svg.append('g')
       .attr('class', 'x axis')
@@ -164,10 +151,6 @@ export class NetworkComponent implements AfterViewInit {
       .attr('ry', 3)
       .attr('fill', 'white');
 
-    function getTextBox(selection) {
-      selection.each(function(d) { d.bbox = this.getBBox(); });
-    }
-
     const references = d3.select('#references')
     .append('svg')
     .attr('width', refWidth)
@@ -209,17 +192,54 @@ export class NetworkComponent implements AfterViewInit {
     .style('font-size', '8px')
     .text((d) => `${d}° año`);
 
-    // node.append('title')
-    //   .text((d) => d.id);
+    let target = _svg.node().parentNode.getBoundingClientRect();
+    let container = svg.node().getBoundingClientRect();
+    let currentScale = target.width / wrapperWidth;
+    let centerYPos = ((target.height / 2) - (container.height / 2)) / currentScale;
+
+    console.log('before: ', target.height);
+    console.log('before: ', container.height);
+    console.log('before: ', currentScale);
+    console.log('before: ', centerYPos);
+
+    _svg.call(zoom);
+    svg.call(zoom.transform, d3.zoomIdentity.scale(currentScale));
+
+    target = _svg.node().parentNode.getBoundingClientRect();
+    container = svg.node().getBoundingClientRect();
+    currentScale = target.width / wrapperWidth;
+    centerYPos = ((target.height / 2) - (container.height / 2)) / currentScale;
+
+    svg.call(zoom.transform, d3.zoomIdentity
+      .scale(currentScale)
+      .translate(0, centerYPos))
+      ;
+
+
+    console.log('after: ', target.height);
+    console.log('after: ', container.height);
+    console.log('after: ', currentScale);
+    console.log('after: ', centerYPos);
 
     d3.select(window)
       .on('resize', function() {
-        const target = _svg.node().parentNode.getBoundingClientRect();
+        target = _svg.node().parentNode.getBoundingClientRect();
+        container = svg.node().getBoundingClientRect();
+        currentScale = target.width / wrapperWidth;
+        centerYPos = ((target.height / 2) - (container.height / 2)) / currentScale;
         svg.call(zoom.transform, d3.zoomIdentity
-          .scale(target.width / wrapperWidth)
-          .translate(0, 0))
+          .scale(currentScale)
+          .translate(0, centerYPos))
           ;
     });
+
+    function zoomed() {
+      svg.attr('transform', d3.event.transform); // updated for d3 v4
+    }
+
+    function getTextBox(selection) {
+      selection.each(function(d) { d.bbox = this.getBBox(); });
+    }
 
     function ticked() {
       node.attr('transform', function(d) {
