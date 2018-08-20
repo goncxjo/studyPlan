@@ -23,7 +23,25 @@
   cursor: grab;
 }
 
-
 #end-arrow {
-  fill: #88A;
+  fill: #999;
+}
+
+.svg-container {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  padding-bottom: 500px;
+  vertical-align: top;
+  overflow: hidden;
+}
+.svg-content-responsive {
+  display: inline-block;
+  position: absolute;
+  left: 0;
+}
+
+#references {
+  position: absolute;
+  padding: 1.25rem;
 }

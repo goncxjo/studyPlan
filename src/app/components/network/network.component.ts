@@ -32,44 +32,63 @@ export class NetworkComponent implements AfterViewInit {
     const numberOfQuarters = this.dataset.numberOfQuarters;
     const maxNodesQuarter = this.dataset.maxNodesQuarter;
 
-    const margin = {top: 50, right: 50, bottom: 50, left: 100},
+    const margin = {top: 50, right: 100, bottom: 50, left: 100},
           width = 1000 - margin.left - margin.right,
           height = 500 - margin.top - margin.bottom;
+
+    const wrapper = d3.select('#graph');
+    const parentWidth = wrapper.node().parentNode.getBoundingClientRect().width;
+    const parentHeight = 500;
+    const refWidth = 150;
     const radius = 15;
     const fill = d3.scaleOrdinal(d3.schemeSet2);
 
     const x = d3.scaleLinear()
       .domain( [1, numberOfQuarters] )
-      .range( [margin.left, width + margin.right ] );
+      .range( [margin.left, parentWidth - margin.right] );
 
     const y = d3.scaleLinear()
       .domain( [0, maxNodesQuarter] )
       .range( [margin.top + height, margin.bottom ] );
 
-    // const xAxis = d3.axisBottom(x).ticks(numberOfQuarters);
+    const xAxis = d3.axisBottom(x).ticks(numberOfQuarters);
 
-    const svg = d3.select('#container')
+    const svg = d3.select('#graph')
+      .classed('svg-container', true)
       .append('svg')
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
-      .attr('shape-rendering', 'geometric-precision');
+      .attr('width', parentWidth)
+      .attr('height', parentHeight)
+      .attr('viewBox', `0 0 ${parentWidth} ${parentHeight}`)
+      .attr('perserveAspectRatio', 'xMinYMid')
+      .classed('svg-content-responsive', true)
+      .call(d3.zoom()
+        // .translateExtent([[0, 0], [width + margin.left + margin.right, height + margin.top + margin.bottom]])
+        .scaleExtent([1, 10])
+        .on('zoom', function () {
+          svg.attr('transform', d3.event.transform);
+        }))
+      .append('g');
 
-    // svg.append('g')
-    //   .attr('class', 'x axis')
-    //   .attr('transform', `translate(0,${margin.top + height})`)
-    //   .call(xAxis);
+    svg.append('g')
+      .attr('class', 'x axis')
+      .attr('transform', `translate(0,${margin.top + height})`)
+      .call(xAxis);
 
     const simulation = d3.forceSimulation()
-      .force('link', d3.forceLink().id(function(d) { return d.id; }))
-      .force('charge', d3.forceManyBody().strength(-200).distanceMin(50).distanceMax(200))
-      .force('collide', d3.forceCollide(25));
-
-    simulation
-      .force('x', d3.forceX((d) => x(d.xPos)).strength(5))
-      .force('y', d3.forceY((d) => {
+      .force('link', d3.forceLink().id((d) => d.id))
+      .force('xPos', d3.forceX((d) => x(d.xPos)).strength(5))
+      .force('yPos', d3.forceY((d) => {
         const partitions = numberOfQuarters / d.nodesPerQuarter;
         return y(partitions + d.yPos);
       }).strength(5));
+
+    simulation
+      .nodes(this.dataset.nodes)
+      .on('tick', ticked);
+
+    simulation.force('link')
+      .strength(0)
+      .links(this.dataset.links);
 
     // add defs-markers
     svg.append('svg:defs').selectAll('marker')
@@ -94,23 +113,24 @@ export class NetworkComponent implements AfterViewInit {
 
     link
       .attr('marker-end', 'url(#end-arrow)')
-      .on('mouseout', fade(1));
+      .on('mouseout', fade(1))
+      ;
 
     const node = svg.append('g')
       .attr('class', 'nodes')
       .selectAll('g')
       .data(this.dataset.nodes)
-      .enter().append('g');
+      .enter().append('g')
+      .call(d3.drag()
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended));
 
     const circles = node.append('circle')
       .attr('r', radius)
       .attr('fill', function(d) { return fill(d.group); })
       .on('mouseover', fade(0.1))
       .on('mouseout', fade(1))
-      .call(d3.drag()
-        .on('start', dragstarted)
-        .on('drag', dragged)
-        .on('end', dragended))
       ;
 
     const labels = node.append('text')
@@ -126,20 +146,26 @@ export class NetworkComponent implements AfterViewInit {
       .attr('y', (d) => d.bbox.y)
       .attr('width', (d) => d.bbox.width)
       .attr('height', (d) => d.bbox.height)
+      .attr('rx', 3)
+      .attr('ry', 3)
       .attr('fill', 'white');
 
     function getTextBox(selection) {
       selection.each(function(d) { d.bbox = this.getBBox(); });
     }
 
-    const references = svg.append('g')
+    const references = d3.select('#references')
+    .append('svg')
+    .attr('width', refWidth)
+    .attr('height', '100%')
+    .append('g')
     .attr('class', 'refWrapper');
 
     const titleRef = references.append('g')
       .attr('class', 'titleRef')
       .append('text')
       .text('Referencias:')
-      .attr('x', 9)
+      .attr('x', 0)
       .attr('y', 9)
       .style('text-anchor', 'start')
       .style('font-weight', 'bold')
@@ -152,7 +178,7 @@ export class NetworkComponent implements AfterViewInit {
       .attr('transform', (d, i) => `translate(0, ${(i * 20) + 20})`);
 
     legend.append('circle')
-      .attr('cx', 18)
+      .attr('cx', 10)
       .attr('cy', 9)
       .attr('r', 9)
       .attr('font-size', '8px')
@@ -162,7 +188,7 @@ export class NetworkComponent implements AfterViewInit {
       .style('fill', fill);
 
     legend.append('text')
-    .attr('x', 40)
+    .attr('x', 26)
     .attr('y', 9)
     .attr('dy', '.35em')
     .style('text-anchor', 'start')
@@ -172,23 +198,25 @@ export class NetworkComponent implements AfterViewInit {
     // node.append('title')
     //   .text((d) => d.id);
 
-    simulation
-      .nodes(this.dataset.nodes)
-      .on('tick', ticked);
-
-    simulation.force('link')
-      .strength(0)
-      .links(this.dataset.links);
+    d3.select(window)
+      .on('resize', function() {
+        const target = svg.node().parentNode.getBoundingClientRect();
+        svg.attr('width', target.width);
+        svg.attr('height', target.height);
+    });
 
     function ticked() {
+      node.attr('transform', function(d) {
+        d.x = Math.max(radius, Math.min(parentWidth - (radius * 2), d.x));
+        d.y = Math.max(radius, Math.min(parentHeight - (radius * 2), d.y));
+        return 'translate(' + d.x + ',' + d.y + ')';
+    });
+
       link
           .attr('x1', (d) => d.source.x)
           .attr('y1', (d) => d.source.y)
           .attr('x2', (d) => d.target.x)
           .attr('y2', (d) => d.target.y);
-
-      node
-        .attr('transform', (d) => `translate(${d.x},${d.y})`);
     }
 
     function dragstarted(d) {
@@ -237,7 +265,8 @@ export class NetworkComponent implements AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if ((changes['student'] && !changes['student'].isFirstChange()) || (changes['subjects'] && !changes['subjects'].isFirstChange())) {
-      d3.select('svg').remove();
+      d3.select('#graph').selectAll('*').remove();
+      d3.select('#references').selectAll('*').remove();
       this.generateGraph();
     }
   }
