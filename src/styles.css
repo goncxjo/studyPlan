@@ -23,6 +23,27 @@
   cursor: grab;
 }
 
+.nodes circle.approved {
+  stroke: green;
+  stroke-opacity: 0.5;
+  stroke-width: 7px;
+}
+.nodes circle.regularized {
+  stroke: chartreuse;
+  stroke-opacity: 0.5;
+  stroke-width: 7px;
+}
+.nodes circle.inProgress {
+  stroke: gold;
+  stroke-opacity: 0.5;
+  stroke-width: 7px;
+}
+.nodes circle.available {
+  stroke: steelblue;
+  stroke-opacity: 0.5;
+  stroke-width: 7px;
+}
+
 #end-arrow {
   fill: #999;
 }

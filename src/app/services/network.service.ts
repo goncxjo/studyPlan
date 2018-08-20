@@ -63,7 +63,8 @@ export class NetworkService {
       name: subject.name,
       quarter: subject.quarter,
       year: subject.year,
-      group: this.student['$key'] ? this.getSubjectState(subject) : subject.year,
+      group: subject.year,
+      state: this.student['$key'] ? this.getSubjectState(subject) : null,
       xPos: subject.quarter,
       yPos: subjectsPerQuarter.findIndex(x => x.$key === subject.$key),
       nodesPerQuarter: subjectsPerQuarter.length
@@ -71,7 +72,7 @@ export class NetworkService {
   }
 
   getSubjectState(subject: Subject) {
-    let group = 'notAvailable';
+    let state = null; //'notAvailable';
     const subjectKey = subject.$key;
 
     const correlatives = subject.correlatives || { approved: [], regularized: [] };
@@ -89,15 +90,15 @@ export class NetworkService {
     const isAvailable = approved.every((key) => _.includes(studentApproved, key));
 
     if (isApproved) {
-      group = 'approved';
+      state = 'approved';
     } else if (isRegularized) {
-      group = 'regularized';
+      state = 'regularized';
     } else if (isInProgress) {
-      group = 'inProgress';
+      state = 'inProgress';
     } else if (isAvailable) {
-      group = 'available';
+      state = 'available';
     }
-    return group;
+    return state;
   }
 
   getLinks(subject, links) {

@@ -129,7 +129,8 @@ export class NetworkComponent implements AfterViewInit {
 
     const circles = node.append('circle')
       .attr('r', radius)
-      .attr('fill', function(d) { return fill(d.group); })
+      .attr('fill', (d) => fill(d.group))
+      .attr('class', (d) => d.state || null)
       .on('mouseover', fade(0.1))
       .on('mouseout', fade(1))
       ;
