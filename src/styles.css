@@ -27,33 +27,29 @@
 }
 
 .nodes circle.state {
-  fill: #999;
-  stroke: #999;
-  stroke-width: 5px;
-  stroke-opacity: 0.5;
+  fill: silver;
+  stroke: #FFF;
+  stroke-width: 3px;
+  stroke-opacity: 1;
 }
 
 .nodes circle.quarter {
-  stroke: #999;
-  stroke-width: 5px;
-  stroke-opacity: 0.5;
+  stroke: #FFF;
+  stroke-width: 3px;
+  stroke-opacity: 1;
 }
 
 .nodes circle.state.approved {
-  fill: green;
+  fill: limegreen;
 }
 .nodes circle.state.regularized {
   fill: chartreuse;
 }
 .nodes circle.state.inProgress {
-  fill: gold;
+  fill: orange;
 }
 .nodes circle.state.available {
-  fill: steelblue;
-}
-
-#end-arrow {
-  fill: #999;
+  fill: dodgerblue;
 }
 
 .svg-container {
@@ -73,4 +69,10 @@
 #references {
   position: absolute;
   padding: 1.25rem;
+}
+
+.nodes text.label {
+  text-anchor: middle;
+  font-size: 8px;
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
 }

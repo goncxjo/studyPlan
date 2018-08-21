@@ -41,15 +41,15 @@ export class NetworkComponent implements AfterViewInit {
     const wrapper = d3.select('#graph');
     const refWidth = 150;
     const radius = 15;
-    const fill = d3.scaleOrdinal(d3.schemeSet2);
+    const fill = d3.scaleOrdinal(d3.schemeCategory10);
 
     const x = d3.scaleLinear()
-      .domain( [1, numberOfQuarters] )
-      .range( [margin.left, margin.right + width] );
+      .domain([1, numberOfQuarters])
+      .range([margin.left, margin.right + width]);
 
     const y = d3.scaleLinear()
-      .domain( [0, maxNodesQuarter] )
-      .range( [margin.top + height, margin.bottom ] );
+      .domain([0, maxNodesQuarter])
+      .range([margin.top + height, margin.bottom]);
 
     const xAxis = d3.axisBottom(x).ticks(numberOfQuarters);
 
@@ -102,9 +102,9 @@ export class NetworkComponent implements AfterViewInit {
       .data(this.dataset.nodes)
       .enter().append('g')
       .call(d3.drag()
-      .on('start', dragstarted)
-      .on('drag', dragged)
-      .on('end', dragended));
+        .on('start', dragstarted)
+        .on('drag', dragged)
+        .on('end', dragended));
 
     const borderCircles = node.append('circle')
       .attr('r', radius)
@@ -115,7 +115,7 @@ export class NetworkComponent implements AfterViewInit {
       ;
 
     const circles = node.append('circle')
-      .attr('r', radius - 5)
+      .attr('r', radius - 4)
       .attr('class', 'group')
       .attr('fill', (d) => fill(d.group))
       .on('mouseover', fade(0.1))
@@ -123,28 +123,17 @@ export class NetworkComponent implements AfterViewInit {
       ;
 
     const labels = node.append('text')
-      .attr('text-anchor', 'middle')
+      .attr('class', 'label')
       .attr('dx', 0)
       .attr('dy', radius * 2)
-      .attr('font-size', '8px')
-      .text((d) => d.name)
-      .call(getTextBox);
-
-    node.insert('rect', 'text')
-      .attr('x', (d) => d.bbox.x)
-      .attr('y', (d) => d.bbox.y)
-      .attr('width', (d) => d.bbox.width)
-      .attr('height', (d) => d.bbox.height)
-      .attr('rx', 3)
-      .attr('ry', 3)
-      .attr('fill', 'white');
+      .text((d) => d.name);
 
     const references = d3.select('#references')
-    .append('svg')
-    .attr('width', refWidth)
-    .attr('height', '100%')
-    .append('g')
-    .attr('class', 'refWrapper');
+      .append('svg')
+      .attr('width', refWidth)
+      .attr('height', '100%')
+      .append('g')
+      .attr('class', 'refWrapper');
 
     const titleRef = references.append('g')
       .attr('class', 'titleRef')
@@ -173,17 +162,18 @@ export class NetworkComponent implements AfterViewInit {
       .style('fill', fill);
 
     legend.append('text')
-    .attr('x', 26)
-    .attr('y', 9)
-    .attr('dy', '.35em')
-    .style('text-anchor', 'start')
-    .style('font-size', '8px')
-    .text((d) => `${d}° año`);
+      .attr('x', 26)
+      .attr('y', 9)
+      .attr('dy', '.35em')
+      .style('text-anchor', 'start')
+      .style('font-size', '8px')
+      .text((d) => `${d}° año`);
 
+    // TODO: don't repeat code
     let target = _svg.node().parentNode.getBoundingClientRect();
     let container = svg.node().getBoundingClientRect();
     let currentScale = target.width / wrapperWidth;
-    let centerYPos = ((target.height / 2) - (container.height / 2)) / currentScale;
+    let centerYPos = 0;
 
     _svg.call(zoom);
     svg.call(zoom.transform, d3.zoomIdentity.scale(currentScale));
@@ -191,43 +181,40 @@ export class NetworkComponent implements AfterViewInit {
     target = _svg.node().parentNode.getBoundingClientRect();
     container = svg.node().getBoundingClientRect();
     currentScale = target.width / wrapperWidth;
-    centerYPos = ((target.height / 2) - (container.height / 2)) / currentScale;
+    centerYPos = target.height > container.height ? ((target.height / 2) - (container.height / 2)) / currentScale : 0;
 
     svg.call(zoom.transform, d3.zoomIdentity
       .scale(currentScale)
       .translate(0, centerYPos))
       ;
+    //
 
     d3.select(window)
-      .on('resize', function() {
+      .on('resize', function () {
         target = _svg.node().parentNode.getBoundingClientRect();
         container = svg.node().getBoundingClientRect();
         currentScale = target.width / wrapperWidth;
-        centerYPos = ((target.height / 2) - (container.height / 2)) / currentScale;
+        centerYPos = target.height > container.height ? ((target.height / 2) - (container.height / 2)) / currentScale : 0;
         svg.call(zoom.transform, d3.zoomIdentity
           .scale(currentScale)
           .translate(0, centerYPos))
           ;
-    });
+      });
 
     function zoomed() {
       svg.attr('transform', d3.event.transform); // updated for d3 v4
     }
 
-    function getTextBox(selection) {
-      selection.each(function(d) { d.bbox = this.getBBox(); });
-    }
-
     function ticked() {
       node.attr('transform', (d) => {
-        return `translate(${d.x}, ${d.y})`
-    });
+        return `translate(${d.x}, ${d.y})`;
+      });
 
       link
-          .attr('x1', (d) => d.source.x)
-          .attr('y1', (d) => d.source.y)
-          .attr('x2', (d) => d.target.x)
-          .attr('y2', (d) => d.target.y);
+        .attr('x1', (d) => d.source.x)
+        .attr('y1', (d) => d.source.y)
+        .attr('x2', (d) => d.target.x)
+        .attr('y2', (d) => d.target.y);
     }
 
     function dragstarted(d) {
