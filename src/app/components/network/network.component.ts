@@ -1,5 +1,4 @@
 import { Component, Input, SimpleChanges, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { Network } from 'vis';
 
 import { NetworkService } from '../../services/network.service';
 import { Student } from '../../models/student/student';
@@ -57,8 +56,6 @@ export class NetworkComponent implements AfterViewInit {
     const zoom = d3.zoom()
       .on('zoom', zoomed)
       .scaleExtent([0.25, 3])
-      // .translateExtent([[0, 0], [wrapperWidth, wrapperHeight]])
-      // .extent([[0, 0], [wrapperWidth, wrapperHeight]])
       ;
 
     const _svg = d3.select('#graph')
@@ -91,29 +88,11 @@ export class NetworkComponent implements AfterViewInit {
       .strength(0)
       .links(this.dataset.links);
 
-    // add defs-markers
-    svg.append('svg:defs').selectAll('marker')
-      .data([{ id: 'end-arrow', opacity: 1 }, { id: 'end-arrow-fade', opacity: 0.1 }])
-      .enter().append('marker')
-      .attr('id', d => d.id)
-      .attr('viewBox', '0 0 10 10')
-      .attr('refX', radius + 13)
-      .attr('refY', radius / 3)
-      .attr('markerWidth', 4)
-      .attr('markerHeight', 4)
-      .attr('orient', 'auto')
-      .append('svg:path')
-      .attr('d', 'M0,0 L0,10 L10,5 z')
-      .style('opacity', d => d.opacity);
-
     const link = svg.append('g')
       .attr('class', 'links')
       .selectAll('line')
       .data(this.dataset.links)
-      .enter().append('line');
-
-    link
-      .attr('marker-end', 'url(#end-arrow)')
+      .enter().append('line')
       .on('mouseout', fade(1))
       ;
 
@@ -127,10 +106,18 @@ export class NetworkComponent implements AfterViewInit {
       .on('drag', dragged)
       .on('end', dragended));
 
-    const circles = node.append('circle')
+    const borderCircles = node.append('circle')
       .attr('r', radius)
       .attr('fill', (d) => fill(d.group))
       .attr('class', (d) => d.state || null)
+      .classed('state', this.student)
+      .classed('quarter', !this.student)
+      ;
+
+    const circles = node.append('circle')
+      .attr('r', radius - 5)
+      .attr('class', 'group')
+      .attr('fill', (d) => fill(d.group))
       .on('mouseover', fade(0.1))
       .on('mouseout', fade(1))
       ;
@@ -198,11 +185,6 @@ export class NetworkComponent implements AfterViewInit {
     let currentScale = target.width / wrapperWidth;
     let centerYPos = ((target.height / 2) - (container.height / 2)) / currentScale;
 
-    console.log('before: ', target.height);
-    console.log('before: ', container.height);
-    console.log('before: ', currentScale);
-    console.log('before: ', centerYPos);
-
     _svg.call(zoom);
     svg.call(zoom.transform, d3.zoomIdentity.scale(currentScale));
 
@@ -215,12 +197,6 @@ export class NetworkComponent implements AfterViewInit {
       .scale(currentScale)
       .translate(0, centerYPos))
       ;
-
-
-    console.log('after: ', target.height);
-    console.log('after: ', container.height);
-    console.log('after: ', currentScale);
-    console.log('after: ', centerYPos);
 
     d3.select(window)
       .on('resize', function() {
@@ -243,10 +219,8 @@ export class NetworkComponent implements AfterViewInit {
     }
 
     function ticked() {
-      node.attr('transform', function(d) {
-        d.x = Math.max(radius, Math.min(wrapperWidth - (radius * 2), d.x));
-        d.y = Math.max(radius, Math.min(wrapperWidth - (radius * 2), d.y));
-        return 'translate(' + d.x + ',' + d.y + ')';
+      node.attr('transform', (d) => {
+        return `translate(${d.x}, ${d.y})`
     });
 
       link
@@ -288,14 +262,13 @@ export class NetworkComponent implements AfterViewInit {
 
     function fade(opacity) {
       return d => {
-        node.style('stroke-opacity', function (o) {
+        node.style('opacity', function (o) {
           const thisOpacity = isConnected(d, o) ? 1 : opacity;
           this.setAttribute('fill-opacity', thisOpacity);
           return thisOpacity;
         });
 
-        link.style('stroke-opacity', o => (o.source === d || o.target === d ? 1 : opacity));
-        link.attr('marker-end', o => (opacity === 1 || o.source === d || o.target === d ? 'url(#end-arrow)' : 'url(#end-arrow-fade)'));
+        link.style('opacity', o => (o.source === d || o.target === d ? 1 : opacity));
       };
     }
   }

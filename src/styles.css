@@ -11,37 +11,45 @@
 }
 
 .links line {
-  stroke: #999;
+  stroke: #aaa;
   stroke-opacity: 1;
   stroke-width: 2px
 }
 
 .nodes circle {
-  stroke: #000;
-  stroke-width: 5px;
-  stroke-opacity: 0.1;
-  cursor: grab;
+  stroke: #fff;
+  stroke-width: 3px;
 }
 
-.nodes circle.approved {
-  stroke: green;
-  stroke-opacity: 0.5;
-  stroke-width: 7px;
+.nodes circle.group {
+  stroke: #fff;
+  stroke-width: 2px;
 }
-.nodes circle.regularized {
-  stroke: chartreuse;
+
+.nodes circle.state {
+  fill: #999;
+  stroke: #999;
+  stroke-width: 5px;
   stroke-opacity: 0.5;
-  stroke-width: 7px;
 }
-.nodes circle.inProgress {
-  stroke: gold;
+
+.nodes circle.quarter {
+  stroke: #999;
+  stroke-width: 5px;
   stroke-opacity: 0.5;
-  stroke-width: 7px;
 }
-.nodes circle.available {
-  stroke: steelblue;
-  stroke-opacity: 0.5;
-  stroke-width: 7px;
+
+.nodes circle.state.approved {
+  fill: green;
+}
+.nodes circle.state.regularized {
+  fill: chartreuse;
+}
+.nodes circle.state.inProgress {
+  fill: gold;
+}
+.nodes circle.state.available {
+  fill: steelblue;
 }
 
 #end-arrow {
