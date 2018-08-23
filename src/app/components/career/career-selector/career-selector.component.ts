@@ -25,7 +25,7 @@ export class CareerSelectorComponent {
   }
 
   getCareers() {
-    this.careerService.getCareers().subscribe(careers => {
+    this.careerService.getCareerMiniList().subscribe(careers => {
       this.careers = careers;
       this.filterByUniversityId(this.filterUniversityId);
     });
@@ -47,6 +47,5 @@ export class CareerSelectorComponent {
   filterByUniversityId(universityId: string) {
     const filterUniversityId = universityId || '';
     this.filterResult = this.careers ? this.careers.filter(c => c.universityId === filterUniversityId) : [];
-    this.change('');
   }
 }

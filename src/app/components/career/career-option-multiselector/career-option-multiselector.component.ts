@@ -26,7 +26,7 @@ export class CareerOptionMultiselectorComponent {
   }
 
   getOptions() {
-    this.careerService.getCareerMiniList().subscribe(options => {
+    this.careerService.getOptionMiniList().subscribe(options => {
        this.options = options;
       });
   }

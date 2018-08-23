@@ -1,4 +1,5 @@
 export const LEVELS = [
-    { key: 'grade', value: 'Grado'},
-    { key: 'posgrade', value: 'Posgrado'}
+    { key: 'undergraduate', value: 'Pregrado'},
+    { key: 'graduate', value: 'Grado'},
+    { key: 'postgraduate', value: 'Posgrado'}
 ];

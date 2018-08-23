@@ -47,6 +47,5 @@ export class CareerOptionSelectorComponent {
   filterByCareerId(careerId: string) {
     const filterCareerId = careerId || '';
     this.filterResult = this.options ? this.options.filter(o => o.careerId === filterCareerId) : [];
-    this.change('');
   }
 }

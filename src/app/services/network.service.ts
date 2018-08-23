@@ -87,7 +87,7 @@ export class NetworkService {
     const isApproved = _.includes(studentApproved, subjectKey);
     const isRegularized = _.includes(studentRegularized, subjectKey);
     const isInProgress = _.includes(studentInProgress, subjectKey);
-    const isAvailable = approved.every((key) => _.includes(studentApproved, key));
+    const isAvailable = _.every(approved, (key) => _.includes(studentApproved, key));
 
     if (isApproved) {
       state = 'approved';
@@ -108,19 +108,23 @@ export class NetworkService {
     const realRegularized = _.difference(regularized, approved);
 
     approved.forEach(i => {
-      links.push({
-        source: i,
-        target: subject.$key,
-        distance: subject.year
-      });
+      if(this.subjects.find(x => x.$key == i)) {
+        links.push({
+          source: i,
+          target: subject.$key,
+          distance: subject.year
+        });
+      }
     });
 
     realRegularized.forEach(i => {
-      links.push({
-        source: i,
-        target: subject.$key,
-        distance: subject.year
-      });
+      if(this.subjects.find(x => x.$key == i)) {
+        links.push({
+          source: i,
+          target: subject.$key,
+          distance: subject.year
+        });
+      }
     });
 
     return links;

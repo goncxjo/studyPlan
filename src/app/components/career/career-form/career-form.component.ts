@@ -38,7 +38,7 @@ export class CareerFormComponent implements OnInit {
       departmentId: '',
       options: this.fb.array([])
     });
-
+    this.levels = this.careerService.getLevels();
   }
 
   ngOnInit() {

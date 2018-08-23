@@ -17,6 +17,7 @@ export class CareerListComponent implements OnInit {
   searchResult: CareerList[] = [];
   filter: CareerList = new CareerList();
   isReady: Boolean = false;
+  levels: any[];
 
   constructor(
     private careerService: CareerService
@@ -27,6 +28,7 @@ export class CareerListComponent implements OnInit {
   ngOnInit() {
     this.startLoading();
     this.getCareers();
+    this.levels = this.careerService.getLevels();
   }
 
   getCareers() {

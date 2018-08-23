@@ -43,7 +43,6 @@ export class StudentPlanComponent implements OnInit {
       tap(s => {
         this.student = s;
         this.student.$key = id;
-        this.student['selectedCareerOption'] = this.student['careerOptionId'] || '';
       }),
       map(() => {
         this.subjectService.getSubjects().subscribe(subjects => {
@@ -64,7 +63,7 @@ export class StudentPlanComponent implements OnInit {
     return this.subjects.filter(s => {
       const matchesUniversity = s.universityId === this.student['universityId'];
       const matchesCareer = (s.careerId === this.student['careerId'] || s.isCrossDisciplinary);
-      return matchesUniversity && matchesCareer && isEmptyOrContainsSelectedOption(s, this.student['selectedCareerOption']);
+      return matchesUniversity && matchesCareer && isEmptyOrContainsSelectedOption(s, this.student['careerOptionId']);
 
       function isEmptyOrContainsSelectedOption(subject, selectedOption) {
         return subject.careerOptions ? subject.careerOptions.find(o => o === selectedOption) : true;

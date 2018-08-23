@@ -3,7 +3,7 @@ import { Component, Input, SimpleChanges, ViewChild, ElementRef, AfterViewInit }
 import { NetworkService } from '../../services/network.service';
 import { Student } from '../../models/student/student';
 import { Subject } from '../../models/subject/subject';
-import * as d3 from 'd3';
+import d3 from 'd3';
 
 @Component({
   selector: 'app-network',
@@ -24,11 +24,10 @@ export class NetworkComponent implements AfterViewInit {
 
   generateGraph() {
     this.networkService.set(this.student, this.subjects);
-    this.dataset = this.networkService.getDataSet();
-    const dataset = this.dataset;
+    const dataset = this.networkService.getDataSet();
 
-    const numberOfQuarters = this.dataset.numberOfQuarters;
-    const maxNodesQuarter = this.dataset.maxNodesQuarter;
+    const numberOfQuarters = dataset.numberOfQuarters;
+    const maxNodesQuarter = dataset.maxNodesQuarter;
 
     const margin = { top: 50, right: 100, bottom: 50, left: 100 };
     const wrapperWidth = 1200;
@@ -36,7 +35,6 @@ export class NetworkComponent implements AfterViewInit {
     const width = wrapperWidth - margin.left - margin.right;
     const height = wrapperHeight - margin.top - margin.bottom;
 
-    const wrapper = d3.select('#graph');
     const refWidth = 150;
     const radius = 15;
     const fill = d3.scaleOrdinal(d3.schemeCategory10);
@@ -56,14 +54,16 @@ export class NetworkComponent implements AfterViewInit {
       .scaleExtent([0.25, 3])
       ;
 
-    const _svg = d3.select('#graph')
+    const wrapper = d3.select('#wrapper');
+
+    const graphSVG = d3.select('#graph')
       .classed('svg-container', true)
       .append('svg')
       .attr('width', wrapperWidth)
       .attr('height', wrapperHeight)
       .classed('svg-content-responsive', true);
 
-    const svg = _svg.append('g');
+    const svg = graphSVG.append('g');
 
     svg.append('g')
       .attr('class', 'x axis')
@@ -79,17 +79,17 @@ export class NetworkComponent implements AfterViewInit {
       }).strength(5));
 
     simulation
-      .nodes(this.dataset.nodes)
+      .nodes(dataset.nodes)
       .on('tick', ticked);
 
     simulation.force('link')
       .strength(0)
-      .links(this.dataset.links);
+      .links(dataset.links);
 
     const link = svg.append('g')
       .attr('class', 'links')
       .selectAll('line')
-      .data(this.dataset.links)
+      .data(dataset.links)
       .enter().append('line')
       .on('mouseout', fade(1))
       ;
@@ -97,7 +97,7 @@ export class NetworkComponent implements AfterViewInit {
     const node = svg.append('g')
       .attr('class', 'nodes')
       .selectAll('g')
-      .data(this.dataset.nodes)
+      .data(dataset.nodes)
       .enter().append('g')
       .call(d3.drag()
         .on('start', dragstarted)
@@ -162,15 +162,15 @@ export class NetworkComponent implements AfterViewInit {
       .text((d) => `${d}° año`);
 
     // TODO: don't repeat code
-    let target = _svg.node().parentNode.getBoundingClientRect();
+    let target = wrapper.node().getBoundingClientRect();
     let container = svg.node().getBoundingClientRect();
     let currentScale = target.width / wrapperWidth;
     let centerYPos = 0;
 
-    _svg.call(zoom);
+    graphSVG.call(zoom);
     svg.call(zoom.transform, d3.zoomIdentity.scale(currentScale));
 
-    target = _svg.node().parentNode.getBoundingClientRect();
+    target = wrapper.node().getBoundingClientRect();
     container = svg.node().getBoundingClientRect();
     currentScale = target.width / wrapperWidth;
     centerYPos = target.height > container.height ? ((target.height / 2) - (container.height / 2)) / currentScale : 0;
@@ -183,7 +183,7 @@ export class NetworkComponent implements AfterViewInit {
 
     d3.select(window)
       .on('resize', function () {
-        target = _svg.node().parentNode.getBoundingClientRect();
+        target = wrapper.node().getBoundingClientRect();
         container = svg.node().getBoundingClientRect();
         currentScale = target.width / wrapperWidth;
         centerYPos = target.height > container.height ? ((target.height / 2) - (container.height / 2)) / currentScale : 0;
@@ -231,7 +231,7 @@ export class NetworkComponent implements AfterViewInit {
     }
 
     const linkedByIndex = {};
-    this.dataset.links.forEach(d => {
+    dataset.links.forEach(d => {
       linkedByIndex[`${d.source.index},${d.target.index}`] = 1;
     });
 

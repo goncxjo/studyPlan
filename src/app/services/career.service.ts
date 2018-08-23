@@ -41,7 +41,7 @@ export class CareerService {
           const levels = this.getLevels();
           val.level = {
             $key: val.level,
-            value: levels.find(l => l.key === val.level).value || ''
+            value: levels.find(l => l.key === (val.level || '')).value || ''
           };
           val.$key = key;
           return val;
