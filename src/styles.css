@@ -46,10 +46,10 @@
   fill: chartreuse;
 }
 .nodes circle.state.inProgress {
-  fill: orange;
+  fill: gold;
 }
 .nodes circle.state.available {
-  fill: dodgerblue;
+  fill: royalblue;
 }
 
 .svg-container {

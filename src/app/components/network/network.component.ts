@@ -16,8 +16,6 @@ export class NetworkComponent implements AfterViewInit {
   simulation: any;
   dataset: any;
 
-  @ViewChild('container') container: ElementRef;
-
   constructor(private networkService: NetworkService) { }
 
   ngAfterViewInit() {
@@ -115,7 +113,7 @@ export class NetworkComponent implements AfterViewInit {
       ;
 
     const circles = node.append('circle')
-      .attr('r', radius - 4)
+      .attr('r', radius - 6)
       .attr('class', 'group')
       .attr('fill', (d) => fill(d.group))
       .on('mouseover', fade(0.1))
@@ -151,22 +149,16 @@ export class NetworkComponent implements AfterViewInit {
       .attr('class', 'legend')
       .attr('transform', (d, i) => `translate(0, ${(i * 20) + 20})`);
 
-    legend.append('circle')
-      .attr('cx', 10)
-      .attr('cy', 9)
-      .attr('r', 9)
-      .attr('font-size', '8px')
-      .style('stroke', 'black')
-      .style('stroke-width', '3px')
-      .style('stroke-opacity', 0.1)
+    legend.append('rect')
+      .attr('width', 15)
+      .attr('height', 10)
       .style('fill', fill);
 
     legend.append('text')
       .attr('x', 26)
-      .attr('y', 9)
-      .attr('dy', '.35em')
+      .attr('y', 7.5)
       .style('text-anchor', 'start')
-      .style('font-size', '8px')
+      .style('font-size', '9px')
       .text((d) => `${d}° año`);
 
     // TODO: don't repeat code
@@ -251,7 +243,6 @@ export class NetworkComponent implements AfterViewInit {
       return d => {
         node.style('opacity', function (o) {
           const thisOpacity = isConnected(d, o) ? 1 : opacity;
-          this.setAttribute('fill-opacity', thisOpacity);
           return thisOpacity;
         });
 
